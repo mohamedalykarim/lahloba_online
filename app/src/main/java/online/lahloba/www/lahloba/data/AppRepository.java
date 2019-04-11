@@ -6,6 +6,7 @@ import android.arch.lifecycle.MutableLiveData;
 import java.util.List;
 
 import online.lahloba.www.lahloba.data.model.MainMenuItem;
+import online.lahloba.www.lahloba.data.model.SubMenuItem;
 
 public class AppRepository {
     private static final Object LOCK = new Object();
@@ -37,5 +38,12 @@ public class AppRepository {
         return networkDataHelper.getMainMenuItems();
     }
 
+    //############################### Sub Menu Item ############################//
+    public void startGetSubMenuItems(String subMenuId) {
+        networkDataHelper.startGetSupMenuItems(subMenuId);
+    }
 
+    public MutableLiveData<List<SubMenuItem>> getSubMenuItems() {
+        return networkDataHelper.getSubMenuItems();
+    }
 }

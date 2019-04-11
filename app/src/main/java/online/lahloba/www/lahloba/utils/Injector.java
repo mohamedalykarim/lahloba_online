@@ -6,6 +6,7 @@ import online.lahloba.www.lahloba.AppExecutor;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.AppRepository;
 import online.lahloba.www.lahloba.data.NetworkDataHelper;
+import online.lahloba.www.lahloba.data.model.VMPHelper;
 
 public class Injector {
 
@@ -26,9 +27,9 @@ public class Injector {
     }
 
 
-    public static ViewModelProviderFactory getVMFactory(Context context){
+    public static ViewModelProviderFactory getVMFactory(Context context, VMPHelper vmpHelper){
         AppRepository appRepository = Injector.provideRepository(context);
-        return new ViewModelProviderFactory(appRepository);
+        return new ViewModelProviderFactory(appRepository, vmpHelper);
     }
 
 }

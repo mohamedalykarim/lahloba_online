@@ -23,6 +23,7 @@ import online.lahloba.www.lahloba.ui.main.MainViewModel;
 import online.lahloba.www.lahloba.utils.Injector;
 
 public class ShoppingFragment extends Fragment {
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -32,13 +33,13 @@ public class ShoppingFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        ViewModelProviderFactory factory = Injector.getVMFactory(this.getContext());
+        ViewModelProviderFactory factory = Injector.getVMFactory(this.getContext(), null);
         MainViewModel mainViewModel = ViewModelProviders.of(this.getActivity(),factory).get(MainViewModel.class);
 
 
         GridView gridView = view.findViewById(R.id.gridview);
         ShoppingAdapter shoppingAdapter = new ShoppingAdapter();
-        
+
 
         gridView.setAdapter(shoppingAdapter);
 
