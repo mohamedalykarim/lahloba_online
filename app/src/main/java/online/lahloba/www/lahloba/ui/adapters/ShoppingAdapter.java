@@ -3,7 +3,6 @@ package online.lahloba.www.lahloba.ui.adapters;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,7 +45,7 @@ public class ShoppingAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.main_grid, null, false);
+        View view = layoutInflater.inflate(R.layout.row_main_grid, null, false);
         ImageView imageView = view.findViewById(R.id.imageView2);
         TextView titleTV = view.findViewById(R.id.titleTV);
         titleTV.setText(shoppingItemList.get(position).getTitle());
@@ -58,7 +57,9 @@ public class ShoppingAdapter extends BaseAdapter {
                     @Override
                     public void onComplete(@NonNull Task<Uri> task) {
                         if(task.isSuccessful()){
-                            Picasso.get().load(task.getResult()).into(imageView);
+                            Picasso.get()
+                                    .load(task.getResult())
+                                    .into(imageView);
                         }
                     }
                 });

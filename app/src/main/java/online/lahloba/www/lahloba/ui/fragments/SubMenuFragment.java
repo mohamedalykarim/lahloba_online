@@ -28,6 +28,8 @@ import static online.lahloba.www.lahloba.utils.Constants.EXTRA_SUBTITLE_ID;
 public class SubMenuFragment extends Fragment {
     String subMenuID;
     List<SubMenuItem> items;
+    SubMenuViewModel viewModel;
+    SubMenuAdapter subMenuAdapter;
 
     public static SubMenuFragment newInstance(Bundle args) {
         SubMenuFragment fragment = new SubMenuFragment();
@@ -50,31 +52,37 @@ public class SubMenuFragment extends Fragment {
         VMPHelper vmpHelper = new VMPHelper();
         vmpHelper.setSubMenuId(subMenuID);
         ViewModelProviderFactory factory = Injector.getVMFactory(this.getContext(), vmpHelper);
-        SubMenuViewModel viewModel = ViewModelProviders.of(this, factory).get(SubMenuViewModel.class);
+        viewModel = ViewModelProviders.of(this, factory).get(SubMenuViewModel.class);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
         items = new ArrayList<>();
-        SubMenuAdapter subMenuAdapter = new SubMenuAdapter();
+        subMenuAdapter = new SubMenuAdapter(getContext());
         subMenuAdapter.setSubMenuItems(items);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(subMenuAdapter);
 
-        viewModel.getSupMenuItems().observe(this, itemList->{
-            Toast.makeText(this.getContext(), ""+itemList.size(), Toast.LENGTH_SHORT).show();
-            items.addAll(itemList);
-            subMenuAdapter.notifyDataSetChanged();
-        });
+
+
+
+
+
+
 
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        subMenuAdapter.clearSubMenuItems();
         items.clear();
+        subMenuAdapter.notifyDataSetChanged();
+
+        viewModel.getSupMenuItems().observe(this, itemList->{
+            Toast.makeText(this.getContext(), ""+items.size(), Toast.LENGTH_SHORT).show();
+            items.addAll(itemList);
+            subMenuAdapter.notifyDataSetChanged();
+        });
+
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
 }
