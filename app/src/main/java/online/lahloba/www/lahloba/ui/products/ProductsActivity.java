@@ -3,6 +3,8 @@ package online.lahloba.www.lahloba.ui.products;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.google.firebase.database.FirebaseDatabase;
+
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ui.fragments.ProductsFragment;
 
@@ -17,5 +19,7 @@ public class ProductsActivity extends AppCompatActivity {
                     .replace(R.id.container, ProductsFragment.newInstance())
                     .commitNow();
         }
+
+
     }
 }

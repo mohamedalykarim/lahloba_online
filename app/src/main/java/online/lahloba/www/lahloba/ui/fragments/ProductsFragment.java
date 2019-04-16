@@ -42,6 +42,10 @@ public class ProductsFragment extends Fragment {
 
         for (int i = 0; i<20; i++){
             ProductItem productItem = new ProductItem();
+            productItem.setId("productid"+i);
+            productItem.setTitle("Product Name Here"+i);
+            productItem.setPrice("150");
+            productItem.setCurrency("EGP");
             productItemList.add(productItem);
         }
 
