@@ -18,11 +18,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import online.lahloba.www.lahloba.data.model.MainMenuItem;
+import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.data.model.SubMenuItem;
 import online.lahloba.www.lahloba.data.services.LahlobaMainService;
+import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.LocalUtils;
 
 import static online.lahloba.www.lahloba.utils.Constants.GET_MAIN_MENU_ITEMS;
+import static online.lahloba.www.lahloba.utils.Constants.GET_PRODUCTS_FOR_CATEGORY;
 import static online.lahloba.www.lahloba.utils.Constants.GET_SUB_MENU_ITEMS;
 
 public class NetworkDataHelper {
@@ -32,12 +35,14 @@ public class NetworkDataHelper {
 
     MutableLiveData<List<MainMenuItem>> mainMenuItems;
     MutableLiveData<List<SubMenuItem>> subMenuItems;
+    private MutableLiveData<List<ProductItem>> productsItems;
 
 
     public NetworkDataHelper(Context applicationContext) {
         mContext = applicationContext;
         mainMenuItems = new MutableLiveData<>();
         subMenuItems = new MutableLiveData<>();
+        productsItems = new MutableLiveData<>();
     }
 
     public static NetworkDataHelper getInstance(Context context){
@@ -94,7 +99,7 @@ public class NetworkDataHelper {
     }
 
 
-    //############################### Main Menu Item ############################//
+    //############################### Sup Menu Item ############################//
     public void startGetSupMenuItems(String subMenuId) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
         intent.setAction(GET_SUB_MENU_ITEMS);
@@ -130,4 +135,55 @@ public class NetworkDataHelper {
     public MutableLiveData<List<SubMenuItem>> getSubMenuItems() {
         return subMenuItems;
     }
+
+    public void clearSupMenu() {
+        List<SubMenuItem> empty = new ArrayList<>();
+        subMenuItems.setValue(empty);
+    }
+
+
+    //############################### Products ############################//
+    public void startGetProductsFromCategory(String categoryId) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(GET_PRODUCTS_FOR_CATEGORY);
+        intent.putExtra(GET_PRODUCTS_FOR_CATEGORY, categoryId);
+        mContext.startService(intent);
+    }
+
+    public void startFetchProductsForCategory(String categoyId) {
+
+        String language = LocalUtils.getLangauge();
+        Query database = FirebaseDatabase
+                .getInstance()
+                .getReference("Product")
+                .child(language).orderByChild("parentId").equalTo(categoyId);
+
+        database.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<ProductItem> productItemsList = new ArrayList<>();
+                for(DataSnapshot child : dataSnapshot.getChildren()){
+                    ProductItem item = child.getValue(ProductItem.class);
+                    item.setCurrency("EGP");
+                    productItemsList.add(item);
+                }
+
+
+                productsItems.setValue(productItemsList);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public MutableLiveData<List<ProductItem>> getProductsOfCategory() {
+        return productsItems;
+    }
+
+
+
 }

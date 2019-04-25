@@ -3,6 +3,8 @@ package online.lahloba.www.lahloba.data.model;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 
+import com.google.firebase.database.Exclude;
+
 import online.lahloba.www.lahloba.BR;
 
 public class ProductItem extends BaseObservable {
@@ -10,8 +12,14 @@ public class ProductItem extends BaseObservable {
     private String image;
     private String title;
     private String price;
+    private Object images;
+    private String parentId;
+
+    @Exclude
     private String currency;
+    @Exclude
     private int count;
+    @Exclude
     private boolean isFavorite;
 
     public String getId() {
@@ -33,16 +41,27 @@ public class ProductItem extends BaseObservable {
         return price;
     }
 
+    public Object getImages() {
+        return images;
+    }
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    @Exclude
     @Bindable
     public String getCurrency() {
         return currency;
     }
 
+    @Exclude
     @Bindable
     public int getCount() {
         return count;
     }
 
+    @Exclude
     @Bindable
     public boolean isFavorite() {
         return isFavorite;
@@ -67,16 +86,27 @@ public class ProductItem extends BaseObservable {
         notifyPropertyChanged(BR.price);
     }
 
+    public void setImages(Object images) {
+        this.images = images;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
+
+    @Exclude
     public void setCurrency(String currency) {
         this.currency = currency;
         notifyPropertyChanged(BR.currency);
     }
 
+    @Exclude
     public void setCount(int count) {
         this.count = count;
         notifyPropertyChanged(BR.count);
     }
 
+    @Exclude
     public void setFavorite(boolean favorite) {
         isFavorite = favorite;
         notifyPropertyChanged(BR.favorite);

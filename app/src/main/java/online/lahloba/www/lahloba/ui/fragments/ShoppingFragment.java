@@ -20,6 +20,7 @@ import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.MainMenuItem;
 import online.lahloba.www.lahloba.ui.adapters.ShoppingAdapter;
 import online.lahloba.www.lahloba.ui.main.MainViewModel;
+import online.lahloba.www.lahloba.utils.ExpandableHeightGridView;
 import online.lahloba.www.lahloba.utils.Injector;
 
 public class ShoppingFragment extends Fragment {
@@ -37,11 +38,12 @@ public class ShoppingFragment extends Fragment {
         MainViewModel mainViewModel = ViewModelProviders.of(this.getActivity(),factory).get(MainViewModel.class);
 
 
-        GridView gridView = view.findViewById(R.id.gridview);
+        ExpandableHeightGridView gridView = view.findViewById(R.id.gridview);
         ShoppingAdapter shoppingAdapter = new ShoppingAdapter();
 
 
         gridView.setAdapter(shoppingAdapter);
+        gridView.setExpanded(true);
 
         mainViewModel.getMainMenuItems().observe(this.getActivity(),items->{
             shoppingAdapter.setShoppingItemList(items);

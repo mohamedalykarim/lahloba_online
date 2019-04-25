@@ -4,9 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="200dp"
-    android:background="#fff"
-    android:padding="5dp"
-    android:elevation="6dp">
+    android:background="@drawable/row_main_grid_bg"
+    android:padding="5dp">
 
     <ImageView
         android:id="@+id/imageView2"

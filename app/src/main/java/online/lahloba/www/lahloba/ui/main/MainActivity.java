@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.setPersistenceEnabled(true);
 
         viewPager=(ViewPager)findViewById(R.id.viewPager);
         indicator=(TabLayout)findViewById(R.id.indicator);

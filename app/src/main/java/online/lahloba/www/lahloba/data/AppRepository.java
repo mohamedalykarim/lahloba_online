@@ -6,6 +6,7 @@ import android.arch.lifecycle.MutableLiveData;
 import java.util.List;
 
 import online.lahloba.www.lahloba.data.model.MainMenuItem;
+import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.data.model.SubMenuItem;
 
 public class AppRepository {
@@ -46,4 +47,19 @@ public class AppRepository {
     public MutableLiveData<List<SubMenuItem>> getSubMenuItems() {
         return networkDataHelper.getSubMenuItems();
     }
+
+    public void clearSupMenu() {
+        networkDataHelper.clearSupMenu();
+    }
+
+    //############################### Proucts ############################//
+    public void startGetSProductItems(String categoryId) {
+        networkDataHelper.startGetProductsFromCategory(categoryId);
+    }
+
+    public MutableLiveData<List<ProductItem>> getProductsForCategory() {
+        return networkDataHelper.getProductsOfCategory();
+    }
+
+
 }

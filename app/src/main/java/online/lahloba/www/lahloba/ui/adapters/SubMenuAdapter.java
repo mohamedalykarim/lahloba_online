@@ -2,6 +2,7 @@ package online.lahloba.www.lahloba.ui.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -39,9 +46,28 @@ public class SubMenuAdapter extends RecyclerView.Adapter<SubMenuAdapter.SubMenuV
     public void onBindViewHolder(@NonNull SubMenuViewHolder holder, int i) {
         SubMenuItem subMenuItem = subMenuItems.get(i);
         holder.titleTV.setText(subMenuItem.getTitle());
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+        storageRef.child(subMenuItem.getImage())
+                .getDownloadUrl()
+                .addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if(task.isSuccessful()){
+                            Picasso.get()
+                                    .load(task.getResult())
+                                    .into(holder.imageView);
+                        }
+                    }
+                });
+
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                subMenuItems.clear();
+                notifyDataSetChanged();
+
                 if(subMenuItem.isHasChild()){
                     Intent intent = new Intent(context, SubMenuActivity.class);
                     intent.putExtra(Constants.EXTRA_SUBTITLE_ID, subMenuItem.getId());
