@@ -1,6 +1,8 @@
 package online.lahloba.www.lahloba.ui.adapters;
 
+import android.content.Intent;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -25,8 +27,10 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 import online.lahloba.www.lahloba.R;
+import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.databinding.RowProductListBinding;
+import online.lahloba.www.lahloba.utils.Injector;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
     List<ProductItem> productItemList;
@@ -83,14 +87,19 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         public void clicks(int i, ProductItem item){
 
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-            databaseReference.child("cart")
+            databaseReference.child("Cart")
                     .child("userId")
-                    .child(item.getId()).child("count")
+                    .child(item.getId())
                     .addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                             if(null != dataSnapshot.getValue()){
-                                productItemList.get(i).setCount(Integer.parseInt(dataSnapshot.getValue().toString()));
+                                CartItem cartItem = dataSnapshot.getValue(CartItem.class);
+                                if(cartItem.getProductId().equals( productItemList.get(i).getId())){
+                                    productItemList.get(i).setCount(cartItem.getCount());
+                                }
+
                             }
 
                         }
@@ -108,7 +117,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                     if(productCount>0){
 
                         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-                        databaseReference.child("cart")
+                        databaseReference.child("Cart")
                                 .child("userId")
                                 .child(item.getId()).child("count")
                                 .runTransaction(new Transaction.Handler() {
@@ -121,7 +130,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                                             return Transaction.success(mutableData);
                                         }else{
                                             int countInt = Integer.parseInt("0"+count);
-                                            mutableData.setValue(countInt - 1);
+                                            if(countInt > 0){
+                                                mutableData.setValue(countInt - 1);
+                                                return Transaction.success(mutableData);
+                                            }
+
                                             return Transaction.success(mutableData);
                                         }
 
@@ -141,7 +154,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                     int productCount = productItemList.get(i).getCount();
 
                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-                    databaseReference.child("cart")
+                    databaseReference.child("Cart")
                             .child("userId")
                             .child(item.getId()).child("count")
                             .runTransaction(new Transaction.Handler() {
@@ -176,14 +189,28 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                     int count = productItemList.get(i).getCount();
                     productItemList.get(i).setCount(count + 1);
 
-                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-                    databaseReference.child("cart")
-                            .child("userId")
-                            .child(item.getId()).child("count")
-                            .setValue(1);
+
+
+                    DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+                            .getReference().child("Cart");
+
+                    String push = databaseReference.push().getKey();
+                    CartItem cartItem = new CartItem();
+                    cartItem.setId(push);
+                    cartItem.setCount(1);
+                    cartItem.setProductId(item.getId());
+                    cartItem.setImage(item.getImage());
+                    cartItem.setPrice(item.getPrice());
+                    cartItem.setProductName(item.getTitle());
+
+                    databaseReference.child("userId").child(item.getId())
+                            .setValue(cartItem);
+
+
 
                 }
             });
+
 
         }
     }

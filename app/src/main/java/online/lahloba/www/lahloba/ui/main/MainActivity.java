@@ -1,5 +1,7 @@
 package online.lahloba.www.lahloba.ui.main;
 
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -13,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
@@ -22,20 +25,21 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import online.lahloba.www.lahloba.R;
+import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.SliderItem;
 import online.lahloba.www.lahloba.ui.adapters.SliderAdapter;
 import online.lahloba.www.lahloba.ui.fragments.AccountFragment;
 import online.lahloba.www.lahloba.ui.fragments.FavoriteFragment;
+import online.lahloba.www.lahloba.ui.fragments.LoginFragment;
 import online.lahloba.www.lahloba.ui.fragments.ShoppingFragment;
+import online.lahloba.www.lahloba.ui.login.LoginViewModel;
+import online.lahloba.www.lahloba.utils.Injector;
 
 public class MainActivity extends AppCompatActivity {
-    ViewPager viewPager;
-    TabLayout indicator;
     BottomNavigationView bottomNavigationView;
-    List<SliderItem> sliderItems;
 
-
-
+    FirebaseAuth mAuth;
+    LoginViewModel loginViewModel;
 
 
 
@@ -44,39 +48,22 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-
-        viewPager=(ViewPager)findViewById(R.id.viewPager);
-        indicator=(TabLayout)findViewById(R.id.indicator);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        sliderItems = new ArrayList<>();
-        Uri uri = Uri.parse("http://www.lahloba.online/image/cache/catalog/Lahloba/Cover2-1140x380.png").buildUpon().build();
-        sliderItems.add(new SliderItem(uri));
 
-        uri = Uri.parse("http://www.lahloba.online/image/cache/catalog/Lahloba/Cover1-1140x380.png").buildUpon().build();
-        sliderItems.add(new SliderItem(uri));
-
-
-        SliderAdapter sliderAdapter = new SliderAdapter(this);
-        sliderAdapter.setSliderItems(sliderItems);
-        viewPager.setAdapter(sliderAdapter);
-        indicator.setupWithViewPager(viewPager, true);
-
-        if(Locale.getDefault().getLanguage().equals("ar")){
-            indicator.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
-        }
-
-
-
-        Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new SliderTimer(), 4000, 6000);
+        ViewModelProviderFactory factory = Injector.getVMFactory(this,null);
+        loginViewModel = ViewModelProviders.of(this,factory).get(LoginViewModel.class);
 
         Fragment fragment = new ShoppingFragment();
         loadFragment(fragment);
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth = FirebaseAuth.getInstance();
+    }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -94,8 +81,7 @@ public class MainActivity extends AppCompatActivity {
                     loadFragment(fragment);
                     return true;
                 case R.id.ic_action_my_account:
-                    fragment = new AccountFragment();
-                    loadFragment(fragment);
+                    loginAccountFragmetReplace();
                     return true;
             }
 
@@ -111,21 +97,18 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
-
-    class SliderTimer extends TimerTask {
-        @Override
-        public void run() {
-            MainActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (viewPager.getCurrentItem() < sliderItems.size() - 1) {
-                        viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
-                    } else {
-                        viewPager.setCurrentItem(0);
-                    }
-                }
-            });
-
-        }
+    public void loginAccountFragmetReplace(){
+        loginViewModel.getIsLogged().observe(MainActivity.this ,isLogged->{
+            if (isLogged){
+                Fragment accountFragment = new AccountFragment();
+                loadFragment(accountFragment);
+            }else {
+                Fragment loginFragment = new LoginFragment();
+                loadFragment(loginFragment);
+            }
+        });
     }
+
+
+
 }

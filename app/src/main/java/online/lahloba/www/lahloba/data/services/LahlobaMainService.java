@@ -9,8 +9,12 @@ import online.lahloba.www.lahloba.data.NetworkDataHelper;
 import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.Injector;
 
+import static online.lahloba.www.lahloba.utils.Constants.GET_CART_ITEM;
 import static online.lahloba.www.lahloba.utils.Constants.GET_PRODUCTS_FOR_CATEGORY;
 import static online.lahloba.www.lahloba.utils.Constants.GET_SUB_MENU_ITEMS;
+import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN;
+import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_EMAIL;
+import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_PASSWORD;
 
 public class LahlobaMainService extends IntentService {
     private NetworkDataHelper networkDataHelper;
@@ -30,6 +34,13 @@ public class LahlobaMainService extends IntentService {
         }else if(intent.getAction().equals(GET_PRODUCTS_FOR_CATEGORY)){
             String categoyId = intent.getStringExtra(GET_PRODUCTS_FOR_CATEGORY);
             networkDataHelper.startFetchProductsForCategory(categoyId);
+        }else if(intent.getAction().equals(GET_CART_ITEM)){
+            String userId = intent.getStringExtra(GET_CART_ITEM);
+            networkDataHelper.startFetchCartItem(userId);
+        }else if(intent.getAction().equals(START_LOGIN)){
+            String email = intent.getStringExtra(START_LOGIN_EMAIL);
+            String password = intent.getStringExtra(START_LOGIN_PASSWORD);
+            networkDataHelper.startFirebaseLogin(email,password);
         }
     }
 }

@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 28
+
     defaultConfig {
         applicationId "online.lahloba.www.lahloba"
         minSdkVersion 19
@@ -18,7 +19,7 @@ android {
     }
 
     dataBinding {
-        enabled = true;
+        enabled = true
     }
     compileOptions {
         sourceCompatibility = '1.8'
@@ -50,7 +51,6 @@ dependencies {
     implementation "android.arch.paging:runtime:$paging_version"
 
 
-
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'de.hdodenhof:circleimageview:3.0.0'
 
@@ -58,6 +58,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.8'
     implementation 'com.google.firebase:firebase-database:16.1.0'
     implementation 'com.google.firebase:firebase-storage:16.1.0'
+    implementation 'com.google.firebase:firebase-auth:16.2.1'
 
 
 }

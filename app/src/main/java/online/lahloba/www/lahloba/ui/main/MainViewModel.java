@@ -14,6 +14,9 @@ public class MainViewModel extends ViewModel {
 
     public MainViewModel(AppRepository appRepository) {
         this.appRepository = appRepository;
+    }
+
+    public void startGetMainMenuItems(){
         appRepository.startGetMainMenuItems();
     }
 

@@ -1,10 +1,10 @@
 package online.lahloba.www.lahloba.data;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 
 import java.util.List;
 
+import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.MainMenuItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.data.model.SubMenuItem;
@@ -61,5 +61,27 @@ public class AppRepository {
         return networkDataHelper.getProductsOfCategory();
     }
 
+    //############################### Cart ############################//
+    public void startGetCartItems(String userId) {
+        networkDataHelper.startGetCartItems(userId);
+    }
 
+    public MutableLiveData<List<CartItem>> getCartItems() {
+        return networkDataHelper.getCartItems();
+    }
+
+
+    //############################### Cart ############################//
+    public void startLogin(String email, String password) {
+        networkDataHelper.startLogin(email, password);
+
+    }
+
+    public MutableLiveData<Boolean> getIsLogged(){
+        return networkDataHelper.getIsLogged();
+    }
+
+    public void startLogout() {
+        networkDataHelper.startLogOut();
+    }
 }

@@ -13,7 +13,20 @@
           "package_name": "online.lahloba.www.lahloba"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "520489206066-3n1mjrbine671nroh8qnqba4h3l371j8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "online.lahloba.www.lahloba",
+            "certificate_hash": "7e25ee0e114260cdfad565a0be278c7811433142"
+          }
+        },
+        {
+          "client_id": "520489206066-pvsi5aj5t5o6fkpc9mcarv1e484sjivi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyByAALkAUOJKzxQpsZKYOBBi8eW3SaRVhA"

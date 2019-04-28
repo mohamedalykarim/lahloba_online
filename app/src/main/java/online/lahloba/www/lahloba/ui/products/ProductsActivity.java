@@ -22,7 +22,6 @@ public class ProductsActivity extends AppCompatActivity {
         if(savedInstanceState == null){
             Intent intent = getIntent();
             if(null != intent && intent.hasExtra(EXTRA_SUBTITLE_ID)){
-                Toast.makeText(this, ""+intent.getStringExtra(EXTRA_SUBTITLE_ID), Toast.LENGTH_SHORT).show();
                 Bundle bundle = new Bundle();
                 bundle.putString(EXTRA_SUBTITLE_ID, intent.getStringExtra(EXTRA_SUBTITLE_ID));
                 getSupportFragmentManager().beginTransaction()

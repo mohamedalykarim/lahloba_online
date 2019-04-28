@@ -5,8 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.view.MenuItem;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -17,6 +21,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.MainMenuItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.data.model.SubMenuItem;
@@ -24,9 +29,13 @@ import online.lahloba.www.lahloba.data.services.LahlobaMainService;
 import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.LocalUtils;
 
+import static online.lahloba.www.lahloba.utils.Constants.GET_CART_ITEM;
 import static online.lahloba.www.lahloba.utils.Constants.GET_MAIN_MENU_ITEMS;
 import static online.lahloba.www.lahloba.utils.Constants.GET_PRODUCTS_FOR_CATEGORY;
 import static online.lahloba.www.lahloba.utils.Constants.GET_SUB_MENU_ITEMS;
+import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN;
+import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_EMAIL;
+import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_PASSWORD;
 
 public class NetworkDataHelper {
     private static final Object LOCK = new Object();
@@ -35,6 +44,8 @@ public class NetworkDataHelper {
 
     MutableLiveData<List<MainMenuItem>> mainMenuItems;
     MutableLiveData<List<SubMenuItem>> subMenuItems;
+    MutableLiveData<List<CartItem>> cartItems;
+    MutableLiveData<Boolean> isLogged;
     private MutableLiveData<List<ProductItem>> productsItems;
 
 
@@ -43,6 +54,14 @@ public class NetworkDataHelper {
         mainMenuItems = new MutableLiveData<>();
         subMenuItems = new MutableLiveData<>();
         productsItems = new MutableLiveData<>();
+        cartItems = new MutableLiveData<>();
+        isLogged = new MutableLiveData<>();
+        if (null == FirebaseAuth.getInstance().getCurrentUser()){
+            isLogged.setValue(false);
+        }else {
+            Log.v("stringmmm","yes");
+            isLogged.setValue(true);
+        }
     }
 
     public static NetworkDataHelper getInstance(Context context){
@@ -185,5 +204,77 @@ public class NetworkDataHelper {
     }
 
 
+    //############################### Cart ############################//
 
+    public void startGetCartItems(String userId) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(GET_CART_ITEM);
+        intent.putExtra(GET_CART_ITEM, userId);
+        mContext.startService(intent);
+    }
+
+
+
+    public MutableLiveData<List<CartItem>> getCartItems() {
+        return cartItems;
+    }
+
+    public void startFetchCartItem(String userId) {
+        Query database = FirebaseDatabase
+                .getInstance()
+                .getReference("Cart")
+                .child(userId).orderByChild("count").startAt(1);
+
+        database.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<CartItem> cartItemList = new ArrayList<>();
+                for(DataSnapshot child : dataSnapshot.getChildren()){
+                    CartItem item = child.getValue(CartItem.class);
+                    item.setCurrency("EGP");
+                    cartItemList.add(item);
+                }
+
+                cartItems.setValue(cartItemList);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+
+    //############################### Cart ############################//
+    public void startLogin(String email, String password) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(START_LOGIN);
+        intent.putExtra(START_LOGIN_EMAIL, email);
+        intent.putExtra(START_LOGIN_PASSWORD, password);
+        mContext.startService(intent);
+    }
+
+    public void startFirebaseLogin(String email, String password) {
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email,password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()){
+                            isLogged.setValue(true);
+                        }
+                    }
+                });
+    }
+
+    public MutableLiveData<Boolean> getIsLogged() {
+        return isLogged;
+    }
+
+    public void startLogOut() {
+        FirebaseAuth.getInstance().signOut();
+        isLogged.setValue(false);
+    }
 }

@@ -5,6 +5,29 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/indicator"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        app:layout_constraintBottom_toBottomOf="@+id/viewPager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:tabBackground="@drawable/indicator_selector"
+        app:tabGravity="center"
+        app:tabIndicatorHeight="0dp" />
+
     <online.lahloba.www.lahloba.utils.ExpandableHeightGridView
         android:id="@+id/gridview"
         android:layout_width="wrap_content"
@@ -13,12 +36,11 @@
         android:horizontalSpacing="16dp"
         android:isScrollContainer="false"
         android:numColumns="2"
+        android:padding="16dp"
         android:stretchMode="columnWidth"
         android:verticalSpacing="16dp"
-        android:padding="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/indicator" />
 
 </android.support.constraint.ConstraintLayout>

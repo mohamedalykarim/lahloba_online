@@ -1,6 +1,8 @@
 package online.lahloba.www.lahloba.ui.fragments;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,14 +22,20 @@ import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.data.model.VMPHelper;
+import online.lahloba.www.lahloba.databinding.FragmentProductBinding;
 import online.lahloba.www.lahloba.ui.adapters.ProductAdapter;
+import online.lahloba.www.lahloba.ui.cart.CartActivity;
 import online.lahloba.www.lahloba.ui.products.ProductsViewModel;
 import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.Injector;
 
 public class ProductsFragment extends Fragment {
-
     private ProductsViewModel mViewModel;
+    List<ProductItem> productItemList;
+    ProductAdapter productAdapter;
+    RecyclerView productsRV;
+
+
 
     public static ProductsFragment newInstance(Bundle args) {
         ProductsFragment fragment = new ProductsFragment();
@@ -35,15 +43,20 @@ public class ProductsFragment extends Fragment {
         return fragment;
     }
 
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_product, container, false);
-        List<ProductItem> productItemList = new ArrayList<>();
-        RecyclerView productsRV = view.findViewById(R.id.productsRecyclerView);
+        FragmentProductBinding binding = DataBindingUtil.inflate(inflater,R.layout.fragment_product, container, false);
+        binding.setLifecycleOwner(this);
+
+        View view = binding.getRoot();
+        productItemList = new ArrayList<>();
+        productsRV = view.findViewById(R.id.productsRecyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        ProductAdapter productAdapter = new ProductAdapter();
+        productAdapter = new ProductAdapter();
         productAdapter.setProductItemList(productItemList);
         productsRV.setLayoutManager(linearLayoutManager);
         productsRV.setAdapter(productAdapter);
@@ -56,9 +69,15 @@ public class ProductsFragment extends Fragment {
 
         ViewModelProviderFactory factory = Injector.getVMFactory(this.getContext(), vmpHelper);
         mViewModel = ViewModelProviders.of(this, factory).get(ProductsViewModel.class);
+        binding.setProductViewModel(mViewModel);
+
+        //todo
+        mViewModel.startGetCartItems("userId");
+        mViewModel.getCartItem().observe(this, cartItems -> {
+            mViewModel.productVMHelper.setCartCount(cartItems.size());
+        });
 
 
-        mViewModel.startProductsForCategory();
 
         mViewModel.getProductsForCategory().observe(this, products->{
             productItemList.clear();
@@ -67,10 +86,28 @@ public class ProductsFragment extends Fragment {
 
         });
 
+        binding.floatingToCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(container.getContext(), CartActivity.class);
+                intent.putExtra(Constants.EXTRA_USER_ID,"userId");
+                container.getContext().startActivity(intent);
+            }
+        });
+
 
 
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mViewModel.startProductsForCategory();
 
+        productAdapter = new ProductAdapter();
+        productItemList = new ArrayList<>();
+        productAdapter.setProductItemList(productItemList);
+        productsRV.setAdapter(productAdapter);
+    }
 }

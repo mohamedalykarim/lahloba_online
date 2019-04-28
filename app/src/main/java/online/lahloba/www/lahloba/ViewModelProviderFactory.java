@@ -7,8 +7,11 @@ import android.support.annotation.NonNull;
 
 import online.lahloba.www.lahloba.data.AppRepository;
 import online.lahloba.www.lahloba.data.model.VMPHelper;
+import online.lahloba.www.lahloba.ui.cart.CartViewModel;
+import online.lahloba.www.lahloba.ui.login.LoginViewModel;
 import online.lahloba.www.lahloba.ui.main.MainViewModel;
 import online.lahloba.www.lahloba.ui.products.ProductsViewModel;
+import online.lahloba.www.lahloba.ui.signup.SignupViewModel;
 import online.lahloba.www.lahloba.ui.sub_menu.SubMenuViewModel;
 
 public class ViewModelProviderFactory extends ViewModelProvider.NewInstanceFactory {
@@ -29,6 +32,12 @@ public class ViewModelProviderFactory extends ViewModelProvider.NewInstanceFacto
             return (T) new SubMenuViewModel(appRepository, vmpHelper);
         }else if(modelClass.isAssignableFrom(ProductsViewModel.class)){
             return (T) new ProductsViewModel(appRepository, vmpHelper);
+        }else if(modelClass.isAssignableFrom(CartViewModel.class)){
+            return (T) new CartViewModel(appRepository, vmpHelper);
+        }else if(modelClass.isAssignableFrom(LoginViewModel.class)){
+            return (T) new LoginViewModel(appRepository);
+        }else if(modelClass.isAssignableFrom(SignupViewModel.class)){
+            return (T) new SignupViewModel(appRepository);
         }
 
 
