@@ -71,7 +71,7 @@ public class AppRepository {
     }
 
 
-    //############################### Cart ############################//
+    //############################### Login ############################//
     public void startLogin(String email, String password) {
         networkDataHelper.startLogin(email, password);
 
@@ -83,5 +83,12 @@ public class AppRepository {
 
     public void startLogout() {
         networkDataHelper.startLogOut();
+    }
+
+    //############################### New Account ############################//
+    public void createNewAccount(String firstName, String secondName,
+                                 String phone, String email, String password) {
+
+        networkDataHelper.startCreateNewAccount(firstName,secondName,phone,email,password);
     }
 }

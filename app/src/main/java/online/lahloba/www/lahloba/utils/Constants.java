@@ -11,4 +11,10 @@ public class Constants {
     public static final String START_LOGIN = "start_login";
     public static final String START_LOGIN_EMAIL = "start_login_email";
     public static final String START_LOGIN_PASSWORD = "start_login_password";
+    public static final String START_CREATE_NEW_ACCOUNT = "start_create_new_account";
+    public static final String START_CREATE_NEW_ACCOUNT_FIRSTNAME = "start_create_new_account_firstname";
+    public static final String START_CREATE_NEW_ACCOUNT_SECONDNAME = "start_create_new_account_secondname";
+    public static final String START_CREATE_NEW_ACCOUNT_PHONE = "start_create_new_account_phone";
+    public static final String START_CREATE_NEW_ACCOUNT_EMAIL = "start_create_new_account_email";
+    public static final String START_CREATE_NEW_ACCOUNT_PASSWORD = "start_create_new_account_password";
 }

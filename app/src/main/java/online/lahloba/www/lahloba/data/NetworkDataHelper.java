@@ -25,6 +25,7 @@ import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.MainMenuItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.data.model.SubMenuItem;
+import online.lahloba.www.lahloba.data.model.UserItem;
 import online.lahloba.www.lahloba.data.services.LahlobaMainService;
 import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.LocalUtils;
@@ -33,6 +34,11 @@ import static online.lahloba.www.lahloba.utils.Constants.GET_CART_ITEM;
 import static online.lahloba.www.lahloba.utils.Constants.GET_MAIN_MENU_ITEMS;
 import static online.lahloba.www.lahloba.utils.Constants.GET_PRODUCTS_FOR_CATEGORY;
 import static online.lahloba.www.lahloba.utils.Constants.GET_SUB_MENU_ITEMS;
+import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_EMAIL;
+import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_FIRSTNAME;
+import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_PASSWORD;
+import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_PHONE;
+import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_SECONDNAME;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_EMAIL;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_PASSWORD;
@@ -248,7 +254,7 @@ public class NetworkDataHelper {
     }
 
 
-    //############################### Cart ############################//
+    //############################### Login ############################//
     public void startLogin(String email, String password) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
         intent.setAction(START_LOGIN);
@@ -276,5 +282,53 @@ public class NetworkDataHelper {
     public void startLogOut() {
         FirebaseAuth.getInstance().signOut();
         isLogged.setValue(false);
+    }
+
+
+    //############################### Create New Account ############################//
+
+    public void startCreateNewAccount(String firstName, String secondName,
+                                      String phone, String email, String password) {
+
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.START_CREATE_NEW_ACCOUNT);
+        intent.putExtra(START_CREATE_NEW_ACCOUNT_FIRSTNAME, firstName);
+        intent.putExtra(START_CREATE_NEW_ACCOUNT_SECONDNAME, secondName);
+        intent.putExtra(START_CREATE_NEW_ACCOUNT_PHONE, phone);
+        intent.putExtra(START_CREATE_NEW_ACCOUNT_EMAIL, email);
+        intent.putExtra(START_CREATE_NEW_ACCOUNT_PASSWORD, password);
+        mContext.startService(intent);
+    }
+
+    public void startCreateFirebaseAccount(String firstname, String secondname,
+                                           String phone, String email, String password) {
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email,password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()){
+                            String uid = task.getResult().getUser().getUid();
+                            DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                            UserItem userItem = new UserItem();
+                            userItem.setEmail(email);
+                            userItem.setFirstName(firstname);
+                            userItem.setLastName(secondname);
+                            userItem.setMobile(phone);
+                            userItem.setSeller(false);
+                            userItem.setSellerId("");
+                            userItem.setStatus(true);
+
+                            mDatabase.child("User").child(uid).setValue(userItem)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()){
+                                        isLogged.setValue(true);
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
     }
 }
