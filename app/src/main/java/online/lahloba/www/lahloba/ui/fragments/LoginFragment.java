@@ -1,6 +1,7 @@
 package online.lahloba.www.lahloba.ui.fragments;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.arch.persistence.room.util.StringUtil;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -12,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.regex.Pattern;
 
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
@@ -27,6 +30,7 @@ public class LoginFragment extends Fragment {
     private LoginViewModel mViewModel;
     TextView emailET, passwordET;
     FragmentLoginBinding binding;
+    int error = 0;
 
     public static LoginFragment newInstance() {
         return new LoginFragment();
@@ -51,16 +55,15 @@ public class LoginFragment extends Fragment {
         binding.loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean checkLogin = checkloginInput(emailET.getText().toString(), passwordET.getText().toString());
-                if (checkLogin){
+                checkloginInput(emailET.getText().toString(), passwordET.getText().toString());
+                if (error==0){
                     mViewModel.startLogin(emailET.getText().toString(), passwordET.getText().toString());
                 }
             }
         });
     }
 
-    private boolean checkloginInput(String email, String password) {
-        int error = 0;
+    private void checkloginInput(String email, String password) {
         if (email.equals("") || null==email || !checkValidEmail(email) ){
             emailET.setError("Please Enter Valid Email Address");
             error++;
@@ -82,15 +85,6 @@ public class LoginFragment extends Fragment {
             error++;
         }
 
-
-
-
-        if (error == 0){
-            return true;
-        }else {
-            return false;
-        }
-
     }
 
 
@@ -98,8 +92,8 @@ public class LoginFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ViewModelProviderFactory factory = Injector.getVMFactory(this.getContext(),null);
-        mViewModel = ViewModelProviders.of(this,factory).get(LoginViewModel.class);
+        ViewModelProviderFactory loginFactory = Injector.getVMFactory(this.getContext(),null);
+        mViewModel = ViewModelProviders.of(this,loginFactory).get(LoginViewModel.class);
         // TODO: Use the ViewModel
     }
 

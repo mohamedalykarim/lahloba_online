@@ -17,4 +17,5 @@ public class Constants {
     public static final String START_CREATE_NEW_ACCOUNT_PHONE = "start_create_new_account_phone";
     public static final String START_CREATE_NEW_ACCOUNT_EMAIL = "start_create_new_account_email";
     public static final String START_CREATE_NEW_ACCOUNT_PASSWORD = "start_create_new_account_password";
+    public static final String START_GET_CURRENT_USER_DETAILS = "start_get_current_user_details";
 }

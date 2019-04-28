@@ -18,6 +18,7 @@ import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUN
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_PASSWORD;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_PHONE;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_SECONDNAME;
+import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_USER_DETAILS;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_EMAIL;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_PASSWORD;
@@ -54,6 +55,10 @@ public class LahlobaMainService extends IntentService {
             String email = intent.getStringExtra(START_CREATE_NEW_ACCOUNT_EMAIL);
             String password = intent.getStringExtra(START_CREATE_NEW_ACCOUNT_PASSWORD);
             networkDataHelper.startCreateFirebaseAccount(firstname,secondname,phone,email,password);
+        }else if(intent.getAction().equals(START_GET_CURRENT_USER_DETAILS)){
+            String uid = intent.getStringExtra(START_GET_CURRENT_USER_DETAILS);
+
+            networkDataHelper.fetchCurrentUserDetails(uid);
         }
     }
 }

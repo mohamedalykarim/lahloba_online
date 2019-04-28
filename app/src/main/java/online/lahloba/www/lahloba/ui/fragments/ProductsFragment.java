@@ -15,6 +15,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,15 +28,19 @@ import online.lahloba.www.lahloba.data.model.VMPHelper;
 import online.lahloba.www.lahloba.databinding.FragmentProductBinding;
 import online.lahloba.www.lahloba.ui.adapters.ProductAdapter;
 import online.lahloba.www.lahloba.ui.cart.CartActivity;
+import online.lahloba.www.lahloba.ui.login.LoginViewModel;
 import online.lahloba.www.lahloba.ui.products.ProductsViewModel;
 import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.Injector;
 
 public class ProductsFragment extends Fragment {
+    FragmentProductBinding binding;
     private ProductsViewModel mViewModel;
+    private LoginViewModel loginViewModel;
     List<ProductItem> productItemList;
     ProductAdapter productAdapter;
     RecyclerView productsRV;
+    String userId;
 
 
 
@@ -49,7 +56,7 @@ public class ProductsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        FragmentProductBinding binding = DataBindingUtil.inflate(inflater,R.layout.fragment_product, container, false);
+        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_product, container, false);
         binding.setLifecycleOwner(this);
 
         View view = binding.getRoot();
@@ -61,6 +68,9 @@ public class ProductsFragment extends Fragment {
         productsRV.setLayoutManager(linearLayoutManager);
         productsRV.setAdapter(productAdapter);
 
+        userId = "userId";
+
+
         Bundle bundle = getArguments();
         String subId = bundle.getString(Constants.EXTRA_SUBTITLE_ID);
 
@@ -69,10 +79,13 @@ public class ProductsFragment extends Fragment {
 
         ViewModelProviderFactory factory = Injector.getVMFactory(this.getContext(), vmpHelper);
         mViewModel = ViewModelProviders.of(this, factory).get(ProductsViewModel.class);
+
+        ViewModelProviderFactory loginFactory = Injector.getVMFactory(this.getContext(),null);
+        loginViewModel = ViewModelProviders.of(this,loginFactory).get(LoginViewModel.class);
+
+
         binding.setProductViewModel(mViewModel);
 
-        //todo
-        mViewModel.startGetCartItems("userId");
         mViewModel.getCartItem().observe(this, cartItems -> {
             mViewModel.productVMHelper.setCartCount(cartItems.size());
         });
@@ -86,15 +99,21 @@ public class ProductsFragment extends Fragment {
 
         });
 
-        binding.floatingToCart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(container.getContext(), CartActivity.class);
-                intent.putExtra(Constants.EXTRA_USER_ID,"userId");
-                container.getContext().startActivity(intent);
+        floatButton(container);
+
+
+        loginViewModel.getCurrentUserDetails().observe(this,currentUser->{
+            if (null != currentUser){
+                userId = currentUser.getId();
+                productAdapter.setUserId(userId);
+                mViewModel.startGetCartItems(userId);
+
+            }else{
+                userId = "userId";
+                productAdapter.setUserId(userId);
+                mViewModel.startGetCartItems(userId);
             }
         });
-
 
 
         return view;
@@ -109,5 +128,16 @@ public class ProductsFragment extends Fragment {
         productItemList = new ArrayList<>();
         productAdapter.setProductItemList(productItemList);
         productsRV.setAdapter(productAdapter);
+    }
+
+    public void floatButton(View container){
+        binding.floatingToCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(container.getContext(), CartActivity.class);
+                intent.putExtra(Constants.EXTRA_USER_ID,userId);
+                container.getContext().startActivity(intent);
+            }
+        });
     }
 }

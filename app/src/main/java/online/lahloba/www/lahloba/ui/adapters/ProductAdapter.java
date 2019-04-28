@@ -34,6 +34,7 @@ import online.lahloba.www.lahloba.utils.Injector;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
     List<ProductItem> productItemList;
+    String userId ="userId";
 
     @NonNull
     @Override
@@ -88,7 +89,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
             databaseReference.child("Cart")
-                    .child("userId")
+                    .child(userId)
                     .child(item.getId())
                     .addValueEventListener(new ValueEventListener() {
                         @Override
@@ -118,7 +119,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
                         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
                         databaseReference.child("Cart")
-                                .child("userId")
+                                .child(userId)
                                 .child(item.getId()).child("count")
                                 .runTransaction(new Transaction.Handler() {
                                     @NonNull
@@ -155,7 +156,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
                     databaseReference.child("Cart")
-                            .child("userId")
+                            .child(userId)
                             .child(item.getId()).child("count")
                             .runTransaction(new Transaction.Handler() {
                                 @NonNull
@@ -203,7 +204,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                     cartItem.setPrice(item.getPrice());
                     cartItem.setProductName(item.getTitle());
 
-                    databaseReference.child("userId").child(item.getId())
+                    databaseReference.child(userId).child(item.getId())
                             .setValue(cartItem);
 
 
@@ -217,5 +218,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
     public void setProductItemList(List<ProductItem> productItemList) {
         this.productItemList = productItemList;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

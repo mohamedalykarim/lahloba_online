@@ -39,6 +39,7 @@ import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUN
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_PASSWORD;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_PHONE;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_SECONDNAME;
+import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_USER_DETAILS;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_EMAIL;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_PASSWORD;
@@ -52,6 +53,7 @@ public class NetworkDataHelper {
     MutableLiveData<List<SubMenuItem>> subMenuItems;
     MutableLiveData<List<CartItem>> cartItems;
     MutableLiveData<Boolean> isLogged;
+    MutableLiveData<UserItem> userDetails;
     private MutableLiveData<List<ProductItem>> productsItems;
 
 
@@ -62,6 +64,8 @@ public class NetworkDataHelper {
         productsItems = new MutableLiveData<>();
         cartItems = new MutableLiveData<>();
         isLogged = new MutableLiveData<>();
+        userDetails = new MutableLiveData<>();
+
         if (null == FirebaseAuth.getInstance().getCurrentUser()){
             isLogged.setValue(false);
         }else {
@@ -285,6 +289,35 @@ public class NetworkDataHelper {
     }
 
 
+    public void startGetUserDetails(String uid) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(START_GET_CURRENT_USER_DETAILS);
+        intent.putExtra(START_GET_CURRENT_USER_DETAILS, uid);
+        mContext.startService(intent);
+    }
+
+    public void fetchCurrentUserDetails(String uid) {
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference()
+                .child("User").child(uid);
+
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        UserItem currentUser = dataSnapshot.getValue(UserItem.class);
+                        userDetails.setValue(currentUser);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public MutableLiveData<UserItem> getCurrentUserDetails() {
+        return userDetails;
+    }
+
     //############################### Create New Account ############################//
 
     public void startCreateNewAccount(String firstName, String secondName,
@@ -310,6 +343,7 @@ public class NetworkDataHelper {
                             String uid = task.getResult().getUser().getUid();
                             DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
                             UserItem userItem = new UserItem();
+                            userItem.setId(uid);
                             userItem.setEmail(email);
                             userItem.setFirstName(firstname);
                             userItem.setLastName(secondname);
@@ -331,4 +365,6 @@ public class NetworkDataHelper {
                     }
                 });
     }
+
+
 }

@@ -1,6 +1,7 @@
 package online.lahloba.www.lahloba.data.model;
 
 public class UserItem {
+    String id;
     String firstName;
     String lastName;
     String mobile;
@@ -8,6 +9,10 @@ public class UserItem {
     boolean isSeller;
     boolean status;
     String sellerId;
+
+    public String getId() {
+        return id;
+    }
 
     public String getFirstName() {
         return firstName;
@@ -37,6 +42,11 @@ public class UserItem {
 
     public String getSellerId() {
         return sellerId;
+    }
+
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void setFirstName(String firstName) {

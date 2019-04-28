@@ -8,6 +8,7 @@ import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.MainMenuItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.data.model.SubMenuItem;
+import online.lahloba.www.lahloba.data.model.UserItem;
 
 public class AppRepository {
     private static final Object LOCK = new Object();
@@ -91,4 +92,13 @@ public class AppRepository {
 
         networkDataHelper.startCreateNewAccount(firstName,secondName,phone,email,password);
     }
+
+    public void startGetUserDetails(String uid) {
+        networkDataHelper.startGetUserDetails(uid);
+    }
+
+    public MutableLiveData<UserItem> getCurrentUserDetails(){
+        return networkDataHelper.getCurrentUserDetails();
+    }
+
 }
