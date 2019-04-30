@@ -8,6 +8,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import online.lahloba.www.lahloba.data.AppRepository;
 import online.lahloba.www.lahloba.data.model.UserItem;
 import online.lahloba.www.lahloba.data.model.vm_helper.LoginVMHelper;
+import online.lahloba.www.lahloba.utils.Injector;
 
 public class LoginViewModel extends ViewModel {
     AppRepository appRepository;
@@ -50,5 +51,15 @@ public class LoginViewModel extends ViewModel {
 
     public MutableLiveData<Boolean> getIsLogged(){
         return appRepository.getIsLogged();
+    }
+
+    public void deleteLocalCartItems() {
+        Injector.getExecuter().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                appRepository.deleteAllFromCart();
+            }
+        });
+
     }
 }

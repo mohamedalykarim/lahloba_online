@@ -108,6 +108,10 @@ public class AppRepository {
         database.cartDao().deleteAllCount0();
     }
 
+    public void deleteAllFromCart() {
+        database.cartDao().deleteAll();
+    }
+
 
 
 

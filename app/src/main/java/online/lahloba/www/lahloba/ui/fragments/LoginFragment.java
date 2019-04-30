@@ -47,6 +47,8 @@ public class LoginFragment extends Fragment {
         createAccount();
         login();
 
+
+
         View view = binding.getRoot();
         return view;
     }
@@ -58,6 +60,7 @@ public class LoginFragment extends Fragment {
                 checkloginInput(emailET.getText().toString(), passwordET.getText().toString());
                 if (error==0){
                     mViewModel.startLogin(emailET.getText().toString(), passwordET.getText().toString());
+                    binding.loginProgressBar.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -94,6 +97,15 @@ public class LoginFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         ViewModelProviderFactory loginFactory = Injector.getVMFactory(this.getContext(),null);
         mViewModel = ViewModelProviders.of(this,loginFactory).get(LoginViewModel.class);
+
+        mViewModel.getIsLogged().observe(this, isLogged->{
+            if (isLogged){
+                mViewModel.deleteLocalCartItems();
+                Toast.makeText(this.getContext(), "Welcome Back", Toast.LENGTH_SHORT).show();
+                binding.loginProgressBar.setVisibility(View.INVISIBLE);
+
+            }
+        });
         // TODO: Use the ViewModel
     }
 
