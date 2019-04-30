@@ -11,6 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
@@ -87,10 +90,15 @@ public class SignupFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        loginViewModel.getIsLogged().observe(this,isLogged->{
-            if (isLogged){
+
+        mViewModel.getIsUserCreated().observe(this,isUserCreated->{
+            if(isUserCreated){
+                mViewModel.addCartItemsToFireBase(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                Toast.makeText(getContext(),
+                        "Welcome To Lahlobe", Toast.LENGTH_SHORT).show();
                 this.getActivity().finish();
             }
+
         });
     }
 

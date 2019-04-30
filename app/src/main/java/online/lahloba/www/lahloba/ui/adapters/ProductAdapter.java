@@ -1,5 +1,6 @@
 package online.lahloba.www.lahloba.ui.adapters;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -123,9 +124,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                         });
             }else {
                 Injector.provideRepository(context).getSpecificCartItem(item.getId())
-                .observeForever(cartItem -> {
+                .observe((LifecycleOwner) context, cartItem -> {
                     if (cartItem!= null){
                         productItemList.get(i).setCount(cartItem.getCount());
+                    }else {
+                        productItemList.get(i).setCount(0);
                     }
                 });
             }
@@ -144,7 +147,16 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                         Injector.getExecuter().diskIO().execute(new Runnable() {
                             @Override
                             public void run() {
-                                removeFromCountInternal(item);
+                                if (item.getCount() >0){
+                                    if (item.getCount() == 1){
+                                        removeFromCountInternal(item);
+                                        Injector.provideRepository(context).deleteSpecificCartItem(item.getId());
+                                    }else {
+                                        removeFromCountInternal(item);
+                                    }
+
+                                }
+
                             }
                         });
                     }

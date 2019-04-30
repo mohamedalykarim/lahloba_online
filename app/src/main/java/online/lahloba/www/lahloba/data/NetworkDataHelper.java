@@ -26,8 +26,10 @@ import online.lahloba.www.lahloba.data.model.MainMenuItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.data.model.SubMenuItem;
 import online.lahloba.www.lahloba.data.model.UserItem;
+import online.lahloba.www.lahloba.data.model.room_entity.CartItemRoom;
 import online.lahloba.www.lahloba.data.services.LahlobaMainService;
 import online.lahloba.www.lahloba.utils.Constants;
+import online.lahloba.www.lahloba.utils.Injector;
 import online.lahloba.www.lahloba.utils.LocalUtils;
 
 import static online.lahloba.www.lahloba.utils.Constants.GET_CART_ITEM;
@@ -53,6 +55,7 @@ public class NetworkDataHelper {
     MutableLiveData<List<SubMenuItem>> subMenuItems;
     MutableLiveData<List<CartItem>> cartItems;
     MutableLiveData<Boolean> isLogged;
+    MutableLiveData<Boolean> isUserCreated;
     MutableLiveData<UserItem> userDetails;
     private MutableLiveData<List<ProductItem>> productsItems;
 
@@ -65,11 +68,12 @@ public class NetworkDataHelper {
         cartItems = new MutableLiveData<>();
         isLogged = new MutableLiveData<>();
         userDetails = new MutableLiveData<>();
+        isUserCreated = new MutableLiveData<>();
+        isUserCreated.setValue(false);
 
         if (null == FirebaseAuth.getInstance().getCurrentUser()){
             isLogged.setValue(false);
         }else {
-            Log.v("stringmmm","yes");
             isLogged.setValue(true);
         }
     }
@@ -357,6 +361,7 @@ public class NetworkDataHelper {
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()){
                                         isLogged.setValue(true);
+                                        isUserCreated.setValue(true);
                                     }
                                 }
                             });
@@ -365,5 +370,29 @@ public class NetworkDataHelper {
                 });
     }
 
+    public MutableLiveData<Boolean> getIsUserCreated() {
+        return isUserCreated;
+    }
 
+
+    public void addCartItemsToFireBase(List<CartItemRoom> cartItems, String userId) {
+        for (int i=0; i< cartItems.size(); i++){
+
+            CartItem cartItem = new CartItem();
+            cartItem.setCurrency(cartItems.get(i).getCurrency());
+            cartItem.setProductName(cartItems.get(i).getProductName());
+            cartItem.setCount(cartItems.get(i).getCount());
+            cartItem.setProductId(cartItems.get(i).getProductId());
+            cartItem.setImage(cartItems.get(i).getImage());
+            cartItem.setPrice(cartItems.get(i).getPrice());
+
+
+
+            FirebaseDatabase.getInstance().getReference()
+                    .child("Cart")
+                    .child(userId)
+                    .child(cartItem.getProductId())
+                    .setValue(cartItem);
+        }
+    }
 }

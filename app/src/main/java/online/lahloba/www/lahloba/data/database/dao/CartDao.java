@@ -27,6 +27,9 @@ public interface CartDao {
     @Query("SELECT * from cart")
     LiveData<List<CartItemRoom>> getAll();
 
+    @Query("SELECT * from cart WHERE count > 0")
+    LiveData<List<CartItemRoom>> getAllWithCount();
+
     @Query("UPDATE cart SET count = :count WHERE productId = :id AND count > 0")
     void changeCount(String id, int count);
 

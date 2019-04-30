@@ -118,15 +118,9 @@ public class ProductsFragment extends Fragment {
                     userId = currentUser.getId();
                     productAdapter.setUserId(userId);
                     mViewModel.startGetCartItems(userId);
-                }else{
-                    productAdapter.setUserId(Utils.getMacAddress(this.getContext()));
-                    mViewModel.startGetCartItems(Utils.getMacAddress(this.getContext()));
                 }
 
-
-            }else{
-                productAdapter.setUserId(Utils.getMacAddress(this.getContext()));
-                mViewModel.startGetCartItems(Utils.getMacAddress(this.getContext()));            }
+            }
         });
 
 

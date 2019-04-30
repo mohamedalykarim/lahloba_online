@@ -2,6 +2,7 @@ package online.lahloba.www.lahloba.data;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.util.Log;
 
 import java.util.List;
 
@@ -140,6 +141,26 @@ public class AppRepository {
         return networkDataHelper.getCurrentUserDetails();
     }
 
+    public MutableLiveData<Boolean> getIsUserCreated() {
+        return networkDataHelper.isUserCreated;
+    }
 
 
+    public void addCartItemsToFireBase(String userId) {
+        database.cartDao().getAllWithCount().observeForever(cartItems->{
+            if (cartItems!= null){
+                networkDataHelper.addCartItemsToFireBase(cartItems, userId);
+                Injector.getExecuter().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        database.cartDao().deleteAll();
+                    }
+                });
+            }
+        });
+
+
+
+
+    }
 }
