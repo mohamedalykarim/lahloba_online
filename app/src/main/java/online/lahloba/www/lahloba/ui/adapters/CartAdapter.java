@@ -80,7 +80,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 //                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 //
 //                            if(null != dataSnapshot.getValue()){
-//                                CartItem cartItem = dataSnapshot.getValue(CartItem.class);
+//                                CartItemRoom cartItem = dataSnapshot.getValue(CartItemRoom.class);
 //                                if(cartItem.getProductId().equals( productItemList.get(i).getId())){
 //                                    productItemList.get(i).setCount(cartItem.getCount());
 //                                }
@@ -180,7 +180,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 //                            .getReference().child("Cart");
 //
 //                    String push = databaseReference.push().getKey();
-//                    CartItem cartItem = new CartItem();
+//                    CartItemRoom cartItem = new CartItemRoom();
 //                    cartItem.setId(push);
 //                    cartItem.setCount(1);
 //                    cartItem.setProductId(item.getId());

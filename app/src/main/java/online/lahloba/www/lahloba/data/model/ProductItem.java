@@ -7,6 +7,7 @@ import com.google.firebase.database.Exclude;
 
 import online.lahloba.www.lahloba.BR;
 
+
 public class ProductItem extends BaseObservable {
     private String id;
     private String image;
@@ -73,17 +74,17 @@ public class ProductItem extends BaseObservable {
 
     public void setImage(String image) {
         this.image = image;
-        notifyPropertyChanged(BR.image);
+//        notifyPropertyChanged(BR.image);
     }
 
     public void setTitle(String title) {
         this.title = title;
-        notifyPropertyChanged(BR.title);
+//        notifyPropertyChanged(BR.title);
     }
 
     public void setPrice(String price) {
         this.price = price;
-        notifyPropertyChanged(BR.price);
+//        notifyPropertyChanged(BR.price);
     }
 
     public void setImages(Object images) {

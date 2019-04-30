@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +22,7 @@ import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.VMPHelper;
+import online.lahloba.www.lahloba.data.model.room_entity.CartItemRoom;
 import online.lahloba.www.lahloba.databinding.FragmentCartBinding;
 import online.lahloba.www.lahloba.ui.adapters.CartAdapter;
 import online.lahloba.www.lahloba.ui.cart.CartViewModel;
@@ -75,21 +78,53 @@ public class CartFragment extends Fragment {
         cartRecyclerView.setAdapter(cartAdapter);
         cartRecyclerView.setLayoutManager(linearLayoutManager);
 
-        mViewModel.startGetCartItems();
 
-        mViewModel.getCartItems().observe(this,cartItems -> {
-            double total = 0;
-            for (int i=0; i < cartItems.size(); i++){
-                total += Double.parseDouble(cartItems.get(i).getPrice()) * cartItems.get(0).getCount();
-                mViewModel.cartVMHelper.setTotal(String.valueOf(total));
-            }
+        if (FirebaseAuth.getInstance().getCurrentUser() != null){
+            mViewModel.startGetCartItems();
 
-            cartItemList.clear();
-            cartAdapter.notifyDataSetChanged();
+            mViewModel.getCartItems().observe(this,cartItems -> {
+                double total = 0;
+                for (int i=0; i < cartItems.size(); i++){
+                    total += Double.parseDouble(cartItems.get(i).getPrice()) * cartItems.get(0).getCount();
+                    mViewModel.cartVMHelper.setTotal(String.valueOf(total));
+                }
 
-            cartItemList.addAll(cartItems);
-            cartAdapter.notifyDataSetChanged();
+                cartItemList.clear();
+                cartAdapter.notifyDataSetChanged();
 
-        });
+                cartItemList.addAll(cartItems);
+                cartAdapter.notifyDataSetChanged();
+
+            });
+        }else{
+            mViewModel.getCartItemsFromInternal().observe(this,cartItems->{
+                Toast.makeText(getContext(), ""+cartItems.size(), Toast.LENGTH_SHORT).show();
+                double total = 0;
+                for (int i=0; i < cartItems.size(); i++){
+                    total += Double.parseDouble(cartItems.get(i).getPrice()) * cartItems.get(0).getCount();
+                    mViewModel.cartVMHelper.setTotal(String.valueOf(total));
+                }
+
+                cartItemList.clear();
+                cartAdapter.notifyDataSetChanged();
+
+                for (CartItemRoom cartChild : cartItems){
+                    CartItem cartItem = new CartItem();
+                    cartItem.setCount(cartChild.getCount());
+                    cartItem.setImage(cartChild.getImage());
+                    cartItem.setPrice(cartChild.getPrice());
+                    cartItem.setProductId(cartChild.getProductId());
+                    cartItem.setProductName(cartChild.getProductName());
+                    cartItem.setCurrency(cartChild.getCurrency());
+                    cartItemList.add(cartItem);
+                }
+
+
+                cartAdapter.notifyDataSetChanged();
+
+            });
+        }
+
+
     }
 }

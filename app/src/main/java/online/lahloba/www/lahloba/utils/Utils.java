@@ -1,5 +1,9 @@
 package online.lahloba.www.lahloba.utils;
 
+import android.content.Context;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,4 +20,11 @@ public class Utils {
         }
 
     }
+
+    public static String getMacAddress(Context context){
+        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        return wifiInfo.getMacAddress();
+    }
+
 }

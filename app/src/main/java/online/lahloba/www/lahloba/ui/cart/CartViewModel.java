@@ -1,5 +1,6 @@
 package online.lahloba.www.lahloba.ui.cart;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
@@ -8,6 +9,7 @@ import java.util.List;
 import online.lahloba.www.lahloba.data.AppRepository;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.VMPHelper;
+import online.lahloba.www.lahloba.data.model.room_entity.CartItemRoom;
 import online.lahloba.www.lahloba.data.model.vm_helper.CartVMHelper;
 
 public class CartViewModel extends ViewModel {
@@ -27,5 +29,9 @@ public class CartViewModel extends ViewModel {
 
     public MutableLiveData<List<CartItem>> getCartItems(){
         return appRepository.getCartItems();
+    }
+
+    public LiveData<List<CartItemRoom>> getCartItemsFromInternal() {
+        return appRepository.getCartItemFromInternal();
     }
 }

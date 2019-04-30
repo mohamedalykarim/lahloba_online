@@ -223,8 +223,6 @@ public class NetworkDataHelper {
         mContext.startService(intent);
     }
 
-
-
     public MutableLiveData<List<CartItem>> getCartItems() {
         return cartItems;
     }
@@ -285,6 +283,7 @@ public class NetworkDataHelper {
 
     public void startLogOut() {
         FirebaseAuth.getInstance().signOut();
+        userDetails.setValue(null);
         isLogged.setValue(false);
     }
 

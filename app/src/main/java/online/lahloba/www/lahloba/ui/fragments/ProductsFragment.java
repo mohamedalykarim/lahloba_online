@@ -32,6 +32,7 @@ import online.lahloba.www.lahloba.ui.login.LoginViewModel;
 import online.lahloba.www.lahloba.ui.products.ProductsViewModel;
 import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.Injector;
+import online.lahloba.www.lahloba.utils.Utils;
 
 public class ProductsFragment extends Fragment {
     FragmentProductBinding binding;
@@ -63,12 +64,12 @@ public class ProductsFragment extends Fragment {
         productItemList = new ArrayList<>();
         productsRV = view.findViewById(R.id.productsRecyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        productAdapter = new ProductAdapter();
+        productAdapter = new ProductAdapter(getContext());
         productAdapter.setProductItemList(productItemList);
         productsRV.setLayoutManager(linearLayoutManager);
         productsRV.setAdapter(productAdapter);
 
-        userId = "userId";
+
 
 
         Bundle bundle = getArguments();
@@ -86,9 +87,18 @@ public class ProductsFragment extends Fragment {
 
         binding.setProductViewModel(mViewModel);
 
-        mViewModel.getCartItem().observe(this, cartItems -> {
-            mViewModel.productVMHelper.setCartCount(cartItems.size());
-        });
+        mViewModel.deleteAllFromCartCount0();
+
+
+        if (FirebaseAuth.getInstance().getCurrentUser() != null){
+            mViewModel.getCartItem().observe(this, cartItems -> {
+                mViewModel.productVMHelper.setCartCount(cartItems.size());
+            });
+        }else{
+            mViewModel.getCartItemFromInternal().observe(this, cartItems->{
+                mViewModel.productVMHelper.setCartCount(cartItems.size());
+            });
+        }
 
 
 
@@ -104,15 +114,19 @@ public class ProductsFragment extends Fragment {
 
         loginViewModel.getCurrentUserDetails().observe(this,currentUser->{
             if (null != currentUser){
-                userId = currentUser.getId();
-                productAdapter.setUserId(userId);
-                mViewModel.startGetCartItems(userId);
+                if(FirebaseAuth.getInstance().getCurrentUser()!=null){
+                    userId = currentUser.getId();
+                    productAdapter.setUserId(userId);
+                    mViewModel.startGetCartItems(userId);
+                }else{
+                    productAdapter.setUserId(Utils.getMacAddress(this.getContext()));
+                    mViewModel.startGetCartItems(Utils.getMacAddress(this.getContext()));
+                }
+
 
             }else{
-                userId = "userId";
-                productAdapter.setUserId(userId);
-                mViewModel.startGetCartItems(userId);
-            }
+                productAdapter.setUserId(Utils.getMacAddress(this.getContext()));
+                mViewModel.startGetCartItems(Utils.getMacAddress(this.getContext()));            }
         });
 
 
@@ -124,7 +138,7 @@ public class ProductsFragment extends Fragment {
         super.onResume();
         mViewModel.startProductsForCategory();
 
-        productAdapter = new ProductAdapter();
+        productAdapter = new ProductAdapter(getContext());
         productItemList = new ArrayList<>();
         productAdapter.setProductItemList(productItemList);
         productsRV.setAdapter(productAdapter);

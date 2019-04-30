@@ -1,5 +1,6 @@
 package online.lahloba.www.lahloba.ui.products;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
@@ -9,7 +10,9 @@ import online.lahloba.www.lahloba.data.AppRepository;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.data.model.VMPHelper;
+import online.lahloba.www.lahloba.data.model.room_entity.CartItemRoom;
 import online.lahloba.www.lahloba.data.model.vm_helper.ProductVMHelper;
+import online.lahloba.www.lahloba.utils.Injector;
 
 public class ProductsViewModel extends ViewModel {
     AppRepository appRepository;
@@ -35,6 +38,20 @@ public class ProductsViewModel extends ViewModel {
     }
 
     public void startGetCartItems(String userId){
-        appRepository.startGetCartItems(userId);
+            appRepository.startGetCartItems(userId);
+        
+    }
+
+    public LiveData<List<CartItemRoom>> getCartItemFromInternal() {
+        return appRepository.getCartItemFromInternal();
+    }
+
+    public void deleteAllFromCartCount0() {
+        Injector.getExecuter().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                appRepository.deleteAllFromCartCount0();
+            }
+        });
     }
 }
