@@ -1,6 +1,8 @@
 package online.lahloba.www.lahloba.data.model;
 
 public class AddressItem {
+    String id;
+    String name;
     String country;
     String city;
     String zone;
@@ -9,6 +11,13 @@ public class AddressItem {
     String floor;
     String flatNumber;
 
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
 
     public String getCountry() {
         return country;
@@ -36,6 +45,14 @@ public class AddressItem {
 
     public String getFlatNumber() {
         return flatNumber;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setCountry(String country) {

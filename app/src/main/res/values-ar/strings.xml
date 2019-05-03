@@ -2,4 +2,6 @@
 <resources>
     <string name="app_name">Lahloba لهلوبة</string>
     <string name="total">الاجمالي :</string>
+    <string name="my_adresses">عناويني</string>
+    <string name="sign_out">تسجيل الخروج</string>
 </resources>

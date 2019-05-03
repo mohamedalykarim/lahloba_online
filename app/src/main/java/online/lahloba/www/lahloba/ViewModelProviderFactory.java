@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 
 import online.lahloba.www.lahloba.data.AppRepository;
 import online.lahloba.www.lahloba.data.model.VMPHelper;
+import online.lahloba.www.lahloba.ui.address.AddAddressViewModel;
+import online.lahloba.www.lahloba.ui.address.AddressViewModel;
 import online.lahloba.www.lahloba.ui.cart.CartViewModel;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
 import online.lahloba.www.lahloba.ui.main.MainViewModel;
@@ -38,6 +40,10 @@ public class ViewModelProviderFactory extends ViewModelProvider.NewInstanceFacto
             return (T) new LoginViewModel(appRepository);
         }else if(modelClass.isAssignableFrom(SignupViewModel.class)){
             return (T) new SignupViewModel(appRepository);
+        }else if(modelClass.isAssignableFrom(AddressViewModel.class)){
+            return (T) new AddressViewModel();
+        }else if(modelClass.isAssignableFrom(AddAddressViewModel.class)){
+            return (T) new AddAddressViewModel();
         }
 
 
