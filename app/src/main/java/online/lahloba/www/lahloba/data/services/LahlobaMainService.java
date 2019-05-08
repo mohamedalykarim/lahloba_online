@@ -18,6 +18,15 @@ import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUN
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_PASSWORD;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_PHONE;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_SECONDNAME;
+import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS;
+import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_BUILDING;
+import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_CITY;
+import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_COUNTRY;
+import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_FLAT;
+import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_FLOOR;
+import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_NAME;
+import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_STREET;
+import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_ZONE;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_USER_DETAILS;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_EMAIL;
@@ -59,6 +68,18 @@ public class LahlobaMainService extends IntentService {
             String uid = intent.getStringExtra(START_GET_CURRENT_USER_DETAILS);
 
             networkDataHelper.fetchCurrentUserDetails(uid);
+        }else if(intent.getAction().equals(START_CREATE_NEW_ADDRESS)){
+            String userId = intent.getStringExtra(START_CREATE_NEW_ADDRESS);
+            String name = intent.getStringExtra(START_CREATE_NEW_ADDRESS_NAME);
+            String country = intent.getStringExtra(START_CREATE_NEW_ADDRESS_COUNTRY);
+            String city = intent.getStringExtra(START_CREATE_NEW_ADDRESS_CITY);
+            String zone = intent.getStringExtra(START_CREATE_NEW_ADDRESS_ZONE);
+            String street = intent.getStringExtra(START_CREATE_NEW_ADDRESS_STREET);
+            String building = intent.getStringExtra(START_CREATE_NEW_ADDRESS_BUILDING);
+            int floor = intent.getIntExtra(START_CREATE_NEW_ADDRESS_FLOOR,0);
+            int flat = intent.getIntExtra(START_CREATE_NEW_ADDRESS_FLAT,0);
+
+            networkDataHelper.AddNewAddress(userId, name,country, city, zone, street, building, floor, flat);
         }
     }
 }

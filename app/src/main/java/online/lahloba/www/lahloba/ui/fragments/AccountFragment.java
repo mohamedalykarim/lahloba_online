@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,6 @@ import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.MainMenuItem;
 import online.lahloba.www.lahloba.databinding.FragmentAccountBinding;
 import online.lahloba.www.lahloba.ui.adapters.AccountAdapter;
-import online.lahloba.www.lahloba.ui.adapters.ShoppingAdapter;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
 import online.lahloba.www.lahloba.utils.ExpandableHeightGridView;
 import online.lahloba.www.lahloba.utils.Injector;

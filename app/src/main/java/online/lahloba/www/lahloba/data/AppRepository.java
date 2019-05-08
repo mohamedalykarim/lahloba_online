@@ -2,7 +2,6 @@ package online.lahloba.www.lahloba.data;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.util.Log;
 
 import java.util.List;
 
@@ -166,5 +165,22 @@ public class AppRepository {
 
 
 
+    }
+
+    //############################### Address ############################//
+
+    public void startAddNewAddress(String userId, String name, String country, String city,
+                                   String zone, String street, String building,
+                                   int floor, int flat) {
+
+        networkDataHelper.startAddNewAddress(userId, name, country, city, zone, street, building, floor, flat);
+    }
+
+    public MutableLiveData<Boolean> getIsAddressAdded(){
+        return networkDataHelper.getIsAddressAdded();
+    }
+
+    public void setIsAddressAddedFalse() {
+        networkDataHelper.setIsAddressAddedFalse();
     }
 }

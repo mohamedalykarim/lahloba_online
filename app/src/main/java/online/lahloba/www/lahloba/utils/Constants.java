@@ -18,4 +18,15 @@ public class Constants {
     public static final String START_CREATE_NEW_ACCOUNT_EMAIL = "start_create_new_account_email";
     public static final String START_CREATE_NEW_ACCOUNT_PASSWORD = "start_create_new_account_password";
     public static final String START_GET_CURRENT_USER_DETAILS = "start_get_current_user_details";
+
+
+    public static final String START_CREATE_NEW_ADDRESS = "start_create_new_address";
+    public static final String START_CREATE_NEW_ADDRESS_NAME = "start_create_new_address_name";
+    public static final String START_CREATE_NEW_ADDRESS_COUNTRY = "start_create_new_address_country";
+    public static final String START_CREATE_NEW_ADDRESS_CITY = "start_create_new_address_city";
+    public static final String START_CREATE_NEW_ADDRESS_ZONE = "start_create_new_address_zone";
+    public static final String START_CREATE_NEW_ADDRESS_STREET = "start_create_new_address_street";
+    public static final String START_CREATE_NEW_ADDRESS_BUILDING = "start_create_new_address_building";
+    public static final String START_CREATE_NEW_ADDRESS_FLOOR = "start_create_new_address_floor";
+    public static final String START_CREATE_NEW_ADDRESS_FLAT = "start_create_new_address_flat";
 }

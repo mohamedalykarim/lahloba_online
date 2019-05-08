@@ -21,6 +21,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.MainMenuItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
@@ -41,6 +42,15 @@ import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUN
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_PASSWORD;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_PHONE;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_SECONDNAME;
+import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS;
+import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_BUILDING;
+import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_CITY;
+import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_COUNTRY;
+import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_FLAT;
+import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_FLOOR;
+import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_NAME;
+import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_STREET;
+import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_ZONE;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_USER_DETAILS;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_EMAIL;
@@ -56,6 +66,7 @@ public class NetworkDataHelper {
     MutableLiveData<List<CartItem>> cartItems;
     MutableLiveData<Boolean> isLogged;
     MutableLiveData<Boolean> isUserCreated;
+    MutableLiveData<Boolean> isAddressAdded;
     MutableLiveData<UserItem> userDetails;
     private MutableLiveData<List<ProductItem>> productsItems;
 
@@ -70,6 +81,9 @@ public class NetworkDataHelper {
         userDetails = new MutableLiveData<>();
         isUserCreated = new MutableLiveData<>();
         isUserCreated.setValue(false);
+
+        isAddressAdded = new MutableLiveData<>();
+        isAddressAdded.setValue(false);
 
         if (null == FirebaseAuth.getInstance().getCurrentUser()){
             isLogged.setValue(false);
@@ -394,5 +408,72 @@ public class NetworkDataHelper {
                     .child(cartItem.getProductId())
                     .setValue(cartItem);
         }
+    }
+
+
+
+    //############################### Addresses ############################//
+
+    public void startAddNewAddress(String userId, String name, String country, String city,
+                                   String zone, String street, String building,
+                                   int floor, int flat) {
+
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(START_CREATE_NEW_ADDRESS);
+        intent.putExtra(START_CREATE_NEW_ADDRESS, userId);
+        intent.putExtra(START_CREATE_NEW_ADDRESS_NAME, name);
+        intent.putExtra(START_CREATE_NEW_ADDRESS_COUNTRY, country);
+        intent.putExtra(START_CREATE_NEW_ADDRESS_CITY, city);
+        intent.putExtra(START_CREATE_NEW_ADDRESS_ZONE, zone);
+        intent.putExtra(START_CREATE_NEW_ADDRESS_STREET, street);
+        intent.putExtra(START_CREATE_NEW_ADDRESS_BUILDING, building);
+        intent.putExtra(START_CREATE_NEW_ADDRESS_FLOOR, floor);
+        intent.putExtra(START_CREATE_NEW_ADDRESS_FLAT, flat);
+        mContext.startService(intent);
+
+    }
+
+    public void AddNewAddress(String userId, String name, String country, String city,
+                              String zone, String street, String building,
+                              int floor, int flat) {
+
+        AddressItem addressItem = new AddressItem();
+        addressItem.setName(name);
+        addressItem.setCountry(country);
+        addressItem.setCity(city);
+        addressItem.setZone(zone);
+        addressItem.setStreet(street);
+        addressItem.setBuilding(building);
+        addressItem.setFloor(floor);
+        addressItem.setFlatNumber(flat);
+
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.child("Address").child(userId).push().setValue(addressItem)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()){
+                            mDatabase.child("DefaultAddress").child(userId)
+                                    .setValue(addressItem)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> taskDefault) {
+                                            if (taskDefault.isSuccessful()){
+                                                isAddressAdded.setValue(true);
+                                            }
+                                        }
+                                    });
+                        }
+                    }
+                });
+
+    }
+
+    public MutableLiveData<Boolean> getIsAddressAdded() {
+        return isAddressAdded;
+    }
+
+    public void setIsAddressAddedFalse() {
+        isAddressAdded.setValue(false);
     }
 }

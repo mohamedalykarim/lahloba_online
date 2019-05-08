@@ -43,7 +43,7 @@ public class ViewModelProviderFactory extends ViewModelProvider.NewInstanceFacto
         }else if(modelClass.isAssignableFrom(AddressViewModel.class)){
             return (T) new AddressViewModel();
         }else if(modelClass.isAssignableFrom(AddAddressViewModel.class)){
-            return (T) new AddAddressViewModel();
+            return (T) new AddAddressViewModel(appRepository);
         }
 
 

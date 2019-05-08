@@ -8,8 +8,8 @@ public class AddressItem {
     String zone;
     String street;
     String building;
-    String floor;
-    String flatNumber;
+    int floor;
+    int flatNumber;
 
     public String getId() {
         return id;
@@ -39,11 +39,11 @@ public class AddressItem {
         return building;
     }
 
-    public String getFloor() {
+    public int getFloor() {
         return floor;
     }
 
-    public String getFlatNumber() {
+    public int getFlatNumber() {
         return flatNumber;
     }
 
@@ -75,11 +75,11 @@ public class AddressItem {
         this.building = building;
     }
 
-    public void setFloor(String floor) {
+    public void setFloor(int floor) {
         this.floor = floor;
     }
 
-    public void setFlatNumber(String flatNumber) {
+    public void setFlatNumber(int flatNumber) {
         this.flatNumber = flatNumber;
     }
 }
