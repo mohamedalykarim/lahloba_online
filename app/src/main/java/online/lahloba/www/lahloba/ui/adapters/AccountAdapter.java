@@ -58,7 +58,7 @@ public class AccountAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.row_main_grid, null, false);
+        View view = layoutInflater.inflate(R.layout.row_account_grid, null, false);
         ImageView imageView = view.findViewById(R.id.imageView2);
         TextView titleTV = view.findViewById(R.id.titleTV);
         titleTV.setText(accountItemList.get(position).getTitle());

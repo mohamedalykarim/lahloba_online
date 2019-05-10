@@ -1,7 +1,6 @@
 package online.lahloba.www.lahloba.ui.fragments;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,15 +9,16 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
+import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.databinding.FragmentAddAddressBinding;
 import online.lahloba.www.lahloba.ui.address.AddAddressViewModel;
+import online.lahloba.www.lahloba.ui.address.AddressViewModel;
 import online.lahloba.www.lahloba.utils.Injector;
 
 public class AddAddressFragment extends Fragment {
@@ -26,6 +26,8 @@ public class AddAddressFragment extends Fragment {
     private AddAddressViewModel mViewModel;
     FragmentAddAddressBinding binding;
     private int error = 0;
+    private AddressViewModel addressViewModel;
+    private AddressItem defaultAddress;
 
 
     public static AddAddressFragment newInstance() {
@@ -46,6 +48,11 @@ public class AddAddressFragment extends Fragment {
         ViewModelProviderFactory factory = Injector.getVMFactory(getContext(),null);
         mViewModel = ViewModelProviders.of(this,factory).get(AddAddressViewModel.class);
 
+        ViewModelProviderFactory addressFactory = Injector.getVMFactory(getContext(),null);
+        addressViewModel = ViewModelProviders.of(this,addressFactory).get(AddressViewModel.class);
+
+
+
         mViewModel.setIsAddressAddedFalse();
 
         binding.addAddressBtn.setOnClickListener(new View.OnClickListener() {
@@ -53,18 +60,26 @@ public class AddAddressFragment extends Fragment {
             public void onClick(View v) {
                 validateForm();
                 if (error==0){
+                    AddressItem addressItem = new AddressItem();
+                    addressItem.setDefault(binding.switch1.isChecked());
+                    addressItem.setName(binding.nameET.getText().toString());
+                    addressItem.setCountry(binding.countryET.getText().toString());
+                    addressItem.setCity(binding.cityET.getText().toString());
+                    addressItem.setZone(binding.zoneET.getText().toString());
+                    addressItem.setStreet(binding.streetET.getText().toString());
+                    addressItem.setBuilding(binding.buildingET.getText().toString());
+                    addressItem.setFloor(Integer.parseInt(binding.floorET.getText().toString()));
+                    addressItem.setFlatNumber(Integer.parseInt(binding.flatNumberET.getText().toString()));
+
+
+
                     mViewModel.startAddNewAddress(
                             FirebaseAuth.getInstance().getCurrentUser().getUid(),
-                            binding.switch1.isChecked(),
-                            binding.nameET.getText().toString(),
-                            binding.countryET.getText().toString(),
-                            binding.cityET.getText().toString(),
-                            binding.zoneET.getText().toString(),
-                            binding.streetET.getText().toString(),
-                            binding.buildingET.getText().toString(),
-                            Integer.parseInt(binding.floorET.getText().toString()),
-                            Integer.parseInt(binding.flatNumberET.getText().toString())
+                            addressItem
                     );
+
+
+
                 }
             }
         });
@@ -133,5 +148,15 @@ public class AddAddressFragment extends Fragment {
         if (null == FirebaseAuth.getInstance()){
             getActivity().finish();
         }
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        addressViewModel.getDefaultAddress().observe(this, defaultAddress->{
+            this.defaultAddress = defaultAddress;
+        });
     }
 }

@@ -4,10 +4,8 @@ import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,7 +28,6 @@ import online.lahloba.www.lahloba.data.model.UserItem;
 import online.lahloba.www.lahloba.data.model.room_entity.CartItemRoom;
 import online.lahloba.www.lahloba.data.services.LahlobaMainService;
 import online.lahloba.www.lahloba.utils.Constants;
-import online.lahloba.www.lahloba.utils.Injector;
 import online.lahloba.www.lahloba.utils.LocalUtils;
 
 import static online.lahloba.www.lahloba.utils.Constants.GET_CART_ITEM;
@@ -43,19 +40,15 @@ import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUN
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_PHONE;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_SECONDNAME;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS;
-import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_BUILDING;
-import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_CITY;
-import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_COUNTRY;
-import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_FLAT;
-import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_FLOOR;
-import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_IS_DEFAULT;
-import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_NAME;
-import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_STREET;
-import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_ZONE;
+import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_ADDRESS_ITEM;
+import static online.lahloba.www.lahloba.utils.Constants.START_DELETE_ADDRESS;
+import static online.lahloba.www.lahloba.utils.Constants.START_GET_ADDRESSES;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_USER_DETAILS;
+import static online.lahloba.www.lahloba.utils.Constants.START_GET_DEFAULT_ADDRESS;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_EMAIL;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_PASSWORD;
+import static online.lahloba.www.lahloba.utils.Constants.START_SET_DEFAULT_ADDRESS;
 
 public class NetworkDataHelper {
     private static final Object LOCK = new Object();
@@ -65,10 +58,13 @@ public class NetworkDataHelper {
     MutableLiveData<List<MainMenuItem>> mainMenuItems;
     MutableLiveData<List<SubMenuItem>> subMenuItems;
     MutableLiveData<List<CartItem>> cartItems;
+    MutableLiveData<List<AddressItem>> addressItems;
     MutableLiveData<Boolean> isLogged;
     MutableLiveData<Boolean> isUserCreated;
     MutableLiveData<Boolean> isAddressAdded;
     MutableLiveData<UserItem> userDetails;
+    MutableLiveData<AddressItem> defaultAddress;
+
     private MutableLiveData<List<ProductItem>> productsItems;
 
 
@@ -77,7 +73,11 @@ public class NetworkDataHelper {
         mainMenuItems = new MutableLiveData<>();
         subMenuItems = new MutableLiveData<>();
         productsItems = new MutableLiveData<>();
+        addressItems = new MutableLiveData<>();
         cartItems = new MutableLiveData<>();
+
+        defaultAddress = new MutableLiveData<>();
+
         isLogged = new MutableLiveData<>();
         userDetails = new MutableLiveData<>();
         isUserCreated = new MutableLiveData<>();
@@ -415,61 +415,69 @@ public class NetworkDataHelper {
 
     //############################### Addresses ############################//
 
-    public void startAddNewAddress(String userId, boolean isDefault, String name, String country, String city,
-                                   String zone, String street, String building,
-                                   int floor, int flat) {
+    public void startAddNewAddress(String userId, AddressItem addressItem) {
 
         Intent intent = new Intent(mContext, LahlobaMainService.class);
         intent.setAction(START_CREATE_NEW_ADDRESS);
         intent.putExtra(START_CREATE_NEW_ADDRESS, userId);
-        intent.putExtra(START_CREATE_NEW_ADDRESS_NAME, name);
-        intent.putExtra(START_CREATE_NEW_ADDRESS_IS_DEFAULT, isDefault);
-        intent.putExtra(START_CREATE_NEW_ADDRESS_COUNTRY, country);
-        intent.putExtra(START_CREATE_NEW_ADDRESS_CITY, city);
-        intent.putExtra(START_CREATE_NEW_ADDRESS_ZONE, zone);
-        intent.putExtra(START_CREATE_NEW_ADDRESS_STREET, street);
-        intent.putExtra(START_CREATE_NEW_ADDRESS_BUILDING, building);
-        intent.putExtra(START_CREATE_NEW_ADDRESS_FLOOR, floor);
-        intent.putExtra(START_CREATE_NEW_ADDRESS_FLAT, flat);
+        intent.putExtra(START_CREATE_NEW_ADDRESS_ADDRESS_ITEM, addressItem);
         mContext.startService(intent);
 
     }
 
-    public void AddNewAddress(String userId, boolean isDefault, String name, String country, String city,
-                              String zone, String street, String building,
-                              int floor, int flat) {
-
-        AddressItem addressItem = new AddressItem();
-        addressItem.setName(name);
-        addressItem.setCountry(country);
-        addressItem.setCity(city);
-        addressItem.setZone(zone);
-        addressItem.setStreet(street);
-        addressItem.setBuilding(building);
-        addressItem.setFloor(floor);
-        addressItem.setFlatNumber(flat);
-
+    public void addNewAddress(String userId, AddressItem addressItem) {
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("Address").child(userId).push().setValue(addressItem)
+        String push = mDatabase.child("Address").child(userId).push().getKey();
+        addressItem.setId(push);
+
+        mDatabase.child("Address").child(userId).child(push).setValue(addressItem)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()){
 
-                            if (isDefault){
-                                mDatabase.child("DefaultAddress").child(userId)
-                                        .setValue(addressItem)
-                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            if (addressItem.isDefault()){
+                                FirebaseDatabase.getInstance().getReference()
+                                        .child("Address")
+                                        .child(userId)
+                                        .orderByChild("default")
+                                        .equalTo(true)
+                                        .addListenerForSingleValueEvent(new ValueEventListener() {
                                             @Override
-                                            public void onComplete(@NonNull Task<Void> taskDefault) {
-                                                if (taskDefault.isSuccessful()){
-                                                    isAddressAdded.setValue(true);
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                for (DataSnapshot child : dataSnapshot.getChildren()){
+                                                    AddressItem address = child.getValue(AddressItem.class);
+                                                    if (!address.getId().equals(addressItem.getId())){
+                                                        FirebaseDatabase.getInstance().getReference()
+                                                                .child("Address")
+                                                                .child(userId)
+                                                                .child(address.getId())
+                                                                .child("default")
+                                                                .setValue(false);
+                                                    }
+
+
+
                                                 }
+
+                                                isAddressAdded.setValue(true);
+
+                                            }
+
+
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
                                             }
                                         });
+
+
                             }else{
                                 isAddressAdded.setValue(true);
                             }
+
+
                         }
                     }
                 });
@@ -482,5 +490,153 @@ public class NetworkDataHelper {
 
     public void setIsAddressAddedFalse() {
         isAddressAdded.setValue(false);
+    }
+
+    public void startGetAddrresses(String userId) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(START_GET_ADDRESSES);
+        intent.putExtra(START_GET_ADDRESSES, userId);
+        mContext.startService(intent);
+    }
+
+    public void getAddressesFromFirebase(String userId) {
+        FirebaseDatabase.getInstance().getReference()
+                .child("Address")
+                .child(userId)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (null != dataSnapshot){
+                            List<AddressItem> addressItemList = new ArrayList<>();
+                            for (DataSnapshot child : dataSnapshot.getChildren()){
+                                AddressItem addressItem = child.getValue(AddressItem.class);
+                                addressItemList.add(addressItem);
+                            }
+                            addressItems.setValue(addressItemList);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    public MutableLiveData<List<AddressItem>> getAddressItems() {
+        return addressItems;
+    }
+
+    public void startGetDefaultAddress(String uid) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(START_GET_DEFAULT_ADDRESS);
+        intent.putExtra(START_GET_DEFAULT_ADDRESS, uid);
+        mContext.startService(intent);
+    }
+
+    public void getDefaultAddressFromFirebase(String userId) {
+        FirebaseDatabase.getInstance().getReference()
+                .child("Address")
+                .child(userId)
+                .orderByChild("default")
+                .equalTo(true)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (null != dataSnapshot){
+                            for (DataSnapshot child : dataSnapshot.getChildren()){
+                                AddressItem addressItem = child.getValue(AddressItem.class);
+                                defaultAddress.setValue(addressItem);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    public MutableLiveData<AddressItem> getDefaultAddress() {
+        return defaultAddress;
+    }
+
+    public void startSetDefaultAddress(String id) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(START_SET_DEFAULT_ADDRESS);
+        intent.putExtra(START_SET_DEFAULT_ADDRESS, id);
+        mContext.startService(intent);
+    }
+
+    public void setDefaultAddress(String id) {
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        mDatabase.child("Address").child(userId).child(id)
+                .child("default")
+                .setValue(true)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()){
+
+                                FirebaseDatabase.getInstance().getReference()
+                                        .child("Address")
+                                        .child(userId)
+                                        .orderByChild("default")
+                                        .equalTo(true)
+                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                for (DataSnapshot child : dataSnapshot.getChildren()){
+                                                    AddressItem address = child.getValue(AddressItem.class);
+                                                    if (!address.getId().equals(id)){
+                                                        FirebaseDatabase.getInstance().getReference()
+                                                                .child("Address")
+                                                                .child(userId)
+                                                                .child(address.getId())
+                                                                .child("default")
+                                                                .setValue(false);
+                                                    }
+
+
+
+                                                }
+
+
+                                            }
+
+
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                            }
+                                        });
+
+
+
+
+
+                        }
+                    }
+                });
+
+    }
+
+    public void startDeleteAddress(String id) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(START_DELETE_ADDRESS);
+        intent.putExtra(START_DELETE_ADDRESS, id);
+        mContext.startService(intent);
+    }
+
+    public void deleteAddress(String id) {
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        mDatabase.child("Address").child(userId).child(id)
+                .removeValue();
     }
 }

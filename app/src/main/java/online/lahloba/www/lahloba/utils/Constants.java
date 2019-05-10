@@ -21,13 +21,15 @@ public class Constants {
 
 
     public static final String START_CREATE_NEW_ADDRESS = "start_create_new_address";
-    public static final String START_CREATE_NEW_ADDRESS_NAME = "start_create_new_address_name";
-    public static final String START_CREATE_NEW_ADDRESS_IS_DEFAULT = "start_create_new_address_is_default";
-    public static final String START_CREATE_NEW_ADDRESS_COUNTRY = "start_create_new_address_country";
-    public static final String START_CREATE_NEW_ADDRESS_CITY = "start_create_new_address_city";
-    public static final String START_CREATE_NEW_ADDRESS_ZONE = "start_create_new_address_zone";
-    public static final String START_CREATE_NEW_ADDRESS_STREET = "start_create_new_address_street";
-    public static final String START_CREATE_NEW_ADDRESS_BUILDING = "start_create_new_address_building";
-    public static final String START_CREATE_NEW_ADDRESS_FLOOR = "start_create_new_address_floor";
-    public static final String START_CREATE_NEW_ADDRESS_FLAT = "start_create_new_address_flat";
+    public static final String START_CREATE_NEW_ADDRESS_ADDRESS_ITEM = "start_create_new_address_address_item";
+
+    public static final String START_GET_ADDRESSES = "start_get_addresses";
+    public static final String START_GET_DEFAULT_ADDRESS = "start_get_default_address";
+    public static final String START_SET_DEFAULT_ADDRESS = "start_set_default_address";
+
+    public static final String START_DELETE_ADDRESS = "start_delete_address";
+
+
+
+
 }

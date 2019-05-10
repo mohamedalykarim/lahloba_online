@@ -3,6 +3,7 @@ package online.lahloba.www.lahloba.ui.fragments;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +25,9 @@ import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.databinding.FragmentAddressBinding;
 import online.lahloba.www.lahloba.ui.adapters.AddressAdapter;
 import online.lahloba.www.lahloba.ui.address.AddAddressActivity;
+import online.lahloba.www.lahloba.ui.address.AddressActivity;
 import online.lahloba.www.lahloba.ui.address.AddressViewModel;
+import online.lahloba.www.lahloba.utils.Injector;
 
 public class AddressFragment extends Fragment {
     private AddressViewModel mViewModel;
@@ -30,6 +35,7 @@ public class AddressFragment extends Fragment {
     LinearLayoutManager linearLayoutManager;
     AddressAdapter addressAdapter;
     List<AddressItem> addressItems;
+    private AddressItem defaultAddress;
 
     public static AddressFragment newInstance() {
         return new AddressFragment();
@@ -41,6 +47,10 @@ public class AddressFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         FragmentAddressBinding binding = DataBindingUtil.inflate(inflater,R.layout.fragment_address, container, false);
         View view = binding.getRoot();
+
+        ViewModelProviderFactory factory = Injector.getVMFactory(getContext(),null);
+        mViewModel = ViewModelProviders.of(this,factory).get(AddressViewModel.class);
+
 
         binding.addaddressContainer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,27 +64,40 @@ public class AddressFragment extends Fragment {
         addressItems = new ArrayList<>();
         addressRV = binding.addressRV;
         linearLayoutManager = new LinearLayoutManager(getContext());
-        addressAdapter = new AddressAdapter();
+        addressAdapter = new AddressAdapter(mViewModel);
         addressRV.setLayoutManager(linearLayoutManager);
         addressRV.setAdapter(addressAdapter);
 
-        for (int i=0; i<5; i++){
-            AddressItem addressItem = new AddressItem();
-            addressItem.setName("Mohamed ALi");
-            addressItem.setFlatNumber(15);
-            addressItem.setFloor(16);
-            addressItem.setBuilding("Atone Building");
-            addressItem.setStreet("Khaled Ebn Elwalied ST.");
-            addressItem.setZone("Awamia");
-            addressItem.setCity("Luxor");
-            addressItem.setCountry("Egypt");
+        mViewModel.startGetDefaultAddress(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-            addressItems.add(addressItem);
-        }
+
+
+        mViewModel.getDefaultAddress().observe(this, defaultAddress->{
+            if (null != defaultAddress){
+                this.defaultAddress = defaultAddress;
+            }
+
+        });
+
         addressAdapter.setAddressItemList(addressItems);
-        addressAdapter.notifyDataSetChanged();
 
 
+
+
+
+
+        binding.toolbar.setTitle("Addresses");
+        binding.toolbar.setTitleTextColor(Color.parseColor("#ffffff"));
+
+        ((AddressActivity)getActivity()).setSupportActionBar(binding.toolbar);
+
+
+        mViewModel.getAddrresses().observe(this, address->{
+            addressItems.clear();
+            addressAdapter.notifyDataSetChanged();
+
+            addressItems.addAll(address);
+        });
 
 
 
@@ -82,11 +105,11 @@ public class AddressFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        ViewModelProviderFactory factory = new ViewModelProviderFactory(null,null);
-        mViewModel = ViewModelProviders.of(this,factory).get(AddressViewModel.class);
-        // TODO: Use the ViewModel
-    }
+    public void onResume() {
+        super.onResume();
 
+        mViewModel.startGetAddrresses(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+
+    }
 }

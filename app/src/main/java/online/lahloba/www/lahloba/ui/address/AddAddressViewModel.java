@@ -4,6 +4,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
 import online.lahloba.www.lahloba.data.AppRepository;
+import online.lahloba.www.lahloba.data.model.AddressItem;
 
 public class AddAddressViewModel extends ViewModel {
     AppRepository appRepository;
@@ -12,9 +13,8 @@ public class AddAddressViewModel extends ViewModel {
         this.appRepository = appRepository;
     }
 
-    public void startAddNewAddress(String userId, boolean isDefault, String name, String country, String city, String zone,
-                                   String street, String building, int floor, int flat) {
-        appRepository.startAddNewAddress(userId, isDefault, name, country, city, zone, street, building, floor, flat);
+    public void startAddNewAddress(String userId, AddressItem addressItem) {
+        appRepository.startAddNewAddress(userId,  addressItem);
     }
 
 

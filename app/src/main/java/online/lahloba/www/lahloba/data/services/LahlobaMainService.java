@@ -3,9 +3,9 @@ package online.lahloba.www.lahloba.data.services;
 import android.app.IntentService;
 import android.content.Intent;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import online.lahloba.www.lahloba.data.NetworkDataHelper;
+import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.Injector;
 
@@ -19,19 +19,15 @@ import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUN
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_PHONE;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_SECONDNAME;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS;
-import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_BUILDING;
-import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_CITY;
-import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_COUNTRY;
-import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_FLAT;
-import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_FLOOR;
-import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_IS_DEFAULT;
-import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_NAME;
-import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_STREET;
-import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_ZONE;
+import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_ADDRESS_ITEM;
+import static online.lahloba.www.lahloba.utils.Constants.START_DELETE_ADDRESS;
+import static online.lahloba.www.lahloba.utils.Constants.START_GET_ADDRESSES;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_USER_DETAILS;
+import static online.lahloba.www.lahloba.utils.Constants.START_GET_DEFAULT_ADDRESS;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_EMAIL;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_PASSWORD;
+import static online.lahloba.www.lahloba.utils.Constants.START_SET_DEFAULT_ADDRESS;
 
 public class LahlobaMainService extends IntentService {
     private NetworkDataHelper networkDataHelper;
@@ -71,19 +67,21 @@ public class LahlobaMainService extends IntentService {
             networkDataHelper.fetchCurrentUserDetails(uid);
         }else if(intent.getAction().equals(START_CREATE_NEW_ADDRESS)){
             String userId = intent.getStringExtra(START_CREATE_NEW_ADDRESS);
-            boolean isDefault = intent.getBooleanExtra(START_CREATE_NEW_ADDRESS_IS_DEFAULT, false);
+            AddressItem addressItem = intent.getParcelableExtra(START_CREATE_NEW_ADDRESS_ADDRESS_ITEM);
+            networkDataHelper.addNewAddress(userId, addressItem);
+        }else if(intent.getAction().equals(START_GET_ADDRESSES)){
+            String userId = intent.getStringExtra(START_GET_ADDRESSES);
 
-            Log.v("string", isDefault+"");
-            String name = intent.getStringExtra(START_CREATE_NEW_ADDRESS_NAME);
-            String country = intent.getStringExtra(START_CREATE_NEW_ADDRESS_COUNTRY);
-            String city = intent.getStringExtra(START_CREATE_NEW_ADDRESS_CITY);
-            String zone = intent.getStringExtra(START_CREATE_NEW_ADDRESS_ZONE);
-            String street = intent.getStringExtra(START_CREATE_NEW_ADDRESS_STREET);
-            String building = intent.getStringExtra(START_CREATE_NEW_ADDRESS_BUILDING);
-            int floor = intent.getIntExtra(START_CREATE_NEW_ADDRESS_FLOOR,0);
-            int flat = intent.getIntExtra(START_CREATE_NEW_ADDRESS_FLAT,0);
-
-            networkDataHelper.AddNewAddress(userId, isDefault, name,country, city, zone, street, building, floor, flat);
+            networkDataHelper.getAddressesFromFirebase(userId);
+        }else if(intent.getAction().equals(START_GET_DEFAULT_ADDRESS)){
+            String userId = intent.getStringExtra(START_GET_DEFAULT_ADDRESS);
+            networkDataHelper.getDefaultAddressFromFirebase(userId);
+        }else if(intent.getAction().equals(START_SET_DEFAULT_ADDRESS)){
+            String id = intent.getStringExtra(START_SET_DEFAULT_ADDRESS);
+            networkDataHelper.setDefaultAddress(id);
+        }else if(intent.getAction().equals(START_DELETE_ADDRESS)){
+            String id = intent.getStringExtra(START_DELETE_ADDRESS);
+            networkDataHelper.deleteAddress(id);
         }
     }
 }

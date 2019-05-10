@@ -1,15 +1,74 @@
 package online.lahloba.www.lahloba.data.model;
 
-public class AddressItem {
-    String id;
-    String name;
-    String country;
-    String city;
-    String zone;
-    String street;
-    String building;
-    int floor;
-    int flatNumber;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.google.firebase.database.Exclude;
+
+public class AddressItem implements Parcelable {
+    private String id;
+    private String name;
+    private String country;
+    private String city;
+    private String zone;
+    private String street;
+    private String building;
+    private int floor;
+    private int flatNumber;
+    private boolean isDefault;
+
+    public AddressItem() {
+    }
+
+
+    protected AddressItem(Parcel in) {
+        id = in.readString();
+        name = in.readString();
+        country = in.readString();
+        city = in.readString();
+        zone = in.readString();
+        street = in.readString();
+        building = in.readString();
+        floor = in.readInt();
+        flatNumber = in.readInt();
+        isDefault = in.readByte() != 0;
+    }
+
+    @Exclude
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(name);
+        dest.writeString(country);
+        dest.writeString(city);
+        dest.writeString(zone);
+        dest.writeString(street);
+        dest.writeString(building);
+        dest.writeInt(floor);
+        dest.writeInt(flatNumber);
+        dest.writeByte((byte) (isDefault ? 1 : 0));
+    }
+
+    @Exclude
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Exclude
+    public static final Creator<AddressItem> CREATOR = new Creator<AddressItem>() {
+        @Exclude
+        @Override
+        public AddressItem createFromParcel(Parcel in) {
+            return new AddressItem(in);
+        }
+
+        @Exclude
+        @Override
+        public AddressItem[] newArray(int size) {
+            return new AddressItem[size];
+        }
+    };
 
     public String getId() {
         return id;
@@ -47,6 +106,10 @@ public class AddressItem {
         return flatNumber;
     }
 
+    public boolean isDefault() {
+        return isDefault;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -81,5 +144,9 @@ public class AddressItem {
 
     public void setFlatNumber(int flatNumber) {
         this.flatNumber = flatNumber;
+    }
+
+    public void setDefault(boolean aDefault) {
+        isDefault = aDefault;
     }
 }

@@ -6,6 +6,7 @@ import android.arch.lifecycle.MutableLiveData;
 import java.util.List;
 
 import online.lahloba.www.lahloba.data.database.LahlobaDatabase;
+import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.MainMenuItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
@@ -169,11 +170,9 @@ public class AppRepository {
 
     //############################### Address ############################//
 
-    public void startAddNewAddress(String userId, boolean isDefault, String name, String country, String city,
-                                   String zone, String street, String building,
-                                   int floor, int flat) {
+    public void startAddNewAddress(String userId, AddressItem addressItem) {
 
-        networkDataHelper.startAddNewAddress(userId, isDefault, name, country, city, zone, street, building, floor, flat);
+        networkDataHelper.startAddNewAddress(userId, addressItem);
     }
 
     public MutableLiveData<Boolean> getIsAddressAdded(){
@@ -182,5 +181,29 @@ public class AppRepository {
 
     public void setIsAddressAddedFalse() {
         networkDataHelper.setIsAddressAddedFalse();
+    }
+
+    public void startGetAddrresses(String userId) {
+        networkDataHelper.startGetAddrresses(userId);
+    }
+
+    public MutableLiveData<List<AddressItem>> getAddressItems() {
+        return networkDataHelper.getAddressItems();
+    }
+
+    public void startGetDefaultAddress(String uid) {
+        networkDataHelper.startGetDefaultAddress(uid);
+    }
+
+    public MutableLiveData<AddressItem> getDefaultAddress() {
+        return networkDataHelper.getDefaultAddress();
+    }
+
+    public void startSetDefaultAddress(String id) {
+        networkDataHelper.startSetDefaultAddress(id);
+    }
+
+    public void startDeleteAddress(String id) {
+        networkDataHelper.startDeleteAddress(id);
     }
 }
