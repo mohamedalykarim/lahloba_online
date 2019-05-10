@@ -24,6 +24,7 @@ import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRES
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_COUNTRY;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_FLAT;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_FLOOR;
+import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_IS_DEFAULT;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_NAME;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_STREET;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_ZONE;
@@ -70,6 +71,9 @@ public class LahlobaMainService extends IntentService {
             networkDataHelper.fetchCurrentUserDetails(uid);
         }else if(intent.getAction().equals(START_CREATE_NEW_ADDRESS)){
             String userId = intent.getStringExtra(START_CREATE_NEW_ADDRESS);
+            boolean isDefault = intent.getBooleanExtra(START_CREATE_NEW_ADDRESS_IS_DEFAULT, false);
+
+            Log.v("string", isDefault+"");
             String name = intent.getStringExtra(START_CREATE_NEW_ADDRESS_NAME);
             String country = intent.getStringExtra(START_CREATE_NEW_ADDRESS_COUNTRY);
             String city = intent.getStringExtra(START_CREATE_NEW_ADDRESS_CITY);
@@ -79,7 +83,7 @@ public class LahlobaMainService extends IntentService {
             int floor = intent.getIntExtra(START_CREATE_NEW_ADDRESS_FLOOR,0);
             int flat = intent.getIntExtra(START_CREATE_NEW_ADDRESS_FLAT,0);
 
-            networkDataHelper.AddNewAddress(userId, name,country, city, zone, street, building, floor, flat);
+            networkDataHelper.AddNewAddress(userId, isDefault, name,country, city, zone, street, building, floor, flat);
         }
     }
 }

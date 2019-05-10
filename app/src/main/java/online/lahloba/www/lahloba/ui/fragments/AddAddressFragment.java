@@ -55,6 +55,7 @@ public class AddAddressFragment extends Fragment {
                 if (error==0){
                     mViewModel.startAddNewAddress(
                             FirebaseAuth.getInstance().getCurrentUser().getUid(),
+                            binding.switch1.isChecked(),
                             binding.nameET.getText().toString(),
                             binding.countryET.getText().toString(),
                             binding.cityET.getText().toString(),

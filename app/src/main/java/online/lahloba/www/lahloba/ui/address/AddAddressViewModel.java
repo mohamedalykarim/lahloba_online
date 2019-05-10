@@ -12,9 +12,9 @@ public class AddAddressViewModel extends ViewModel {
         this.appRepository = appRepository;
     }
 
-    public void startAddNewAddress(String userId, String name, String country, String city, String zone,
+    public void startAddNewAddress(String userId, boolean isDefault, String name, String country, String city, String zone,
                                    String street, String building, int floor, int flat) {
-        appRepository.startAddNewAddress(userId, name, country, city, zone, street, building, floor, flat);
+        appRepository.startAddNewAddress(userId, isDefault, name, country, city, zone, street, building, floor, flat);
     }
 
 

@@ -169,11 +169,11 @@ public class AppRepository {
 
     //############################### Address ############################//
 
-    public void startAddNewAddress(String userId, String name, String country, String city,
+    public void startAddNewAddress(String userId, boolean isDefault, String name, String country, String city,
                                    String zone, String street, String building,
                                    int floor, int flat) {
 
-        networkDataHelper.startAddNewAddress(userId, name, country, city, zone, street, building, floor, flat);
+        networkDataHelper.startAddNewAddress(userId, isDefault, name, country, city, zone, street, building, floor, flat);
     }
 
     public MutableLiveData<Boolean> getIsAddressAdded(){

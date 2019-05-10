@@ -48,6 +48,7 @@ import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRES
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_COUNTRY;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_FLAT;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_FLOOR;
+import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_IS_DEFAULT;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_NAME;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_STREET;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_ZONE;
@@ -414,7 +415,7 @@ public class NetworkDataHelper {
 
     //############################### Addresses ############################//
 
-    public void startAddNewAddress(String userId, String name, String country, String city,
+    public void startAddNewAddress(String userId, boolean isDefault, String name, String country, String city,
                                    String zone, String street, String building,
                                    int floor, int flat) {
 
@@ -422,6 +423,7 @@ public class NetworkDataHelper {
         intent.setAction(START_CREATE_NEW_ADDRESS);
         intent.putExtra(START_CREATE_NEW_ADDRESS, userId);
         intent.putExtra(START_CREATE_NEW_ADDRESS_NAME, name);
+        intent.putExtra(START_CREATE_NEW_ADDRESS_IS_DEFAULT, isDefault);
         intent.putExtra(START_CREATE_NEW_ADDRESS_COUNTRY, country);
         intent.putExtra(START_CREATE_NEW_ADDRESS_CITY, city);
         intent.putExtra(START_CREATE_NEW_ADDRESS_ZONE, zone);
@@ -433,7 +435,7 @@ public class NetworkDataHelper {
 
     }
 
-    public void AddNewAddress(String userId, String name, String country, String city,
+    public void AddNewAddress(String userId, boolean isDefault, String name, String country, String city,
                               String zone, String street, String building,
                               int floor, int flat) {
 
@@ -453,16 +455,21 @@ public class NetworkDataHelper {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()){
-                            mDatabase.child("DefaultAddress").child(userId)
-                                    .setValue(addressItem)
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> taskDefault) {
-                                            if (taskDefault.isSuccessful()){
-                                                isAddressAdded.setValue(true);
+
+                            if (isDefault){
+                                mDatabase.child("DefaultAddress").child(userId)
+                                        .setValue(addressItem)
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> taskDefault) {
+                                                if (taskDefault.isSuccessful()){
+                                                    isAddressAdded.setValue(true);
+                                                }
                                             }
-                                        }
-                                    });
+                                        });
+                            }else{
+                                isAddressAdded.setValue(true);
+                            }
                         }
                     }
                 });

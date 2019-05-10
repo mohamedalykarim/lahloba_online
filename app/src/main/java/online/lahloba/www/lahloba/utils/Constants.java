@@ -22,6 +22,7 @@ public class Constants {
 
     public static final String START_CREATE_NEW_ADDRESS = "start_create_new_address";
     public static final String START_CREATE_NEW_ADDRESS_NAME = "start_create_new_address_name";
+    public static final String START_CREATE_NEW_ADDRESS_IS_DEFAULT = "start_create_new_address_is_default";
     public static final String START_CREATE_NEW_ADDRESS_COUNTRY = "start_create_new_address_country";
     public static final String START_CREATE_NEW_ADDRESS_CITY = "start_create_new_address_city";
     public static final String START_CREATE_NEW_ADDRESS_ZONE = "start_create_new_address_zone";
