@@ -4,7 +4,12 @@ import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryDataEventListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -200,11 +205,51 @@ public class NetworkDataHelper {
 
     public void startFetchProductsForCategory(String categoyId) {
 
+        double lat = 25.685532;
+        double lan = 32.640231;
+
+        List<ProductItem> products = new ArrayList<>();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("MarketPlaceLocation");
+        GeoFire geoFire = new GeoFire(ref);
+
+        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(lat,lan),10);
+        geoQuery.addGeoQueryDataEventListener(new GeoQueryDataEventListener() {
+            @Override
+            public void onDataEntered(DataSnapshot dataSnapshot, GeoLocation location) {
+
+            }
+
+            @Override
+            public void onDataExited(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onDataMoved(DataSnapshot dataSnapshot, GeoLocation location) {
+
+            }
+
+            @Override
+            public void onDataChanged(DataSnapshot dataSnapshot, GeoLocation location) {
+
+            }
+
+            @Override
+            public void onGeoQueryReady() {
+
+            }
+
+            @Override
+            public void onGeoQueryError(DatabaseError error) {
+
+            }
+        });
+
         String language = LocalUtils.getLangauge();
         Query database = FirebaseDatabase
                 .getInstance()
                 .getReference("Product")
-                .child(language).orderByChild("parentId").equalTo(categoyId);
+                .child(language).orderByChild("parentId-marketPlaceId").equalTo(categoyId+"-"+"-LeYjJahPxAhqZpj0f9a");
 
         database.addValueEventListener(new ValueEventListener() {
             @Override
@@ -226,6 +271,7 @@ public class NetworkDataHelper {
 
             }
         });
+
     }
 
     public MutableLiveData<List<ProductItem>> getProductsOfCategory() {
