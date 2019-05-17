@@ -34,6 +34,7 @@ import online.lahloba.www.lahloba.data.model.room_entity.CartItemRoom;
 import online.lahloba.www.lahloba.data.services.LahlobaMainService;
 import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.LocalUtils;
+import online.lahloba.www.lahloba.utils.SharedPreferencesManager;
 
 import static online.lahloba.www.lahloba.utils.Constants.GET_CART_ITEM;
 import static online.lahloba.www.lahloba.utils.Constants.GET_MAIN_MENU_ITEMS;
@@ -205,17 +206,46 @@ public class NetworkDataHelper {
 
     public void startFetchProductsForCategory(String categoyId) {
 
-        double lat = 25.685532;
-        double lan = 32.640231;
+        double lat = Double.parseDouble(SharedPreferencesManager.getCurrentLocationLat(mContext));
+        double lan = Double.parseDouble(SharedPreferencesManager.getCurrentLocationLan(mContext));
+
+//        Log.v("mm", lat+"-"+lan);
+
 
         List<ProductItem> products = new ArrayList<>();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("MarketPlaceLocation");
         GeoFire geoFire = new GeoFire(ref);
 
-        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(lat,lan),10);
+        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(lat,lan),50);
         geoQuery.addGeoQueryDataEventListener(new GeoQueryDataEventListener() {
             @Override
             public void onDataEntered(DataSnapshot dataSnapshot, GeoLocation location) {
+//                Log.v("mm", categoyId+"-"+dataSnapshot.getKey());
+
+                String language = LocalUtils.getLangauge();
+                Query database = FirebaseDatabase
+                        .getInstance()
+                        .getReference("Product")
+                        .child(language).orderByChild("parentId-marketPlaceId").equalTo(categoyId+"-"+dataSnapshot.getKey());
+
+
+                database.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for(DataSnapshot child : dataSnapshot.getChildren()){
+                            ProductItem item = child.getValue(ProductItem.class);
+                            item.setCurrency("EGP");
+                            products.add(item);
+                        }
+
+                        productsItems.setValue(products);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
 
             }
 
@@ -236,38 +266,10 @@ public class NetworkDataHelper {
 
             @Override
             public void onGeoQueryReady() {
-
             }
 
             @Override
             public void onGeoQueryError(DatabaseError error) {
-
-            }
-        });
-
-        String language = LocalUtils.getLangauge();
-        Query database = FirebaseDatabase
-                .getInstance()
-                .getReference("Product")
-                .child(language).orderByChild("parentId-marketPlaceId").equalTo(categoyId+"-"+"-LeYjJahPxAhqZpj0f9a");
-
-        database.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                List<ProductItem> productItemsList = new ArrayList<>();
-                for(DataSnapshot child : dataSnapshot.getChildren()){
-                    ProductItem item = child.getValue(ProductItem.class);
-                    item.setCurrency("EGP");
-                    productItemsList.add(item);
-                }
-
-
-                productsItems.setValue(productItemsList);
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
