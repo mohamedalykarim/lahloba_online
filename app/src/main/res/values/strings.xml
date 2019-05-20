@@ -3,4 +3,16 @@
     <string name="total">Total :</string>
     <string name="my_adresses">My Addresses</string>
     <string name="sign_out">Sign Out</string>
+
+
+    <string name="exo2" translatable="false">Lato-Black.ttf</string>
+    <string name="login">Login</string>
+    <string name="new_account">New Account</string>
+    <string name="create">create </string>
+    <string name="password">Password</string>
+    <string name="welcome_to_lahloba">Welcome To Lahloba</string>
+    <string name="to_continue_please_login">To continue Please Login</string>
+    <string name="email">Email</string>
+    <string name="current_location">Current Location</string>
+    <string name="add_to_cart">Add to cart</string>
 </resources>

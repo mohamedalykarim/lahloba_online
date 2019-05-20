@@ -41,6 +41,7 @@ public class LoginFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_login, container, false);
+        binding.setLifecycleOwner(this);
         emailET = binding.emailET;
         passwordET = binding.passwordET;
 

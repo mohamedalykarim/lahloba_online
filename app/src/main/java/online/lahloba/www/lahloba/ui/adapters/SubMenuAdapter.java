@@ -23,6 +23,7 @@ import java.util.List;
 
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.data.model.SubMenuItem;
+import online.lahloba.www.lahloba.databinding.RowSubMenuBinding;
 import online.lahloba.www.lahloba.ui.products.ProductsActivity;
 import online.lahloba.www.lahloba.ui.sub_menu.SubMenuActivity;
 import online.lahloba.www.lahloba.utils.Constants;
@@ -38,9 +39,12 @@ public class SubMenuAdapter extends RecyclerView.Adapter<SubMenuAdapter.SubMenuV
     @NonNull
     @Override
     public SubMenuViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-        View view = inflater.inflate(R.layout.row_sub_menu, viewGroup,false);
-        return new SubMenuViewHolder(view);
+        RowSubMenuBinding rowSubMenuBinding = RowSubMenuBinding.inflate(
+                LayoutInflater.from(viewGroup.getContext()),
+                null,
+                false
+        );
+        return new SubMenuViewHolder(rowSubMenuBinding.getRoot());
     }
 
     @Override

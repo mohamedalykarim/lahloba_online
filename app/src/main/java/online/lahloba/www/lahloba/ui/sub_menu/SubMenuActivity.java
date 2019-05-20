@@ -1,6 +1,7 @@
 package online.lahloba.www.lahloba.ui.sub_menu;
 
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import online.lahloba.www.lahloba.R;
+import online.lahloba.www.lahloba.databinding.ActivitySubMenuBinding;
 import online.lahloba.www.lahloba.ui.fragments.SubMenuFragment;
 import online.lahloba.www.lahloba.utils.Constants;
 
@@ -19,7 +21,8 @@ public class SubMenuActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sub_menu);
+        ActivitySubMenuBinding binding = DataBindingUtil.setContentView(this,R.layout.activity_sub_menu);
+        binding.setLifecycleOwner(this);
 
         Intent intent = getIntent();
         if(null != intent && intent.hasExtra(EXTRA_SUBTITLE_ID)){

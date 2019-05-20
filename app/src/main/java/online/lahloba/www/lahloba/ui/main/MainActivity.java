@@ -3,6 +3,8 @@ package online.lahloba.www.lahloba.ui.main;
 import android.Manifest;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.location.Address;
@@ -15,12 +17,19 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.orhanobut.dialogplus.DialogPlus;
+import com.orhanobut.dialogplus.OnItemClickListener;
+import com.orhanobut.dialogplus.ViewHolder;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,6 +38,8 @@ import java.util.Locale;
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.databinding.ActivityMainBinding;
+import online.lahloba.www.lahloba.databinding.DialogPlusHeaderBinding;
+import online.lahloba.www.lahloba.databinding.RowAddressItemBinding;
 import online.lahloba.www.lahloba.ui.fragments.AccountFragment;
 import online.lahloba.www.lahloba.ui.fragments.FavoriteFragment;
 import online.lahloba.www.lahloba.ui.fragments.LoginFragment;
@@ -53,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        binding.setLifecycleOwner(this);
 
         binding.toolbar.setTitle(getResources().getString(R.string.app_name));
         binding.toolbar.setTitleTextColor(getResources().getColor(R.color.colorAccent));
@@ -148,6 +160,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         switch (id) {
             case android.R.id.home:
                 mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
@@ -164,15 +177,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
 
                 }else{
-                    mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-                    location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-
+                    getCurrentLocation();
                 }
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
+
 
 
     @Override
@@ -183,8 +194,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-                    location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                    getCurrentLocation();
 
                 } else {
                     // permission denied, boo! Disable the
@@ -197,6 +208,47 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             // permissions this app might request.
         }
     }
+
+
+
+
+    private void getCurrentLocation() {
+        boolean gps_enabled = false;
+
+        try {
+            gps_enabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch(Exception ex) {}
+
+
+        if(!gps_enabled ) {
+            // notify user
+            buildAlertMessageNoGps();
+        }else {
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+            location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        }
+    }
+
+    private void buildAlertMessageNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+
+
 
     /**
      * Get list of address by latitude and longitude
@@ -295,10 +347,34 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     @Override
     public void onLocationChanged(Location location) {
         mLocationManager.removeUpdates(this);
-        SharedPreferencesManager.setCurrentLocationLat(this, String.valueOf(location.getLatitude()));
-        SharedPreferencesManager.setCurrentLocationLan(this, String.valueOf(location.getLongitude()));
-        SharedPreferencesManager.setCurrentLocationAddress(this, getAddressLine(this,location.getLatitude(),location.getLongitude(),1));
-        Toast.makeText(this, "You Current Location is : "+getAddressLine(this,location.getLatitude(),location.getLongitude(),1), Toast.LENGTH_SHORT).show();
+        if (location != null){
+            SharedPreferencesManager.setCurrentLocationLat(this, String.valueOf(location.getLatitude()));
+            SharedPreferencesManager.setCurrentLocationLan(this, String.valueOf(location.getLongitude()));
+            SharedPreferencesManager.setCurrentLocationAddress(this, getAddressLine(this,location.getLatitude(),location.getLongitude(),1));
+
+            DialogPlusHeaderBinding dialogPlusHeaderBinding = DialogPlusHeaderBinding.inflate(LayoutInflater.from(this),null,false);
+            dialogPlusHeaderBinding.textView26.setText(getAddressLine(this,location.getLatitude(),location.getLongitude(),1));
+            View view = dialogPlusHeaderBinding.getRoot();
+
+            DialogPlus dialog = DialogPlus.newDialog(this)
+                    .setContentHolder(new ViewHolder(view))
+                    .setExpanded(true)  // This will enable the expand feature, (similar to android L share dialog)
+                    .create();
+            dialog.show();
+
+
+        }else{
+            DialogPlus dialog = DialogPlus.newDialog(this)
+                    .setOnItemClickListener(new OnItemClickListener() {
+                        @Override
+                        public void onItemClick(DialogPlus dialog, Object item, View view, int position) {
+                        }
+                    })
+                    .setExpanded(true)  // This will enable the expand feature, (similar to android L share dialog)
+                    .create();
+            dialog.show();
+        }
+
     }
 
     @Override

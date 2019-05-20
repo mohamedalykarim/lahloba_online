@@ -4,4 +4,13 @@
     <string name="total">الاجمالي :</string>
     <string name="my_adresses">عناويني</string>
     <string name="sign_out">تسجيل الخروج</string>
+    <string name="login">تسجيل الدخول</string>
+    <string name="new_account">حساب جديد</string>
+    <string name="create">انشاء </string>
+    <string name="password">كلمة المرور</string>
+    <string name="welcome_to_lahloba">مرحبا بك فى لهلوبة</string>
+    <string name="to_continue_please_login">رجاء تسجيل الدخول</string>
+    <string name="email">البريد الالكتروني</string>
+    <string name="current_location">العنوان الحالى</string>
+    <string name="add_to_cart">اضافة لسلة المشتريات</string>
 </resources>
