@@ -20,6 +20,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -175,15 +176,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                             ACCESS_FINE_LOCATION_REQUEST_CODE);
 
 
-
-                }else{
+                } else {
                     getCurrentLocation();
                 }
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
-
 
 
     @Override
@@ -210,21 +209,24 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
 
 
-
-
     private void getCurrentLocation() {
         boolean gps_enabled = false;
 
         try {
             gps_enabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch(Exception ex) {}
+        } catch (Exception ex) {
+        }
 
 
-        if(!gps_enabled ) {
+        if (!gps_enabled) {
             // notify user
             buildAlertMessageNoGps();
-        }else {
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        } else {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+
+            mLocationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, this,null);
             location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         }
     }
@@ -347,7 +349,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     @Override
     public void onLocationChanged(Location location) {
         mLocationManager.removeUpdates(this);
-        if (location != null){
+        if (getAddressLine(this,location.getLatitude(),location.getLongitude(),1) != null){
             SharedPreferencesManager.setCurrentLocationLat(this, String.valueOf(location.getLatitude()));
             SharedPreferencesManager.setCurrentLocationLan(this, String.valueOf(location.getLongitude()));
             SharedPreferencesManager.setCurrentLocationAddress(this, getAddressLine(this,location.getLatitude(),location.getLongitude(),1));
@@ -358,21 +360,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
             DialogPlus dialog = DialogPlus.newDialog(this)
                     .setContentHolder(new ViewHolder(view))
+                    .setGravity(Gravity.CENTER)
                     .setExpanded(true)  // This will enable the expand feature, (similar to android L share dialog)
                     .create();
             dialog.show();
 
 
         }else{
-            DialogPlus dialog = DialogPlus.newDialog(this)
-                    .setOnItemClickListener(new OnItemClickListener() {
-                        @Override
-                        public void onItemClick(DialogPlus dialog, Object item, View view, int position) {
-                        }
-                    })
-                    .setExpanded(true)  // This will enable the expand feature, (similar to android L share dialog)
-                    .create();
-            dialog.show();
+            onLocationChanged(location);
         }
 
     }

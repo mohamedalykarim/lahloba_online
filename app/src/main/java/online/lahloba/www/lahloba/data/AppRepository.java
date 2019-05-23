@@ -2,6 +2,7 @@ package online.lahloba.www.lahloba.data;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.util.Log;
 
 import java.util.List;
 
@@ -83,7 +84,10 @@ public class AppRepository {
     }
 
     public void insertCartItemToInternaldb(CartItemRoom cartItem){
-        database.cartDao().insert(cartItem);
+        long mm =         database.cartDao().insert(cartItem);
+
+        Log.v("mmm",""+mm);
+
     }
 
     public void changeCartItemCountInternaldb(String productId, int count){

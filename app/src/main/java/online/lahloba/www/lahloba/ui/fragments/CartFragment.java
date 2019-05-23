@@ -16,6 +16,9 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import online.lahloba.www.lahloba.R;
@@ -29,6 +32,7 @@ import online.lahloba.www.lahloba.ui.cart.CartViewModel;
 import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.ExpandableHeightRecyclerView;
 import online.lahloba.www.lahloba.utils.Injector;
+import online.lahloba.www.lahloba.utils.comparator.CartItemNameComparator;
 
 public class CartFragment extends Fragment {
 
@@ -50,21 +54,19 @@ public class CartFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_cart, container, false);
-        View view = binding.getRoot();
-
-        return view;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
 
         VMPHelper vmpHelper = new VMPHelper();
         vmpHelper.setUserId(getArguments().getString(Constants.EXTRA_USER_ID));
         ViewModelProviderFactory factory = Injector.getVMFactory(this.getContext(), vmpHelper);
         mViewModel = ViewModelProviders.of(this, factory).get(CartViewModel.class);
         binding.setCatViewModel(mViewModel);
+
+        View view = binding.getRoot();
+
+        return view;
     }
+
+
 
     @Override
     public void onResume() {
@@ -72,7 +74,7 @@ public class CartFragment extends Fragment {
 
         cartRecyclerView = binding.cartItemRecyclerView;
         linearLayoutManager = new LinearLayoutManager(this.getContext());
-        cartAdapter = new CartAdapter();
+        cartAdapter = new CartAdapter(getContext());
         cartItemList = new ArrayList<>();
         cartAdapter.setCartItemList(cartItemList);
         cartRecyclerView.setAdapter(cartAdapter);
@@ -81,13 +83,17 @@ public class CartFragment extends Fragment {
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null){
             mViewModel.startGetCartItems();
+            cartAdapter.setUserId(FirebaseAuth.getInstance().getUid());
 
             mViewModel.getCartItems().observe(this,cartItems -> {
+                Collections.sort(cartItems, new CartItemNameComparator());
+
                 double total = 0;
                 for (int i=0; i < cartItems.size(); i++){
                     total += Double.parseDouble(cartItems.get(i).getPrice()) * cartItems.get(0).getCount();
-                    mViewModel.cartVMHelper.setTotal(String.valueOf(total));
                 }
+                mViewModel.cartVMHelper.setTotal(String.valueOf(total));
+
 
                 cartItemList.clear();
                 cartAdapter.notifyDataSetChanged();
@@ -98,7 +104,6 @@ public class CartFragment extends Fragment {
             });
         }else{
             mViewModel.getCartItemsFromInternal().observe(this,cartItems->{
-                Toast.makeText(getContext(), ""+cartItems.size(), Toast.LENGTH_SHORT).show();
                 double total = 0;
                 for (int i=0; i < cartItems.size(); i++){
                     total += Double.parseDouble(cartItems.get(i).getPrice()) * cartItems.get(0).getCount();

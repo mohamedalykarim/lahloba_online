@@ -112,16 +112,7 @@ public class ProductsFragment extends Fragment {
         floatButton(container);
 
 
-        loginViewModel.getCurrentUserDetails().observe(this,currentUser->{
-            if (null != currentUser){
-                if(FirebaseAuth.getInstance().getCurrentUser()!=null){
-                    userId = currentUser.getId();
-                    productAdapter.setUserId(userId);
-                    mViewModel.startGetCartItems(userId);
-                }
 
-            }
-        });
 
 
         return view;
@@ -136,6 +127,17 @@ public class ProductsFragment extends Fragment {
         productItemList = new ArrayList<>();
         productAdapter.setProductItemList(productItemList);
         productsRV.setAdapter(productAdapter);
+
+        loginViewModel.getCurrentUserDetails().observe(this,currentUser->{
+            if (null != currentUser){
+                if(FirebaseAuth.getInstance().getCurrentUser()!=null){
+                    userId = currentUser.getId();
+                    productAdapter.setUserId(userId);
+                    mViewModel.startGetCartItems(userId);
+                }
+
+            }
+        });
     }
 
     public void floatButton(View container){

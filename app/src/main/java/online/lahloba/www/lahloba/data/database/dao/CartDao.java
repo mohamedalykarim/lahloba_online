@@ -15,8 +15,8 @@ import online.lahloba.www.lahloba.data.model.room_entity.CartItemRoom;
 @Dao
 public interface CartDao {
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insert(CartItemRoom item);
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    long insert(CartItemRoom item);
 
     @Query("DELETE FROM cart")
     void deleteAll();
