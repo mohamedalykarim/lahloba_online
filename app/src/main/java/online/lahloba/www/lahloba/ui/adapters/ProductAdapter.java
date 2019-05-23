@@ -28,6 +28,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.data.model.room_entity.CartItemRoom;
@@ -68,6 +69,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                         if(task.isSuccessful()){
                             Picasso.get()
                                     .load(task.getResult())
+                                    .placeholder(R.drawable.progress_animation)
                                     .into(productViewHolder.binding.productImage);
                         }
                     }

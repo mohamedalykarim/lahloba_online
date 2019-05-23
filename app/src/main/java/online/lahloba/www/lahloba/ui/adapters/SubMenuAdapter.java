@@ -62,6 +62,7 @@ public class SubMenuAdapter extends RecyclerView.Adapter<SubMenuAdapter.SubMenuV
                         if(task.isSuccessful()){
                             Picasso.get()
                                     .load(task.getResult())
+                                    .placeholder(R.drawable.progress_animation)
                                     .into(holder.imageView);
                         }
                     }

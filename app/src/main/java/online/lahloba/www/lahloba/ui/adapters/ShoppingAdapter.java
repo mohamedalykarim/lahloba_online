@@ -65,6 +65,7 @@ public class ShoppingAdapter extends BaseAdapter {
                         if(task.isSuccessful()){
                             Picasso.get()
                                     .load(task.getResult())
+                                    .placeholder(R.drawable.progress_animation)
                                     .into(imageView);
                         }
                     }
