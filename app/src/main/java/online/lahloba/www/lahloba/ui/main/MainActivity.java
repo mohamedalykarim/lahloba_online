@@ -1,58 +1,30 @@
 package online.lahloba.www.lahloba.ui.main;
 
-import android.Manifest;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Toast;
-
 import com.google.firebase.auth.FirebaseAuth;
-import com.orhanobut.dialogplus.DialogPlus;
-import com.orhanobut.dialogplus.OnItemClickListener;
-import com.orhanobut.dialogplus.ViewHolder;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
 
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.databinding.ActivityMainBinding;
-import online.lahloba.www.lahloba.databinding.DialogPlusHeaderBinding;
-import online.lahloba.www.lahloba.databinding.RowAddressItemBinding;
 import online.lahloba.www.lahloba.ui.fragments.AccountFragment;
 import online.lahloba.www.lahloba.ui.fragments.FavoriteFragment;
 import online.lahloba.www.lahloba.ui.fragments.LoginFragment;
 import online.lahloba.www.lahloba.ui.fragments.ShoppingFragment;
+import online.lahloba.www.lahloba.ui.governerate.GovernerateActivity;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
 import online.lahloba.www.lahloba.utils.Injector;
-import online.lahloba.www.lahloba.utils.SharedPreferencesManager;
 
-public class MainActivity extends AppCompatActivity implements LocationListener {
-    private static final int ACCESS_FINE_LOCATION_REQUEST_CODE = 1;
-    LocationManager mLocationManager;
-    Location location;
+public class MainActivity extends AppCompatActivity  {
 
     BottomNavigationView bottomNavigationView;
     ActivityMainBinding binding;
@@ -160,230 +132,15 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         int id = item.getItemId();
         switch (id) {
             case android.R.id.home:
-                mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-
-                    ActivityCompat.requestPermissions(this,
-                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                            ACCESS_FINE_LOCATION_REQUEST_CODE);
+                Intent intent = new Intent(this, GovernerateActivity.class);
+                startActivity(intent);
 
 
-                } else {
-                    getCurrentLocation();
-                }
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case ACCESS_FINE_LOCATION_REQUEST_CODE: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    getCurrentLocation();
-
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-                return;
-            }
-
-            // other 'case' lines to check for other
-            // permissions this app might request.
-        }
-    }
-
-
-    private void getCurrentLocation() {
-        boolean gps_enabled = false;
-
-        try {
-            gps_enabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch (Exception ex) {
-        }
-
-
-        if (!gps_enabled) {
-            // notify user
-            buildAlertMessageNoGps();
-        } else {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-
-            mLocationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, this,null);
-            location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        }
-    }
-
-    private void buildAlertMessageNoGps() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
-                .setCancelable(false)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, final int id) {
-                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, final int id) {
-                        dialog.cancel();
-                    }
-                });
-        final AlertDialog alert = builder.create();
-        alert.show();
-    }
-
-
-
-
-    /**
-     * Get list of address by latitude and longitude
-     * @return null or List<Address>
-     */
-    public List<Address> getGeocoderAddress(Context context, double latitude, double longitude, int maxAddresses ) {
-        if (location != null) {
-
-            Geocoder geocoder = new Geocoder(context, Locale.ENGLISH);
-
-            try {
-                /**
-                 * Geocoder.getFromLocation - Returns an array of Addresses
-                 * that are known to describe the area immediately surrounding the given latitude and longitude.
-                 */
-                List<Address> addresses = geocoder.getFromLocation(latitude, longitude, maxAddresses);
-
-                return addresses;
-            } catch (IOException e) {
-                //e.printStackTrace();
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Try to get AddressLine
-     * @return null or addressLine
-     */
-    public String getAddressLine(Context context, double latitude, double longitude, int maxAddresses) {
-        List<Address> addresses = getGeocoderAddress(context, latitude, longitude, maxAddresses);
-
-        if (addresses != null && addresses.size() > 0) {
-            Address address = addresses.get(0);
-            String addressLine = address.getAddressLine(0);
-
-            return addressLine;
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Try to get Locality
-     * @return null or locality
-     */
-    public String getLocality(Context context, double latitude, double longitude, int maxAddresses) {
-        List<Address> addresses = getGeocoderAddress(context, latitude, longitude, maxAddresses);
-
-        if (addresses != null && addresses.size() > 0) {
-            Address address = addresses.get(0);
-            String locality = address.getLocality();
-
-            return locality;
-        }
-        else {
-            return null;
-        }
-    }
-
-    /**
-     * Try to get Postal Code
-     * @return null or postalCode
-     */
-    public String getPostalCode(Context context, double latitude, double longitude, int maxAddresses) {
-        List<Address> addresses = getGeocoderAddress(context, latitude, longitude, maxAddresses);
-
-        if (addresses != null && addresses.size() > 0) {
-            Address address = addresses.get(0);
-            String postalCode = address.getPostalCode();
-
-            return postalCode;
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Try to get CountryName
-     * @return null or postalCode
-     */
-    public String getCountryName(Context context, double latitude, double longitude, int maxAddresses) {
-        List<Address> addresses = getGeocoderAddress(context, latitude, longitude, maxAddresses);
-        if (addresses != null && addresses.size() > 0) {
-            Address address = addresses.get(0);
-            String countryName = address.getCountryName();
-
-            return countryName;
-        } else {
-            return null;
-        }
-    }
-
-
-    @Override
-    public void onLocationChanged(Location location) {
-        mLocationManager.removeUpdates(this);
-        if (getAddressLine(this,location.getLatitude(),location.getLongitude(),1) != null){
-            SharedPreferencesManager.setCurrentLocationLat(this, String.valueOf(location.getLatitude()));
-            SharedPreferencesManager.setCurrentLocationLan(this, String.valueOf(location.getLongitude()));
-            SharedPreferencesManager.setCurrentLocationAddress(this, getAddressLine(this,location.getLatitude(),location.getLongitude(),1));
-
-            DialogPlusHeaderBinding dialogPlusHeaderBinding = DialogPlusHeaderBinding.inflate(LayoutInflater.from(this),null,false);
-            dialogPlusHeaderBinding.textView26.setText(getAddressLine(this,location.getLatitude(),location.getLongitude(),1));
-            View view = dialogPlusHeaderBinding.getRoot();
-
-            DialogPlus dialog = DialogPlus.newDialog(this)
-                    .setContentHolder(new ViewHolder(view))
-                    .setGravity(Gravity.CENTER)
-                    .setExpanded(true)  // This will enable the expand feature, (similar to android L share dialog)
-                    .create();
-            dialog.show();
-
-
-        }else{
-            onLocationChanged(location);
-        }
-
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
-    }
 }

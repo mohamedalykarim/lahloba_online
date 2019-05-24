@@ -13,4 +13,5 @@
     <string name="email">البريد الالكتروني</string>
     <string name="current_location">العنوان الحالى</string>
     <string name="add_to_cart">اضافة لسلة المشتريات</string>
+    <string name="get_your_location">اجلب عنوانك الحالى</string>
 </resources>

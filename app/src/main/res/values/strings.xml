@@ -15,4 +15,5 @@
     <string name="email">Email</string>
     <string name="current_location">Current Location</string>
     <string name="add_to_cart">Add to cart</string>
+    <string name="get_your_location">Get your location</string>
 </resources>

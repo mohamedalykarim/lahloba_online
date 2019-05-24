@@ -30,6 +30,5 @@ public class Constants {
     public static final String START_DELETE_ADDRESS = "start_delete_address";
 
 
-
-
+    public static final String START_GET_GOVERNORATES = "start_get_governorates";
 }

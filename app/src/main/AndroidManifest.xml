@@ -5,7 +5,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
 
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -13,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.address.AddAddressActivity"></activity>
+        <activity android:name=".ui.governerate.GovernerateActivity"></activity>
+        <activity android:name=".ui.address.AddAddressActivity" />
         <activity android:name=".ui.address.AddressActivity" />
         <activity android:name=".ui.signup.SignupActivity" />
         <activity android:name=".ui.login.LoginActivity" />

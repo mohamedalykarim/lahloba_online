@@ -4,6 +4,8 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.util.Log;
 
+import com.google.firebase.database.DataSnapshot;
+
 import java.util.List;
 
 import online.lahloba.www.lahloba.data.database.LahlobaDatabase;
@@ -209,5 +211,14 @@ public class AppRepository {
 
     public void startDeleteAddress(String id) {
         networkDataHelper.startDeleteAddress(id);
+    }
+
+    //############################### Governorates ############################//
+    public void startGetGovernorates() {
+        networkDataHelper.startGetGovernorates();
+    }
+
+    public MutableLiveData<DataSnapshot> getGovernorates() {
+        return networkDataHelper.getGovernorates();
     }
 }

@@ -51,6 +51,7 @@ import static online.lahloba.www.lahloba.utils.Constants.START_DELETE_ADDRESS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_ADDRESSES;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_USER_DETAILS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_DEFAULT_ADDRESS;
+import static online.lahloba.www.lahloba.utils.Constants.START_GET_GOVERNORATES;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_EMAIL;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_PASSWORD;
@@ -70,6 +71,7 @@ public class NetworkDataHelper {
     MutableLiveData<Boolean> isAddressAdded;
     MutableLiveData<UserItem> userDetails;
     MutableLiveData<AddressItem> defaultAddress;
+    MutableLiveData<DataSnapshot> governorates;
 
     private MutableLiveData<List<ProductItem>> productsItems;
 
@@ -81,6 +83,7 @@ public class NetworkDataHelper {
         productsItems = new MutableLiveData<>();
         addressItems = new MutableLiveData<>();
         cartItems = new MutableLiveData<>();
+        governorates = new MutableLiveData<>();
 
         defaultAddress = new MutableLiveData<>();
 
@@ -686,5 +689,35 @@ public class NetworkDataHelper {
 
         mDatabase.child("Address").child(userId).child(id)
                 .removeValue();
+    }
+
+    //############################### Governorates ############################//
+    public void startGetGovernorates() {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(START_GET_GOVERNORATES);
+        mContext.startService(intent);
+    }
+
+    public void getGovernoratesFromFirebase() {
+        String language = LocalUtils.getLangauge();
+
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.child("Governorate").child(language).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChildren()){
+                    governorates.setValue(dataSnapshot);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public MutableLiveData<DataSnapshot> getGovernorates() {
+        return governorates;
     }
 }
