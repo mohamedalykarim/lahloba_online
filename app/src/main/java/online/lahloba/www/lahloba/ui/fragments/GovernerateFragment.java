@@ -27,8 +27,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
-import com.orhanobut.dialogplus.DialogPlus;
-import com.orhanobut.dialogplus.ViewHolder;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,7 +37,6 @@ import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.Country;
 import online.lahloba.www.lahloba.data.model.Governerate;
-import online.lahloba.www.lahloba.databinding.DialogPlusHeaderBinding;
 import online.lahloba.www.lahloba.databinding.FragmentGovernerateBinding;
 import online.lahloba.www.lahloba.ui.adapters.GovernerateAdapter;
 import online.lahloba.www.lahloba.ui.governerate.GovernerateViewModel;
@@ -267,6 +264,8 @@ public class GovernerateFragment extends Fragment implements GovernerateAdapter.
         }
     }
 
+
+
     /**
      * Try to get Locality
      * @return null or locality
@@ -277,6 +276,79 @@ public class GovernerateFragment extends Fragment implements GovernerateAdapter.
         if (addresses != null && addresses.size() > 0) {
             Address address = addresses.get(0);
             String locality = address.getLocality();
+
+            return locality;
+        }
+        else {
+            return null;
+        }
+    }
+
+
+    /**
+     * Try to get Locality
+     * @return null or locality
+     */
+    public String getPremises(Context context, double latitude, double longitude, int maxAddresses) {
+        List<Address> addresses = getGeocoderAddress(context, latitude, longitude, maxAddresses);
+
+        if (addresses != null && addresses.size() > 0) {
+            Address address = addresses.get(0);
+            String locality = address.getPremises();
+
+            return locality;
+        }
+        else {
+            return null;
+        }
+    }
+
+    /**
+     * Try to get Locality
+     * @return null or locality
+     */
+    public String getSubAdminArea(Context context, double latitude, double longitude, int maxAddresses) {
+        List<Address> addresses = getGeocoderAddress(context, latitude, longitude, maxAddresses);
+
+        if (addresses != null && addresses.size() > 0) {
+            Address address = addresses.get(0);
+            String locality = address.getSubAdminArea();
+
+            return locality;
+        }
+        else {
+            return null;
+        }
+    }
+
+    /**
+     * Try to get Locality
+     * @return null or locality
+     */
+    public String getAdminArea(Context context, double latitude, double longitude, int maxAddresses) {
+        List<Address> addresses = getGeocoderAddress(context, latitude, longitude, maxAddresses);
+
+        if (addresses != null && addresses.size() > 0) {
+            Address address = addresses.get(0);
+            String locality = address.getAdminArea();
+
+            return locality;
+        }
+        else {
+            return null;
+        }
+    }
+
+    /**
+     * Try to get Locality
+     * @return null or locality
+     */
+    public String getSubLocality(Context context, double latitude, double longitude, int maxAddresses) {
+        List<Address> addresses = getGeocoderAddress(context, latitude, longitude, maxAddresses);
+
+        if (addresses != null && addresses.size() > 0) {
+            Address address = addresses.get(0);
+            String locality = address.getSubLocality();
 
             return locality;
         }
@@ -325,14 +397,21 @@ public class GovernerateFragment extends Fragment implements GovernerateAdapter.
         if (getAddressLine(getContext(),location.getLatitude(),location.getLongitude(),1) != null){
             SharedPreferencesManager.setCurrentLocationLat(getContext(), String.valueOf(location.getLatitude()));
             SharedPreferencesManager.setCurrentLocationLan(getContext(), String.valueOf(location.getLongitude()));
-            SharedPreferencesManager.setCurrentLocationAddress(getContext(), getAddressLine(getContext(),location.getLatitude(),location.getLongitude(),1));
+
+            String cityName = ""+getAdminArea(getContext(),location.getLatitude(),location.getLongitude(),1);
+
+            if (cityName.equals("null")){
+                cityName = ""+getSubAdminArea(getContext(),location.getLatitude(),location.getLongitude(),1);
+            }
+
+            SharedPreferencesManager.setCurrentLocationAddress(getContext(), cityName);
 
             binding.currentLocation.setText(SharedPreferencesManager.getCurrentLocationAddress(getContext()));
-
 
         }else{
             onLocationChanged(location);
         }
+
 
     }
 
