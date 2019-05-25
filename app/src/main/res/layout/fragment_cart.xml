@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     <data>
         <import type="android.view.View" />
+        <import type="online.lahloba.www.lahloba.data.model.vm_helper.CartVMHelper" />
         <variable
             name="cartViewModel"
             type="online.lahloba.www.lahloba.ui.cart.CartViewModel" />
@@ -76,6 +77,8 @@
                     android:id="@+id/shippingContainer"
                     android:layout_width="match_parent"
                     android:layout_height="300dp"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/btn_bg_1"
                     android:visibility='@{(cartViewModel.cartVMHelper.shippingMethodSelected == null) ? View.GONE : View.VISIBLE}'>
 
                     <TextView
@@ -84,9 +87,11 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
                         android:text="Current shipping method"
                         android:textColor="@color/black"
                         android:textSize="18sp"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -94,13 +99,12 @@
                         android:id="@+id/shippingMetodImage"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
-                        android:layout_marginStart="8dp"
                         android:layout_marginTop="18dp"
                         android:layout_marginEnd="8dp"
-                        app:layout_constraintEnd_toEndOf="parent"
+                        android:shippingIcon="@{cartViewModel.cartVMHelper.shippingMethodSelected == cartViewModel.cartVMHelper.FREE_SHIPPING ? CartVMHelper.FREE_SHIPPING : CartVMHelper.HYPERLOCAL_SHIPPING}"
+                        app:layout_constraintEnd_toEndOf="@+id/textView28"
                         app:layout_constraintStart_toStartOf="@+id/textView28"
-                        app:layout_constraintTop_toBottomOf="@+id/textView28"
-                        app:srcCompat="@drawable/ic_action_shopping" />
+                        app:layout_constraintTop_toBottomOf="@+id/textView28" />
 
                     <TextView
                         android:id="@+id/shippingMethodTypeTv"
@@ -109,10 +113,24 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
+                        android:text="@{cartViewModel.cartVMHelper.shippingMethodSelected == cartViewModel.cartVMHelper.FREE_SHIPPING ? @string/free_shipping : @string/hyperlocal_shipping}"
                         android:textColor="@color/black"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/shippingMetodImage" />
+
+                    <TextView
+                        android:id="@+id/hyperlocalCostTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:text="TextView"
+                        android:visibility='@{(cartViewModel.cartVMHelper.shippingMethodSelected != CartVMHelper.HYPERLOCAL_SHIPPING) ? View.GONE : View.VISIBLE}'
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/shippingMethodTypeTv" />
                 </android.support.constraint.ConstraintLayout>
             </LinearLayout>
         </ScrollView>

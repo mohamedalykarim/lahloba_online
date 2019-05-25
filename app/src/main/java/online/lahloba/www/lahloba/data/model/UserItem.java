@@ -9,6 +9,8 @@ public class UserItem {
     boolean isSeller;
     boolean status;
     String sellerId;
+    double lat;
+    double lan;
 
     public String getId() {
         return id;
@@ -44,6 +46,13 @@ public class UserItem {
         return sellerId;
     }
 
+    public double getLat() {
+        return lat;
+    }
+
+    public double getLan() {
+        return lan;
+    }
 
     public void setId(String id) {
         this.id = id;
@@ -76,4 +85,13 @@ public class UserItem {
     public void setSellerId(String sellerId) {
         this.sellerId = sellerId;
     }
+
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public void setLan(double lan) {
+        this.lan = lan;
+    }
+
 }

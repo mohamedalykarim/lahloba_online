@@ -11,6 +11,7 @@ public class CartVMHelper extends BaseObservable {
 
     private String total;
     private String shippingMethodSelected;
+    private double hyperlocalCost = 0;
 
     @Bindable
     public String getTotal() {
@@ -22,6 +23,10 @@ public class CartVMHelper extends BaseObservable {
         return shippingMethodSelected;
     }
 
+    @Bindable
+    public double getHyperlocalCost() {
+        return hyperlocalCost;
+    }
 
     public void setTotal(String total) {
         this.total = total;
@@ -32,5 +37,10 @@ public class CartVMHelper extends BaseObservable {
     public void setShippingMethodSelected(String shippingMethodSelected) {
         this.shippingMethodSelected = shippingMethodSelected;
         notifyPropertyChanged(BR.shippingMethodSelected);
+    }
+
+    public void setHyperlocalCost(double hyperlocalCost) {
+        this.hyperlocalCost = hyperlocalCost;
+        notifyPropertyChanged(BR.hyperlocalCost);
     }
 }

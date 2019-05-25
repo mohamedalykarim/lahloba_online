@@ -16,5 +16,7 @@
     <string name="current_location">Current Location</string>
     <string name="add_to_cart">Add to cart</string>
     <string name="get_your_location">My location</string>
+    <string name="free_shipping">Free Shipping</string>
+    <string name="hyperlocal_shipping">Hyperlocal Shipping</string>
 
 </resources>

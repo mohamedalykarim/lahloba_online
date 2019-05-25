@@ -146,4 +146,8 @@ public class CartFragment extends Fragment {
         mViewModel.cartVMHelper.setTotal(String.valueOf(total));
 
     }
+
+    public CartViewModel getmViewModel() {
+        return mViewModel;
+    }
 }
