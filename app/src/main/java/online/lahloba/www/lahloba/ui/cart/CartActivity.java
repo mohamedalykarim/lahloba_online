@@ -15,14 +15,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.UserItem;
-import online.lahloba.www.lahloba.data.model.VMPHelper;
 import online.lahloba.www.lahloba.data.model.vm_helper.CartVMHelper;
 import online.lahloba.www.lahloba.databinding.CartActivityBinding;
 import online.lahloba.www.lahloba.ui.cart.bottom_sheet.LogginBottomSheet;
@@ -30,9 +28,7 @@ import online.lahloba.www.lahloba.ui.cart.bottom_sheet.ShippingMethodBottomSheet
 import online.lahloba.www.lahloba.ui.fragments.CartFragment;
 import online.lahloba.www.lahloba.ui.login.LoginActivity;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
-import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.Injector;
-import online.lahloba.www.lahloba.utils.SharedPreferencesManager;
 
 import static online.lahloba.www.lahloba.utils.Constants.EXTRA_USER_ID;
 
