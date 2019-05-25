@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.databinding.FragmentLoginBinding;
+import online.lahloba.www.lahloba.ui.login.LoginActivity;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
 import online.lahloba.www.lahloba.ui.signup.SignupActivity;
 import online.lahloba.www.lahloba.utils.Injector;
@@ -105,9 +106,12 @@ public class LoginFragment extends Fragment {
                 Toast.makeText(this.getContext(), "Welcome Back", Toast.LENGTH_SHORT).show();
                 binding.loginProgressBar.setVisibility(View.INVISIBLE);
 
+                if (getActivity() instanceof LoginActivity){
+                    getActivity().finish();
+                }
+
             }
         });
-        // TODO: Use the ViewModel
     }
 
     public void createAccount(){

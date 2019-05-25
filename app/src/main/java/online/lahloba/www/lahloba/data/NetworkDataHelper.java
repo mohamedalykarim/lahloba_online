@@ -298,6 +298,11 @@ public class NetworkDataHelper {
     }
 
     public void startFetchCartItem(String userId) {
+        if (userId==null){
+            cartItems.postValue(null);
+            return;
+        }
+
         Query database = FirebaseDatabase
                 .getInstance()
                 .getReference("Cart")

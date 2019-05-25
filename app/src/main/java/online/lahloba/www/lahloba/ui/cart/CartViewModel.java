@@ -4,6 +4,8 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.List;
 
 import online.lahloba.www.lahloba.data.AppRepository;
@@ -17,6 +19,8 @@ public class CartViewModel extends ViewModel {
     VMPHelper vmpHelper;
     public CartVMHelper cartVMHelper;
 
+
+
     public CartViewModel(AppRepository appRepository, VMPHelper vmpHelper) {
         this.appRepository = appRepository;
         this.vmpHelper = vmpHelper;
@@ -24,7 +28,7 @@ public class CartViewModel extends ViewModel {
     }
 
     public void startGetCartItems(){
-        appRepository.startGetCartItems(vmpHelper.getUserId());
+        appRepository.startGetCartItems(FirebaseAuth.getInstance().getUid());
     }
 
     public MutableLiveData<List<CartItem>> getCartItems(){

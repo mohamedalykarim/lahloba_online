@@ -31,6 +31,7 @@ import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.data.model.room_entity.CartItemRoom;
 import online.lahloba.www.lahloba.databinding.RowCartListBinding;
+import online.lahloba.www.lahloba.ui.cart.CartActivity;
 import online.lahloba.www.lahloba.utils.Injector;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {

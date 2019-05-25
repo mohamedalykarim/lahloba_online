@@ -54,12 +54,13 @@ public class CartFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_cart, container, false);
+        binding.setLifecycleOwner(this);
 
         VMPHelper vmpHelper = new VMPHelper();
         vmpHelper.setUserId(getArguments().getString(Constants.EXTRA_USER_ID));
         ViewModelProviderFactory factory = Injector.getVMFactory(this.getContext(), vmpHelper);
         mViewModel = ViewModelProviders.of(this, factory).get(CartViewModel.class);
-        binding.setCatViewModel(mViewModel);
+        binding.setCartViewModel(mViewModel);
 
         View view = binding.getRoot();
 
@@ -82,25 +83,26 @@ public class CartFragment extends Fragment {
 
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null){
-            mViewModel.startGetCartItems();
             cartAdapter.setUserId(FirebaseAuth.getInstance().getUid());
+            mViewModel.startGetCartItems();
+
 
             mViewModel.getCartItems().observe(this,cartItems -> {
-                Collections.sort(cartItems, new CartItemNameComparator());
+                if (cartItems==null){
+                    mViewModel.startGetCartItems();
 
-                double total = 0;
-                for (int i=0; i < cartItems.size(); i++){
-                    total += Double.parseDouble(cartItems.get(i).getPrice()) * cartItems.get(0).getCount();
+                }else {
+                    Collections.sort(cartItems, new CartItemNameComparator());
+
+                    calculateTotal();
+
+                    cartItemList.clear();
+                    cartAdapter.notifyDataSetChanged();
+
+                    cartItemList.addAll(cartItems);
+                    cartAdapter.notifyDataSetChanged();
+
                 }
-                mViewModel.cartVMHelper.setTotal(String.valueOf(total));
-
-
-                cartItemList.clear();
-                cartAdapter.notifyDataSetChanged();
-
-                cartItemList.addAll(cartItems);
-                cartAdapter.notifyDataSetChanged();
-
             });
         }else{
             mViewModel.getCartItemsFromInternal().observe(this,cartItems->{
@@ -130,6 +132,18 @@ public class CartFragment extends Fragment {
             });
         }
 
+
+    }
+
+    public void calculateTotal(){
+        double total = 0;
+
+        for (int i=0; i < cartItemList.size(); i++){
+            double price = Double.parseDouble(cartItemList.get(i).getPrice()) * cartItemList.get(0).getCount();
+            total = total+price;
+        }
+
+        mViewModel.cartVMHelper.setTotal(String.valueOf(total));
 
     }
 }
