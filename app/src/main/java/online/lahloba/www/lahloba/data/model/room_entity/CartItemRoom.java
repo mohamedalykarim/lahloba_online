@@ -14,6 +14,8 @@ public class CartItemRoom {
     String price;
     String image;
     String currency;
+    String marketId;
+
 
 
     public int getCount() {
@@ -40,6 +42,10 @@ public class CartItemRoom {
         return currency;
     }
 
+    public String getMarketId() {
+        return marketId;
+    }
+
     public void setCount(int count) {
         this.count = count;
     }
@@ -62,5 +68,9 @@ public class CartItemRoom {
 
     public void setCurrency(String currency) {
         this.currency = currency;
+    }
+
+    public void setMarketId(String marketId) {
+        this.marketId = marketId;
     }
 }

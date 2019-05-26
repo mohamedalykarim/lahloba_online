@@ -8,6 +8,7 @@ public class CartItem {
     String price;
     String image;
     String currency;
+    String marketId;
 
 
     public String getId() {
@@ -38,6 +39,10 @@ public class CartItem {
         return currency;
     }
 
+    public String getMarketId() {
+        return marketId;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -64,5 +69,9 @@ public class CartItem {
 
     public void setCurrency(String currency) {
         this.currency = currency;
+    }
+
+    public void setMarketId(String marketId) {
+        this.marketId = marketId;
     }
 }

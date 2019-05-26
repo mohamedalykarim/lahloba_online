@@ -24,6 +24,7 @@ import java.util.List;
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.ProductItem;
+import online.lahloba.www.lahloba.data.model.UserItem;
 import online.lahloba.www.lahloba.data.model.VMPHelper;
 import online.lahloba.www.lahloba.databinding.FragmentProductBinding;
 import online.lahloba.www.lahloba.ui.adapters.ProductAdapter;
@@ -42,7 +43,7 @@ public class ProductsFragment extends Fragment {
     ProductAdapter productAdapter;
     RecyclerView productsRV;
     String userId;
-
+    private UserItem currentUser;
 
 
     public static ProductsFragment newInstance(Bundle args) {
@@ -131,13 +132,21 @@ public class ProductsFragment extends Fragment {
         loginViewModel.getCurrentUserDetails().observe(this,currentUser->{
             if (null != currentUser){
                 if(FirebaseAuth.getInstance().getCurrentUser()!=null){
+                    this.currentUser = currentUser;
                     userId = currentUser.getId();
                     productAdapter.setUserId(userId);
-                    mViewModel.startGetCartItems(userId);
                 }
 
             }
         });
+
+        if (currentUser!= null){
+            mViewModel.startGetCartItems(userId);
+        }
+
+
+
+
     }
 
     public void floatButton(View container){

@@ -6,6 +6,8 @@ public class MarketPlace{
     String sellerId;
     String sellerName;
     String governerateId;
+    double lat;
+    double lan;
 
 
     public String getId() {
@@ -28,6 +30,14 @@ public class MarketPlace{
         return governerateId;
     }
 
+    public double getLat() {
+        return lat;
+    }
+
+    public double getLan() {
+        return lan;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -46,5 +56,13 @@ public class MarketPlace{
 
     public void setGovernerateId(String governerateId) {
         this.governerateId = governerateId;
+    }
+
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public void setLan(double lan) {
+        this.lan = lan;
     }
 }

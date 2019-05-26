@@ -12,6 +12,7 @@ import online.lahloba.www.lahloba.data.database.LahlobaDatabase;
 import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.MainMenuItem;
+import online.lahloba.www.lahloba.data.model.MarketPlace;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.data.model.SubMenuItem;
 import online.lahloba.www.lahloba.data.model.UserItem;
@@ -220,5 +221,16 @@ public class AppRepository {
 
     public MutableLiveData<DataSnapshot> getGovernorates() {
         return networkDataHelper.getGovernorates();
+    }
+
+    //############################### Market Place ############################//
+
+
+    public void startGetMarketPlaceForId(String id) {
+        networkDataHelper.startGetMarketPlaceForId(id);
+    }
+
+    public MutableLiveData<MarketPlace> getMarketPlace() {
+        return networkDataHelper.getMarketPlace();
     }
 }

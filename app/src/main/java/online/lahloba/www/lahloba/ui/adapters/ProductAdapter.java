@@ -306,6 +306,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         cartItem.setImage(item.getImage());
         cartItem.setPrice(item.getPrice());
         cartItem.setProductName(item.getTitle());
+        cartItem.setMarketId(item.getMarketPlaceId());
 
         databaseReference.child(userId).child(item.getId())
                 .setValue(cartItem);
@@ -319,6 +320,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         cartItem.setPrice(item.getPrice());
         cartItem.setProductName(item.getTitle());
         cartItem.setCurrency("EGP");
+        cartItem.setMarketId(item.getMarketPlaceId());
 
         Injector.provideRepository(context).insertCartItemToInternaldb(cartItem);
 

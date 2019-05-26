@@ -27,6 +27,7 @@ import java.util.List;
 import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.MainMenuItem;
+import online.lahloba.www.lahloba.data.model.MarketPlace;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.data.model.SubMenuItem;
 import online.lahloba.www.lahloba.data.model.UserItem;
@@ -52,6 +53,7 @@ import static online.lahloba.www.lahloba.utils.Constants.START_GET_ADDRESSES;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_USER_DETAILS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_DEFAULT_ADDRESS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_GOVERNORATES;
+import static online.lahloba.www.lahloba.utils.Constants.START_GET_MARKETPLACE;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_EMAIL;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_PASSWORD;
@@ -72,6 +74,7 @@ public class NetworkDataHelper {
     MutableLiveData<UserItem> userDetails;
     MutableLiveData<AddressItem> defaultAddress;
     MutableLiveData<DataSnapshot> governorates;
+    MutableLiveData<MarketPlace> marketPlace;
 
     private MutableLiveData<List<ProductItem>> productsItems;
 
@@ -84,6 +87,7 @@ public class NetworkDataHelper {
         addressItems = new MutableLiveData<>();
         cartItems = new MutableLiveData<>();
         governorates = new MutableLiveData<>();
+        marketPlace = new MutableLiveData<>();
 
         defaultAddress = new MutableLiveData<>();
 
@@ -208,11 +212,16 @@ public class NetworkDataHelper {
     }
 
     public void startFetchProductsForCategory(String categoyId) {
+        double lat;
+        double lan;
 
-        double lat = Double.parseDouble(SharedPreferencesManager.getCurrentLocationLat(mContext));
-        double lan = Double.parseDouble(SharedPreferencesManager.getCurrentLocationLan(mContext));
+        if (null != SharedPreferencesManager.getCurrentLocationLat(mContext)){
+            lat = Double.parseDouble(SharedPreferencesManager.getCurrentLocationLat(mContext));
+            lan = Double.parseDouble(SharedPreferencesManager.getCurrentLocationLan(mContext));
+        }else {
+            return;
+        }
 
-//        Log.v("mm", lat+"-"+lan);
 
 
         List<ProductItem> products = new ArrayList<>();
@@ -223,7 +232,6 @@ public class NetworkDataHelper {
         geoQuery.addGeoQueryDataEventListener(new GeoQueryDataEventListener() {
             @Override
             public void onDataEntered(DataSnapshot dataSnapshot, GeoLocation location) {
-//                Log.v("mm", categoyId+"-"+dataSnapshot.getKey());
 
                 String language = LocalUtils.getLangauge();
                 Query database = FirebaseDatabase
@@ -724,5 +732,37 @@ public class NetworkDataHelper {
 
     public MutableLiveData<DataSnapshot> getGovernorates() {
         return governorates;
+    }
+
+
+    //############################### Governorates ############################//
+    public void startGetMarketPlaceForId(String id) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(START_GET_MARKETPLACE);
+        intent.putExtra(START_GET_MARKETPLACE,id);
+        mContext.startService(intent);
+    }
+
+    public void getMarketPlaceForId(String id) {
+
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.child("MarketPlace").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChildren()){
+                    marketPlace.setValue(dataSnapshot.getValue(MarketPlace.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    public MutableLiveData<MarketPlace> getMarketPlace() {
+        return marketPlace;
     }
 }

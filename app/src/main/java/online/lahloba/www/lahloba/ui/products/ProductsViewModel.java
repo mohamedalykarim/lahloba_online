@@ -22,7 +22,6 @@ public class ProductsViewModel extends ViewModel {
     public ProductsViewModel(AppRepository appRepository, VMPHelper vmpHelper) {
         this.appRepository = appRepository;
         categoryId = vmpHelper.getCategoryId();
-        this.categoryId = categoryId;
     }
 
     public void startProductsForCategory() {
@@ -39,7 +38,7 @@ public class ProductsViewModel extends ViewModel {
 
     public void startGetCartItems(String userId){
             appRepository.startGetCartItems(userId);
-        
+
     }
 
     public LiveData<List<CartItemRoom>> getCartItemFromInternal() {

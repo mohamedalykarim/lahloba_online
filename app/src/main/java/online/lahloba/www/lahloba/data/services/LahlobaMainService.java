@@ -25,6 +25,7 @@ import static online.lahloba.www.lahloba.utils.Constants.START_GET_ADDRESSES;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_USER_DETAILS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_DEFAULT_ADDRESS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_GOVERNORATES;
+import static online.lahloba.www.lahloba.utils.Constants.START_GET_MARKETPLACE;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_EMAIL;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_PASSWORD;
@@ -85,6 +86,9 @@ public class LahlobaMainService extends IntentService {
             networkDataHelper.deleteAddress(id);
         }else if(intent.getAction().equals(START_GET_GOVERNORATES)){
             networkDataHelper.getGovernoratesFromFirebase();
+        }else if(intent.getAction().equals(START_GET_MARKETPLACE)){
+            String id = intent.getStringExtra(START_GET_MARKETPLACE);
+            networkDataHelper.getMarketPlaceForId(id);
         }
 
 

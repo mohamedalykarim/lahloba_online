@@ -21,10 +21,21 @@ public class Utils {
 
     }
 
-    public static String getMacAddress(Context context){
-        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-        return wifiInfo.getMacAddress();
+    public static int getCostByDistance(double distance){
+        if (distance <= 5){
+            return 10;
+        }else if (distance >5 && distance <= 10){
+            return 15;
+        }else if (distance >10 && distance <= 15){
+            return 20;
+        }else if (distance >15 && distance <= 20){
+            return 25;
+        }else if (distance > 20){
+            return 30;
+        }
+
+        return 0;
+
     }
 
 }

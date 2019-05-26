@@ -10,6 +10,7 @@ import java.util.List;
 
 import online.lahloba.www.lahloba.data.AppRepository;
 import online.lahloba.www.lahloba.data.model.CartItem;
+import online.lahloba.www.lahloba.data.model.MarketPlace;
 import online.lahloba.www.lahloba.data.model.VMPHelper;
 import online.lahloba.www.lahloba.data.model.room_entity.CartItemRoom;
 import online.lahloba.www.lahloba.data.model.vm_helper.CartVMHelper;
@@ -27,9 +28,6 @@ public class CartViewModel extends ViewModel {
         cartVMHelper = new CartVMHelper();
     }
 
-    public void startGetCartItems(){
-        appRepository.startGetCartItems(FirebaseAuth.getInstance().getUid());
-    }
 
     public MutableLiveData<List<CartItem>> getCartItems(){
         return appRepository.getCartItems();
@@ -37,5 +35,17 @@ public class CartViewModel extends ViewModel {
 
     public LiveData<List<CartItemRoom>> getCartItemsFromInternal() {
         return appRepository.getCartItemFromInternal();
+    }
+
+    public void startGetMarketPlaceForId(String id) {
+        appRepository.startGetMarketPlaceForId(id);
+    }
+
+    public MutableLiveData<MarketPlace> getMarketPlace() {
+        return appRepository.getMarketPlace();
+    }
+
+    public void setCartVMHelper(CartVMHelper cartVMHelper) {
+        this.cartVMHelper = cartVMHelper;
     }
 }

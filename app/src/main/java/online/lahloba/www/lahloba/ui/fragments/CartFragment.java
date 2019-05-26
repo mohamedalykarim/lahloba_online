@@ -2,12 +2,13 @@ package online.lahloba.www.lahloba.ui.fragments;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,22 +17,25 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import okhttp3.internal.Util;
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.CartItem;
+import online.lahloba.www.lahloba.data.model.UserItem;
 import online.lahloba.www.lahloba.data.model.VMPHelper;
 import online.lahloba.www.lahloba.data.model.room_entity.CartItemRoom;
+import online.lahloba.www.lahloba.data.model.vm_helper.CartVMHelper;
 import online.lahloba.www.lahloba.databinding.FragmentCartBinding;
 import online.lahloba.www.lahloba.ui.adapters.CartAdapter;
 import online.lahloba.www.lahloba.ui.cart.CartViewModel;
 import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.ExpandableHeightRecyclerView;
 import online.lahloba.www.lahloba.utils.Injector;
+import online.lahloba.www.lahloba.utils.Utils;
 import online.lahloba.www.lahloba.utils.comparator.CartItemNameComparator;
 
 public class CartFragment extends Fragment {
@@ -42,6 +46,7 @@ public class CartFragment extends Fragment {
     LinearLayoutManager linearLayoutManager;
     CartAdapter cartAdapter;
     List<CartItem> cartItemList;
+
 
     public static CartFragment newInstance(Bundle args) {
         CartFragment fragment = new CartFragment();
@@ -84,14 +89,14 @@ public class CartFragment extends Fragment {
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null){
             cartAdapter.setUserId(FirebaseAuth.getInstance().getUid());
-            mViewModel.startGetCartItems();
-
 
             mViewModel.getCartItems().observe(this,cartItems -> {
-                if (cartItems==null){
-                    mViewModel.startGetCartItems();
+                if (cartItems!=null){
+                    /**
+                     * Get cart items from firebase
+                     */
 
-                }else {
+
                     Collections.sort(cartItems, new CartItemNameComparator());
 
                     calculateTotal();
@@ -102,8 +107,14 @@ public class CartFragment extends Fragment {
                     cartItemList.addAll(cartItems);
                     cartAdapter.notifyDataSetChanged();
 
+
                 }
+
             });
+
+            calculateDistance();
+
+
         }else{
             mViewModel.getCartItemsFromInternal().observe(this,cartItems->{
                 double total = 0;
@@ -123,17 +134,67 @@ public class CartFragment extends Fragment {
                     cartItem.setProductId(cartChild.getProductId());
                     cartItem.setProductName(cartChild.getProductName());
                     cartItem.setCurrency(cartChild.getCurrency());
+                    cartItem.setMarketId(cartChild.getMarketId());
                     cartItemList.add(cartItem);
                 }
 
 
                 cartAdapter.notifyDataSetChanged();
 
+
             });
+
+            calculateDistance();
+
         }
 
 
+
+
+
+
     }
+
+    void calculateDistance(){
+        binding.hyperlocalCostTV.setText("");
+
+        List<String> marketIds = new ArrayList<>();
+        for (int i=0; i<cartItemList.size();i++){
+            if(marketIds.indexOf(cartItemList.get(i).getMarketId()) > -1){
+            }else{
+                marketIds.add(cartItemList.get(i).getMarketId());
+            }
+        }
+
+
+        for (int i=0; i<marketIds.size();i++){
+            mViewModel.startGetMarketPlaceForId(marketIds.get(i));
+        }
+
+
+        Location userLocation = new Location("");
+        userLocation.setLatitude(25.6);
+        userLocation.setLongitude(32.5);
+
+        mViewModel.getMarketPlace().observe(this, marketPlace -> {
+        Log.v("string","done");
+
+
+            Location marketplaceLocation = new Location("");
+            marketplaceLocation.setLatitude(marketPlace.getLat());
+            marketplaceLocation.setLongitude(marketPlace.getLan());
+            double distance = marketplaceLocation.distanceTo(userLocation)/1000;
+
+
+            mViewModel.cartVMHelper.setHyperlocalCost(mViewModel.cartVMHelper.getHyperlocalCost() + Utils.getCostByDistance(distance));
+
+            binding.hyperlocalCostTV.append(marketPlace.getName() + "   "+getString(R.string.cost)+": "+ Utils.getCostByDistance(distance)+"\n");
+
+        });
+
+    }
+
+
 
     public void calculateTotal(){
         double total = 0;
@@ -150,4 +211,5 @@ public class CartFragment extends Fragment {
     public CartViewModel getmViewModel() {
         return mViewModel;
     }
+
 }
