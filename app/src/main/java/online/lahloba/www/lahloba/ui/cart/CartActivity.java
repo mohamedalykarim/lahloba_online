@@ -18,11 +18,15 @@ import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.List;
+
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
+import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.UserItem;
 import online.lahloba.www.lahloba.data.model.vm_helper.CartVMHelper;
 import online.lahloba.www.lahloba.databinding.CartActivityBinding;
+import online.lahloba.www.lahloba.ui.cart.bottom_sheet.AddressBottomSheet;
 import online.lahloba.www.lahloba.ui.cart.bottom_sheet.LogginBottomSheet;
 import online.lahloba.www.lahloba.ui.cart.bottom_sheet.ShippingMethodBottomSheet;
 import online.lahloba.www.lahloba.ui.fragments.CartFragment;
@@ -33,11 +37,17 @@ import online.lahloba.www.lahloba.utils.Injector;
 import static online.lahloba.www.lahloba.utils.Constants.EXTRA_USER_ID;
 
 public class CartActivity extends AppCompatActivity
-implements LogginBottomSheet.OnLoginSheetClicked,
-        ShippingMethodBottomSheet.OnShippingMethodClicked {
+implements
+        LogginBottomSheet.OnLoginSheetClicked,
+        ShippingMethodBottomSheet.OnShippingMethodClicked,
+        CartFragment.AddressesToActivityFromCart,
+        AddressBottomSheet.SendAddressToCart
+
+{
 
     LogginBottomSheet logginBottomSheet;
     ShippingMethodBottomSheet shippingMethodBottomSheet;
+    AddressBottomSheet addressBottomSheet;
 
     private LoginViewModel loginViewModel;
 
@@ -47,6 +57,11 @@ implements LogginBottomSheet.OnLoginSheetClicked,
         super.onCreate(savedInstanceState);
         CartActivityBinding binding = DataBindingUtil.setContentView(this,R.layout.cart_activity);
         binding.setLifecycleOwner(this);
+
+        logginBottomSheet = new LogginBottomSheet();
+        shippingMethodBottomSheet = new ShippingMethodBottomSheet();
+        addressBottomSheet = new AddressBottomSheet();
+
 
         ViewModelProviderFactory loginFactory = Injector.getVMFactory(this,null);
         loginViewModel = ViewModelProviders.of(this,loginFactory).get(LoginViewModel.class);
@@ -58,7 +73,7 @@ implements LogginBottomSheet.OnLoginSheetClicked,
 
                 Bundle bundle = new Bundle();
                 bundle.putString(EXTRA_USER_ID, intent.getStringExtra(EXTRA_USER_ID));
-                CartFragment cartFragment = CartFragment.newInstance(bundle);
+                CartFragment cartFragment = CartFragment.newInstance(bundle, this);
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.container, cartFragment)
                         .commitNow();
@@ -72,30 +87,41 @@ implements LogginBottomSheet.OnLoginSheetClicked,
                              * If not login ask user for login
                              */
                             
-                            logginBottomSheet = new LogginBottomSheet();
                             logginBottomSheet.show(getSupportFragmentManager(),"");
                         }else{
                             /**
                              * user is log in
                              */
 
-
                             if (((CartFragment)getSupportFragmentManager().getFragments().get(0))
-                                    .getmViewModel().cartVMHelper.getShippingMethodSelected() == null){
+                                    .getmViewModel().cartVMHelper.getAddressSelected() == null){
+
+                                addressBottomSheet.show(getSupportFragmentManager(),"");
+
+                            }else {
                                 /**
-                                 * Shipping method not set
+                                 * address selected then choose shipping method
                                  */
 
-                                shippingMethodBottomSheet = new ShippingMethodBottomSheet();
-                                shippingMethodBottomSheet.show(getSupportFragmentManager(),"");
+                                if (((CartFragment)getSupportFragmentManager().getFragments().get(0))
+                                        .getmViewModel().cartVMHelper.getShippingMethodSelected() == null){
+                                    /**
+                                     * Shipping method not set
+                                     */
 
-                            }else{
-                                /**
-                                 * Shipping method is set
-                                 */
+                                    shippingMethodBottomSheet.show(getSupportFragmentManager(),"");
+
+                                }else{
+                                    /**
+                                     * Shipping method is set
+                                     */
 
 
+                                }
                             }
+
+
+
                             
                             
 
@@ -146,5 +172,24 @@ implements LogginBottomSheet.OnLoginSheetClicked,
 
 
 
+    @Override
+    public void onAddressesToActivityFromCart(List<AddressItem> addresses) {
+        if (addresses!=null){
+            addressBottomSheet.setAddresses(addresses);
+        }
+    }
 
+
+
+    /**
+     * Get selected Address From Adapter to activity
+     */
+    @Override
+    public void onSendAddressToCart(AddressItem addressItems) {
+        ((CartFragment)getSupportFragmentManager().getFragments().get(0))
+                .getmViewModel().cartVMHelper.setAddressSelected(addressItems);
+
+        if (addressBottomSheet !=null)
+            addressBottomSheet.dismiss();
+    }
 }

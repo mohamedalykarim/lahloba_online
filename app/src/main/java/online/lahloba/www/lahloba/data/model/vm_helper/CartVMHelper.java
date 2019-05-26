@@ -4,12 +4,14 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 
 import online.lahloba.www.lahloba.BR;
+import online.lahloba.www.lahloba.data.model.AddressItem;
 
 public class CartVMHelper extends BaseObservable {
     public static final String FREE_SHIPPING = "free_shipping";
     public static final String HYPERLOCAL_SHIPPING = "hyperlocal_shipping";
 
     private String total;
+    private AddressItem addressSelected;
     private String shippingMethodSelected;
     private double hyperlocalCost = 0;
 
@@ -28,6 +30,11 @@ public class CartVMHelper extends BaseObservable {
         return hyperlocalCost;
     }
 
+    @Bindable
+    public AddressItem getAddressSelected() {
+        return addressSelected;
+    }
+
     public void setTotal(String total) {
         this.total = total;
         notifyPropertyChanged(BR.total);
@@ -42,5 +49,10 @@ public class CartVMHelper extends BaseObservable {
     public void setHyperlocalCost(double hyperlocalCost) {
         this.hyperlocalCost = hyperlocalCost;
         notifyPropertyChanged(BR.hyperlocalCost);
+    }
+
+    public void setAddressSelected(AddressItem addressSelected) {
+        this.addressSelected = addressSelected;
+        notifyPropertyChanged(BR.addressSelected);
     }
 }

@@ -4,11 +4,10 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
-import com.google.firebase.auth.FirebaseAuth;
-
 import java.util.List;
 
 import online.lahloba.www.lahloba.data.AppRepository;
+import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.MarketPlace;
 import online.lahloba.www.lahloba.data.model.VMPHelper;
@@ -47,5 +46,13 @@ public class CartViewModel extends ViewModel {
 
     public void cleerMarketPlaceForId() {
         appRepository.cleerMarketPlaceForId();
+    }
+
+    public MutableLiveData<List<AddressItem>> getAddresses(String userId){
+        return appRepository.getAddressItems();
+    }
+
+    public void startGetAddress(String uid) {
+        appRepository.startGetAddrresses(uid);
     }
 }

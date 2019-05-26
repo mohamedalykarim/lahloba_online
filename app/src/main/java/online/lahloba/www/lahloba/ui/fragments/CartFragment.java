@@ -1,6 +1,7 @@
 package online.lahloba.www.lahloba.ui.fragments;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.location.Location;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import okhttp3.internal.Util;
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
+import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.UserItem;
 import online.lahloba.www.lahloba.data.model.VMPHelper;
@@ -32,6 +34,8 @@ import online.lahloba.www.lahloba.data.model.vm_helper.CartVMHelper;
 import online.lahloba.www.lahloba.databinding.FragmentCartBinding;
 import online.lahloba.www.lahloba.ui.adapters.CartAdapter;
 import online.lahloba.www.lahloba.ui.cart.CartViewModel;
+import online.lahloba.www.lahloba.ui.cart.bottom_sheet.AddressBottomSheet;
+import online.lahloba.www.lahloba.ui.cart.bottom_sheet.ShippingMethodBottomSheet;
 import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.ExpandableHeightRecyclerView;
 import online.lahloba.www.lahloba.utils.Injector;
@@ -39,7 +43,6 @@ import online.lahloba.www.lahloba.utils.Utils;
 import online.lahloba.www.lahloba.utils.comparator.CartItemNameComparator;
 
 public class CartFragment extends Fragment {
-
     private CartViewModel mViewModel;
     FragmentCartBinding binding;
     ExpandableHeightRecyclerView cartRecyclerView;
@@ -47,9 +50,10 @@ public class CartFragment extends Fragment {
     CartAdapter cartAdapter;
     List<CartItem> cartItemList;
     private Location userLocation;
+    AddressesToActivityFromCart addressesToActivityFromCart;
 
 
-    public static CartFragment newInstance(Bundle args) {
+    public static CartFragment newInstance(Bundle args, AddressesToActivityFromCart listener) {
         CartFragment fragment = new CartFragment();
         fragment.setArguments(args);
         return fragment;
@@ -169,10 +173,29 @@ public class CartFragment extends Fragment {
 
         });
 
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            mViewModel.startGetAddress(FirebaseAuth.getInstance().getUid());
+
+            mViewModel.getAddresses(FirebaseAuth.getInstance().getUid()).observe(this,addresses->{
+                addressesToActivityFromCart.onAddressesToActivityFromCart(addresses);
+                Toast.makeText(getContext(), ""+addresses.size(), Toast.LENGTH_SHORT).show();
+            });
+        }
 
 
 
 
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try{
+            addressesToActivityFromCart = (AddressesToActivityFromCart) context;
+        }catch (ClassCastException e){
+            throw new ClassCastException(context.toString() + "Must implement AddressesToActivityFromCart");
+        }
 
     }
 
@@ -215,4 +238,7 @@ public class CartFragment extends Fragment {
         return mViewModel;
     }
 
+    public interface AddressesToActivityFromCart{
+        void onAddressesToActivityFromCart(List<AddressItem> addresses);
+    }
 }

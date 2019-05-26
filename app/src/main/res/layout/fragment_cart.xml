@@ -74,6 +74,63 @@
                 </android.support.constraint.ConstraintLayout>
 
                 <android.support.constraint.ConstraintLayout
+                    android:id="@+id/addressContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/btn_bg_1"
+                    android:paddingBottom="8dp"
+                    android:visibility='@{(cartViewModel.cartVMHelper.addressSelected == null) ? View.GONE : View.VISIBLE}'>
+
+                    <TextView
+                        android:id="@+id/textView29"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:text="Current Selected Address"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/currentAddressNameTv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@{cartViewModel.cartVMHelper.addressSelected.name}"
+                        app:layout_constraintEnd_toEndOf="@+id/imageView12"
+                        app:layout_constraintStart_toStartOf="@+id/imageView12"
+                        app:layout_constraintTop_toBottomOf="@+id/imageView12" />
+
+                    <ImageView
+                        android:id="@+id/imageView12"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginBottom="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="@+id/textView29"
+                        app:layout_constraintStart_toStartOf="@+id/textView29"
+                        app:layout_constraintTop_toBottomOf="@+id/textView29"
+                        app:srcCompat="@drawable/ic_action_my_location" />
+
+                    <TextView
+                        android:id="@+id/currentAddressTv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text='@{cartViewModel.cartVMHelper.addressSelected.country + "/" +cartViewModel.cartVMHelper.addressSelected.city + "/" + cartViewModel.cartVMHelper.addressSelected.zone + "/" +cartViewModel.cartVMHelper.addressSelected.building + "/" +cartViewModel.cartVMHelper.addressSelected.floor + "/" +cartViewModel.cartVMHelper.addressSelected.flatNumber}'
+                        app:layout_constraintEnd_toEndOf="@+id/currentAddressNameTv"
+                        app:layout_constraintStart_toStartOf="@+id/currentAddressNameTv"
+                        app:layout_constraintTop_toBottomOf="@+id/currentAddressNameTv" />
+
+
+                </android.support.constraint.ConstraintLayout>
+
+                <android.support.constraint.ConstraintLayout
                     android:id="@+id/shippingContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -100,7 +157,8 @@
                         android:id="@+id/shippingMetodImage"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
-                        android:layout_marginTop="18dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="16dp"
                         android:layout_marginEnd="8dp"
                         android:shippingIcon="@{cartViewModel.cartVMHelper.shippingMethodSelected == cartViewModel.cartVMHelper.FREE_SHIPPING ? CartVMHelper.FREE_SHIPPING : CartVMHelper.HYPERLOCAL_SHIPPING}"
                         app:layout_constraintEnd_toEndOf="@+id/textView28"
@@ -138,8 +196,8 @@
                         android:layout_marginStart="32dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="32dp"
-                        android:visibility='@{(cartViewModel.cartVMHelper.shippingMethodSelected != CartVMHelper.HYPERLOCAL_SHIPPING) ? View.GONE : View.VISIBLE}'
                         android:background="@drawable/btn_bg_3"
+                        android:visibility='@{(cartViewModel.cartVMHelper.shippingMethodSelected != CartVMHelper.HYPERLOCAL_SHIPPING) ? View.GONE : View.VISIBLE}'
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/hyperlocalCostTV">
@@ -152,8 +210,8 @@
                             android:layout_marginTop="8dp"
                             android:layout_marginEnd="8dp"
                             android:layout_marginBottom="8dp"
-                            android:textColor="@color/white"
                             android:text='@{cartViewModel.cartVMHelper.hyperlocalCost+" "+"EGP"}'
+                            android:textColor="@color/white"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
