@@ -746,7 +746,8 @@ public class NetworkDataHelper {
     public void getMarketPlaceForId(String id) {
 
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("MarketPlace").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.child("MarketPlace").child(id)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChildren()){
@@ -764,5 +765,9 @@ public class NetworkDataHelper {
 
     public MutableLiveData<MarketPlace> getMarketPlace() {
         return marketPlace;
+    }
+
+    public void cleerMarketPlaceForId() {
+        marketPlace.setValue(null);
     }
 }

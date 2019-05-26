@@ -46,6 +46,7 @@ public class CartFragment extends Fragment {
     LinearLayoutManager linearLayoutManager;
     CartAdapter cartAdapter;
     List<CartItem> cartItemList;
+    private Location userLocation;
 
 
     public static CartFragment newInstance(Bundle args) {
@@ -66,6 +67,8 @@ public class CartFragment extends Fragment {
         ViewModelProviderFactory factory = Injector.getVMFactory(this.getContext(), vmpHelper);
         mViewModel = ViewModelProviders.of(this, factory).get(CartViewModel.class);
         binding.setCartViewModel(mViewModel);
+
+        mViewModel.cleerMarketPlaceForId();
 
         View view = binding.getRoot();
 
@@ -149,6 +152,24 @@ public class CartFragment extends Fragment {
         }
 
 
+        mViewModel.getMarketPlace().observe(this, marketPlace -> {
+
+            if (marketPlace==null)return;
+
+
+            Location marketplaceLocation = new Location("");
+            marketplaceLocation.setLatitude(marketPlace.getLat());
+            marketplaceLocation.setLongitude(marketPlace.getLan());
+            double distance = marketplaceLocation.distanceTo(userLocation)/1000;
+
+
+            mViewModel.cartVMHelper.setHyperlocalCost(mViewModel.cartVMHelper.getHyperlocalCost() + Utils.getCostByDistance(distance));
+
+            binding.hyperlocalCostTV.append(marketPlace.getName() + "   "+getString(R.string.cost)+": "+ Utils.getCostByDistance(distance)+"\n");
+
+        });
+
+
 
 
 
@@ -171,27 +192,9 @@ public class CartFragment extends Fragment {
             mViewModel.startGetMarketPlaceForId(marketIds.get(i));
         }
 
-
-        Location userLocation = new Location("");
+        userLocation = new Location("");
         userLocation.setLatitude(25.6);
         userLocation.setLongitude(32.5);
-
-        mViewModel.getMarketPlace().observe(this, marketPlace -> {
-        Log.v("string","done");
-
-
-            Location marketplaceLocation = new Location("");
-            marketplaceLocation.setLatitude(marketPlace.getLat());
-            marketplaceLocation.setLongitude(marketPlace.getLan());
-            double distance = marketplaceLocation.distanceTo(userLocation)/1000;
-
-
-            mViewModel.cartVMHelper.setHyperlocalCost(mViewModel.cartVMHelper.getHyperlocalCost() + Utils.getCostByDistance(distance));
-
-            binding.hyperlocalCostTV.append(marketPlace.getName() + "   "+getString(R.string.cost)+": "+ Utils.getCostByDistance(distance)+"\n");
-
-        });
-
     }
 
 

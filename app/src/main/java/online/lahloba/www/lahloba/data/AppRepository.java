@@ -233,4 +233,8 @@ public class AppRepository {
     public MutableLiveData<MarketPlace> getMarketPlace() {
         return networkDataHelper.getMarketPlace();
     }
+
+    public void cleerMarketPlaceForId() {
+        networkDataHelper.cleerMarketPlaceForId();
+    }
 }

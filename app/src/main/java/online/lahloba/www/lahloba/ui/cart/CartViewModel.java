@@ -45,7 +45,7 @@ public class CartViewModel extends ViewModel {
         return appRepository.getMarketPlace();
     }
 
-    public void setCartVMHelper(CartVMHelper cartVMHelper) {
-        this.cartVMHelper = cartVMHelper;
+    public void cleerMarketPlaceForId() {
+        appRepository.cleerMarketPlaceForId();
     }
 }
