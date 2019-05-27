@@ -87,10 +87,7 @@ public class AppRepository {
     }
 
     public void insertCartItemToInternaldb(CartItemRoom cartItem){
-        long mm =         database.cartDao().insert(cartItem);
-
-        Log.v("mmm",""+mm);
-
+        database.cartDao().insert(cartItem);
     }
 
     public void changeCartItemCountInternaldb(String productId, int count){
@@ -236,5 +233,20 @@ public class AppRepository {
 
     public void cleerMarketPlaceForId() {
         networkDataHelper.cleerMarketPlaceForId();
+    }
+
+    public void insertMarketPlaceToInternal(MarketPlace marketPlace){
+        Injector.getExecuter().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                long m = database.marketPlaceDao().insert(marketPlace);
+
+            }
+        });
+    }
+
+    public LiveData<List<MarketPlace>> getMarketPlaceFromInternal(List<String> ids) {
+
+        return database.marketPlaceDao().getSpecificMarketPlaces(ids);
     }
 }

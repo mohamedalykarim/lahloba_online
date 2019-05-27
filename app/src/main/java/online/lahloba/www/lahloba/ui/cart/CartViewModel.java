@@ -55,4 +55,12 @@ public class CartViewModel extends ViewModel {
     public void startGetAddress(String uid) {
         appRepository.startGetAddrresses(uid);
     }
+
+    public void insertMarketPlaceToInternal(MarketPlace marketPlace) {
+        appRepository.insertMarketPlaceToInternal(marketPlace);
+    }
+
+    public LiveData<List<MarketPlace>> getMarketPlaceFromInternal(List<String> ids) {
+        return appRepository.getMarketPlaceFromInternal(ids);
+    }
 }
