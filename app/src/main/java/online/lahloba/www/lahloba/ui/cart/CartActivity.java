@@ -164,8 +164,6 @@ implements
                     .getmViewModel().cartVMHelper.setShippingMethodSelected(CartVMHelper.HYPERLOCAL_SHIPPING);
 
 
-
-
             shippingMethodBottomSheet.dismiss();
         }
     }

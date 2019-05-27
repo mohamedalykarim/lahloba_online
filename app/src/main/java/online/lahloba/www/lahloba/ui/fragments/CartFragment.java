@@ -108,7 +108,6 @@ public class CartFragment extends Fragment {
 
                     Collections.sort(cartItems, new CartItemNameComparator());
 
-                    calculateTotal();
 
                     cartItemList.clear();
                     cartAdapter.notifyDataSetChanged();
@@ -116,6 +115,7 @@ public class CartFragment extends Fragment {
                     cartItemList.addAll(cartItems);
                     cartAdapter.notifyDataSetChanged();
 
+                    calculateTotal();
 
                     calculateDistance();
                     setHyperlocalData();
@@ -231,12 +231,15 @@ public class CartFragment extends Fragment {
 
 
     public void calculateTotal(){
+
         double total = 0;
 
         for (int i=0; i < cartItemList.size(); i++){
-            double price = Double.parseDouble(cartItemList.get(i).getPrice()) * cartItemList.get(0).getCount();
+            int price = 0;
+            price = Integer.parseInt(cartItemList.get(i).getPrice()) * cartItemList.get(i).getCount();
             total = total+price;
         }
+
 
         mViewModel.cartVMHelper.setTotal(String.valueOf(total));
 
