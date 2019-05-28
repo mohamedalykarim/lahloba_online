@@ -95,6 +95,29 @@ public class CartFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
+        /**
+         * Observe the addresses to show on address selection
+         */
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            mViewModel.startGetAddress(FirebaseAuth.getInstance().getUid());
+
+            mViewModel.getAddresses(FirebaseAuth.getInstance().getUid()).observe(this,addresses->{
+                addressesToActivityFromCart.onAddressesToActivityFromCart(addresses);
+            });
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+
+
+        if (FirebaseAuth.getInstance().getCurrentUser() != null){
+            cartAdapter.setUserId(FirebaseAuth.getInstance().getUid());
+        }
+
         /**
          * get cart items from firebase if user is logged in
          */
@@ -169,33 +192,6 @@ public class CartFragment extends Fragment {
 
 
 
-
-        /**
-         * Observe the addresses to show on address selection
-         */
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            mViewModel.startGetAddress(FirebaseAuth.getInstance().getUid());
-
-            mViewModel.getAddresses(FirebaseAuth.getInstance().getUid()).observe(this,addresses->{
-                addressesToActivityFromCart.onAddressesToActivityFromCart(addresses);
-            });
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-
-
-        if (FirebaseAuth.getInstance().getCurrentUser() != null){
-            cartAdapter.setUserId(FirebaseAuth.getInstance().getUid());
-        }
-
-
-
-
-
     }
 
     @Override
@@ -235,8 +231,8 @@ public class CartFragment extends Fragment {
         double total = 0;
 
         for (int i=0; i < cartItemList.size(); i++){
-            int price = 0;
-            price = Integer.parseInt(cartItemList.get(i).getPrice()) * cartItemList.get(i).getCount();
+            double price = 0;
+            price = Double.parseDouble(cartItemList.get(i).getPrice()) * cartItemList.get(i).getCount();
             total = total+price;
         }
 

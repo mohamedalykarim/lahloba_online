@@ -91,6 +91,26 @@ public class ProductsFragment extends Fragment {
         mViewModel.deleteAllFromCartCount0();
 
 
+
+        floatButton(container);
+
+        productAdapter = new ProductAdapter(getContext());
+        productItemList = new ArrayList<>();
+        productAdapter.setProductItemList(productItemList);
+        productsRV.setAdapter(productAdapter);
+
+
+
+
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mViewModel.startProductsForCategory();
+
+
         if (FirebaseAuth.getInstance().getCurrentUser() != null){
             mViewModel.getCartItem().observe(this, cartItems -> {
                 mViewModel.productVMHelper.setCartCount(cartItems.size());
@@ -110,24 +130,6 @@ public class ProductsFragment extends Fragment {
 
         });
 
-        floatButton(container);
-
-
-
-
-
-        return view;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        mViewModel.startProductsForCategory();
-
-        productAdapter = new ProductAdapter(getContext());
-        productItemList = new ArrayList<>();
-        productAdapter.setProductItemList(productItemList);
-        productsRV.setAdapter(productAdapter);
 
         loginViewModel.getCurrentUserDetails().observe(this,currentUser->{
             if (null != currentUser){
