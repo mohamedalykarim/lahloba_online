@@ -13,13 +13,15 @@ public class AddressItem implements Parcelable {
     private String zone;
     private String street;
     private String building;
+    private double lat;
+    private double lon;
     private int floor;
     private int flatNumber;
     private boolean isDefault;
+    private String address;
 
     public AddressItem() {
     }
-
 
     protected AddressItem(Parcel in) {
         id = in.readString();
@@ -29,12 +31,14 @@ public class AddressItem implements Parcelable {
         zone = in.readString();
         street = in.readString();
         building = in.readString();
+        lat = in.readDouble();
+        lon = in.readDouble();
         floor = in.readInt();
         flatNumber = in.readInt();
         isDefault = in.readByte() != 0;
+        address = in.readString();
     }
 
-    @Exclude
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id);
@@ -44,26 +48,25 @@ public class AddressItem implements Parcelable {
         dest.writeString(zone);
         dest.writeString(street);
         dest.writeString(building);
+        dest.writeDouble(lat);
+        dest.writeDouble(lon);
         dest.writeInt(floor);
         dest.writeInt(flatNumber);
         dest.writeByte((byte) (isDefault ? 1 : 0));
+        dest.writeString(address);
     }
 
-    @Exclude
     @Override
     public int describeContents() {
         return 0;
     }
 
-    @Exclude
     public static final Creator<AddressItem> CREATOR = new Creator<AddressItem>() {
-        @Exclude
         @Override
         public AddressItem createFromParcel(Parcel in) {
             return new AddressItem(in);
         }
 
-        @Exclude
         @Override
         public AddressItem[] newArray(int size) {
             return new AddressItem[size];
@@ -98,6 +101,14 @@ public class AddressItem implements Parcelable {
         return building;
     }
 
+    public double getLat() {
+        return lat;
+    }
+
+    public double getLon() {
+        return lon;
+    }
+
     public int getFloor() {
         return floor;
     }
@@ -108,6 +119,10 @@ public class AddressItem implements Parcelable {
 
     public boolean isDefault() {
         return isDefault;
+    }
+
+    public String getAddress() {
+        return address;
     }
 
     public void setId(String id) {
@@ -138,6 +153,14 @@ public class AddressItem implements Parcelable {
         this.building = building;
     }
 
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public void setLon(double lon) {
+        this.lon = lon;
+    }
+
     public void setFloor(int floor) {
         this.floor = floor;
     }
@@ -148,5 +171,9 @@ public class AddressItem implements Parcelable {
 
     public void setDefault(boolean aDefault) {
         isDefault = aDefault;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

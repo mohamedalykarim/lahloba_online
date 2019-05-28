@@ -163,6 +163,9 @@ implements
             ((CartFragment)getSupportFragmentManager().getFragments().get(0))
                     .getmViewModel().cartVMHelper.setShippingMethodSelected(CartVMHelper.HYPERLOCAL_SHIPPING);
 
+            ((CartFragment)getSupportFragmentManager().getFragments().get(0))
+                    .getmViewModel().cartVMHelper
+                    .setHyperlocalCost(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getNonFinalHyperLocalCost());
 
             shippingMethodBottomSheet.dismiss();
         }
@@ -186,6 +189,9 @@ implements
     public void onSendAddressToCart(AddressItem addressItems) {
         ((CartFragment)getSupportFragmentManager().getFragments().get(0))
                 .getmViewModel().cartVMHelper.setAddressSelected(addressItems);
+
+        ((CartFragment)getSupportFragmentManager().getFragments().get(0))
+                .startRetrieveCartItemsAfterSelectAddress();
 
         if (addressBottomSheet !=null)
             addressBottomSheet.dismiss();

@@ -56,6 +56,7 @@ public class CartFragment extends Fragment {
     private Location userLocation;
     AddressesToActivityFromCart addressesToActivityFromCart;
     List<String> marketIds;
+    double nonFinalHyperLocalCost;
 
     public static CartFragment newInstance(Bundle args, AddressesToActivityFromCart listener) {
         CartFragment fragment = new CartFragment();
@@ -191,7 +192,6 @@ public class CartFragment extends Fragment {
         });
 
 
-
     }
 
     @Override
@@ -237,7 +237,7 @@ public class CartFragment extends Fragment {
         }
 
 
-        mViewModel.cartVMHelper.setTotal(String.valueOf(total));
+        mViewModel.cartVMHelper.setTotal(total);
 
     }
 
@@ -254,36 +254,51 @@ public class CartFragment extends Fragment {
      *  finish the calculations of hyper local and show in the screen
      */
     public void setHyperlocalData(){
+           if (mViewModel.cartVMHelper.getAddressSelected() != null){
 
-        userLocation = new Location("");
-        userLocation.setLatitude(25.6);
-        userLocation.setLongitude(32.5);
+               userLocation = new Location("");
+               userLocation.setLatitude(mViewModel.cartVMHelper.getAddressSelected().getLat());
+               userLocation.setLongitude(mViewModel.cartVMHelper.getAddressSelected().getLat());
 
-
-        mViewModel.getMarketPlaceFromInternal(marketIds)
-                .observe(this, marketPlaces -> {
-
-
-                    if (marketPlaces != null){
-                        binding.hyperlocalCostTV.setText("");
-                        mViewModel.cartVMHelper.setHyperlocalCost(0);
-
-                        for (MarketPlace marketPlace : marketPlaces){
-                            Log.v("string", ""+marketIds.size() +"-"+ marketPlace.getId());
+               mViewModel.getMarketPlaceFromInternal(marketIds)
+                       .observe(this, marketPlaces -> {
 
 
-                            Location marketplaceLocation = new Location("");
-                            marketplaceLocation.setLatitude(marketPlace.getLat());
-                            marketplaceLocation.setLongitude(marketPlace.getLan());
-                            double distance = marketplaceLocation.distanceTo(userLocation)/1000;
+                           if (marketPlaces != null ){
+                               binding.hyperlocalCostTV.setText("");
+                               mViewModel.cartVMHelper.setHyperlocalCost(0);
+                               nonFinalHyperLocalCost = 0;
 
-                            mViewModel.cartVMHelper.setHyperlocalCost(mViewModel.cartVMHelper.getHyperlocalCost() + Utils.getCostByDistance(distance));
-                            binding.hyperlocalCostTV.append(marketPlace.getName() + "   "+getString(R.string.cost)+": "+ Utils.getCostByDistance(distance)+"\n");
+                               for (MarketPlace marketPlace : marketPlaces){
+                                   Log.v("string", ""+marketIds.size() +"-"+ marketPlace.getId());
 
-                        }
-                    }
-                });
+
+                                   Location marketplaceLocation = new Location("");
+                                   marketplaceLocation.setLatitude(marketPlace.getLat());
+                                   marketplaceLocation.setLongitude(marketPlace.getLan());
+                                   double distance = marketplaceLocation.distanceTo(userLocation)/1000;
+
+                                   nonFinalHyperLocalCost = nonFinalHyperLocalCost + Utils.getCostByDistance(distance);
+
+                                   if (mViewModel.cartVMHelper.getShippingMethodSelected() != null){
+                                       mViewModel.cartVMHelper.setHyperlocalCost(nonFinalHyperLocalCost);
+                                   }
+
+                                   binding.hyperlocalCostTV.append(marketPlace.getName() + "   "+getString(R.string.cost)+": "+ Utils.getCostByDistance(distance)+"\n");
+
+                               }
+                           }
+                       });
+           }
+
     }
 
 
+    public void startRetrieveCartItemsAfterSelectAddress(){
+        mViewModel.startGetCartItems(FirebaseAuth.getInstance().getUid());
+    }
+
+    public double getNonFinalHyperLocalCost() {
+        return nonFinalHyperLocalCost;
+    }
 }

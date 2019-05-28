@@ -10,13 +10,13 @@ public class CartVMHelper extends BaseObservable {
     public static final String FREE_SHIPPING = "free_shipping";
     public static final String HYPERLOCAL_SHIPPING = "hyperlocal_shipping";
 
-    private String total;
+    private double total;
     private AddressItem addressSelected;
     private String shippingMethodSelected;
     private double hyperlocalCost = 0;
 
     @Bindable
-    public String getTotal() {
+    public double getTotal() {
         return total;
     }
 
@@ -35,7 +35,7 @@ public class CartVMHelper extends BaseObservable {
         return addressSelected;
     }
 
-    public void setTotal(String total) {
+    public void setTotal(double total) {
         this.total = total;
         notifyPropertyChanged(BR.total);
     }
