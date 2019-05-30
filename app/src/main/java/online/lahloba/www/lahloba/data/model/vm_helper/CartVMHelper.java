@@ -14,6 +14,7 @@ public class CartVMHelper extends BaseObservable {
     private AddressItem addressSelected;
     private String shippingMethodSelected;
     private double hyperlocalCost = 0;
+    private String pay_method;
 
     @Bindable
     public double getTotal() {
@@ -35,6 +36,10 @@ public class CartVMHelper extends BaseObservable {
         return addressSelected;
     }
 
+    public String getPay_method() {
+        return pay_method;
+    }
+
     public void setTotal(double total) {
         this.total = total;
         notifyPropertyChanged(BR.total);
@@ -54,5 +59,9 @@ public class CartVMHelper extends BaseObservable {
     public void setAddressSelected(AddressItem addressSelected) {
         this.addressSelected = addressSelected;
         notifyPropertyChanged(BR.addressSelected);
+    }
+
+    public void setPay_method(String pay_method) {
+        this.pay_method = pay_method;
     }
 }

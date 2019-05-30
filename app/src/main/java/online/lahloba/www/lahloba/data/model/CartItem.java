@@ -1,6 +1,8 @@
 package online.lahloba.www.lahloba.data.model;
 
-public class CartItem {
+import java.io.Serializable;
+
+public class CartItem implements Serializable {
     String id;
     int count;
     String productId;

@@ -78,6 +78,7 @@ public class CartFragment extends Fragment {
         binding.setCartViewModel(mViewModel);
 
         mViewModel.cleerMarketPlaceForId();
+        mViewModel.resetIsOrderAdded(false);
 
         View view = binding.getRoot();
 
@@ -106,7 +107,20 @@ public class CartFragment extends Fragment {
             mViewModel.getAddresses(FirebaseAuth.getInstance().getUid()).observe(this,addresses->{
                 addressesToActivityFromCart.onAddressesToActivityFromCart(addresses);
             });
+
+            mViewModel.getIsOrderAdded().observe(this, isOrderAdded->{
+                if (null != isOrderAdded){
+                    if (isOrderAdded){
+                        getActivity().finish();
+                        Toast.makeText(getContext(), "added", Toast.LENGTH_SHORT).show();
+
+                    }
+                }
+
+            });
         }
+
+
     }
 
     @Override
@@ -270,21 +284,24 @@ public class CartFragment extends Fragment {
                                nonFinalHyperLocalCost = 0;
 
                                for (MarketPlace marketPlace : marketPlaces){
-                                   Log.v("string", ""+marketIds.size() +"-"+ marketPlace.getId());
+                                   for (CartItem cartItem : cartItemList){
+                                       if (cartItem.getMarketId().equals(marketPlace.getId())){
+                                           Location marketplaceLocation = new Location("");
+                                           marketplaceLocation.setLatitude(marketPlace.getLat());
+                                           marketplaceLocation.setLongitude(marketPlace.getLan());
+                                           double distance = marketplaceLocation.distanceTo(userLocation)/1000;
 
+                                           nonFinalHyperLocalCost = nonFinalHyperLocalCost + Utils.getCostByDistance(distance);
 
-                                   Location marketplaceLocation = new Location("");
-                                   marketplaceLocation.setLatitude(marketPlace.getLat());
-                                   marketplaceLocation.setLongitude(marketPlace.getLan());
-                                   double distance = marketplaceLocation.distanceTo(userLocation)/1000;
+                                           if (mViewModel.cartVMHelper.getShippingMethodSelected() != null){
+                                               mViewModel.cartVMHelper.setHyperlocalCost(nonFinalHyperLocalCost);
+                                           }
 
-                                   nonFinalHyperLocalCost = nonFinalHyperLocalCost + Utils.getCostByDistance(distance);
+                                           binding.hyperlocalCostTV.append(marketPlace.getName() + "   "+getString(R.string.cost)+": "+ Utils.getCostByDistance(distance)+"\n");
 
-                                   if (mViewModel.cartVMHelper.getShippingMethodSelected() != null){
-                                       mViewModel.cartVMHelper.setHyperlocalCost(nonFinalHyperLocalCost);
+                                       }
                                    }
 
-                                   binding.hyperlocalCostTV.append(marketPlace.getName() + "   "+getString(R.string.cost)+": "+ Utils.getCostByDistance(distance)+"\n");
 
                                }
                            }
@@ -300,5 +317,9 @@ public class CartFragment extends Fragment {
 
     public double getNonFinalHyperLocalCost() {
         return nonFinalHyperLocalCost;
+    }
+
+    public List<CartItem> getCartItemList() {
+        return cartItemList;
     }
 }

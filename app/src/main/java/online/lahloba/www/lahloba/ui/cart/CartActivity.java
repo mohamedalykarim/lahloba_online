@@ -18,11 +18,14 @@ import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.HashMap;
 import java.util.List;
 
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.AddressItem;
+import online.lahloba.www.lahloba.data.model.CartItem;
+import online.lahloba.www.lahloba.data.model.OrderItem;
 import online.lahloba.www.lahloba.data.model.UserItem;
 import online.lahloba.www.lahloba.data.model.vm_helper.CartVMHelper;
 import online.lahloba.www.lahloba.databinding.CartActivityBinding;
@@ -113,9 +116,30 @@ implements
 
                                 }else{
                                     /**
-                                     * Shipping method is set
+                                     * Start the order
                                      */
 
+                                    OrderItem orderItem = new OrderItem();
+                                    HashMap<String, CartItem> products = new HashMap<>();
+                                    for (CartItem item : ((CartFragment)getSupportFragmentManager().getFragments().get(0)).getCartItemList()){
+                                        products.put(item.getId(), item);
+                                    }
+
+
+                                    orderItem.setProducts(products);
+                                    orderItem.setAddressSelected(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getAddressSelected());
+                                    orderItem.setHyperlocalCost(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getHyperlocalCost());
+                                    orderItem.setTotal(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getTotal());
+                                    orderItem.setPay_method(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getPay_method());
+                                    orderItem.setShippingMethodSelected(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getShippingMethodSelected());
+                                    orderItem.setOrderTotal(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getTotal()
+                                    +((CartFragment)getSupportFragmentManager().getFragments().get(0))
+                                                    .getmViewModel().cartVMHelper.getHyperlocalCost()
+                                    );
+
+                                    ((CartFragment)getSupportFragmentManager().getFragments().get(0))
+                                            .getmViewModel()
+                                            .startNewOrder(orderItem);
 
                                 }
                             }

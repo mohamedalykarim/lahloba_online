@@ -28,6 +28,7 @@ import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.MainMenuItem;
 import online.lahloba.www.lahloba.data.model.MarketPlace;
+import online.lahloba.www.lahloba.data.model.OrderItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.data.model.SubMenuItem;
 import online.lahloba.www.lahloba.data.model.UserItem;
@@ -57,6 +58,7 @@ import static online.lahloba.www.lahloba.utils.Constants.START_GET_MARKETPLACE;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_EMAIL;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_PASSWORD;
+import static online.lahloba.www.lahloba.utils.Constants.START_NEW_ORDER;
 import static online.lahloba.www.lahloba.utils.Constants.START_SET_DEFAULT_ADDRESS;
 
 public class NetworkDataHelper {
@@ -75,6 +77,7 @@ public class NetworkDataHelper {
     MutableLiveData<AddressItem> defaultAddress;
     MutableLiveData<DataSnapshot> governorates;
     MutableLiveData<MarketPlace> marketPlace;
+    MutableLiveData<Boolean> isOrderAdded;
 
     private MutableLiveData<List<ProductItem>> productsItems;
 
@@ -94,6 +97,9 @@ public class NetworkDataHelper {
         isLogged = new MutableLiveData<>();
         userDetails = new MutableLiveData<>();
         isUserCreated = new MutableLiveData<>();
+        isOrderAdded = new MutableLiveData<>();
+
+
         isUserCreated.setValue(false);
 
         isAddressAdded = new MutableLiveData<>();
@@ -769,5 +775,43 @@ public class NetworkDataHelper {
 
     public void cleerMarketPlaceForId() {
         marketPlace.setValue(null);
+    }
+
+    //############################### Order ############################//
+    public void startNewOrder(OrderItem orderItem) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(START_NEW_ORDER);
+        intent.putExtra(START_NEW_ORDER,orderItem);
+        mContext.startService(intent);
+
+    }
+
+    public void startAddNewOrderToFirebase(OrderItem orderItem) {
+        String userId = FirebaseAuth.getInstance().getUid();
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        String pushKey = mDatabase.child("Orders").child(userId).push().getKey();
+        orderItem.setId(pushKey);
+        mDatabase.child("Orders").child(userId).child(pushKey).setValue(orderItem)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()){
+                            mDatabase.child("Cart").child(userId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    isOrderAdded.setValue(true);
+                                }
+                            });
+                        }
+                    }
+                });
+    }
+
+    public void resetIsOrderAdded(boolean isAdded) {
+        this.isOrderAdded.setValue(false);
+    }
+
+    public MutableLiveData<Boolean> getIsOrderAdded() {
+        return isOrderAdded;
     }
 }

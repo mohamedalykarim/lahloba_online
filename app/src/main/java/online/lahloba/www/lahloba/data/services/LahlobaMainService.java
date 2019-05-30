@@ -6,6 +6,8 @@ import android.support.annotation.Nullable;
 
 import online.lahloba.www.lahloba.data.NetworkDataHelper;
 import online.lahloba.www.lahloba.data.model.AddressItem;
+import online.lahloba.www.lahloba.data.model.CartItem;
+import online.lahloba.www.lahloba.data.model.OrderItem;
 import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.Injector;
 
@@ -29,6 +31,7 @@ import static online.lahloba.www.lahloba.utils.Constants.START_GET_MARKETPLACE;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_EMAIL;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_PASSWORD;
+import static online.lahloba.www.lahloba.utils.Constants.START_NEW_ORDER;
 import static online.lahloba.www.lahloba.utils.Constants.START_SET_DEFAULT_ADDRESS;
 
 public class LahlobaMainService extends IntentService {
@@ -89,6 +92,9 @@ public class LahlobaMainService extends IntentService {
         }else if(intent.getAction().equals(START_GET_MARKETPLACE)){
             String id = intent.getStringExtra(START_GET_MARKETPLACE);
             networkDataHelper.getMarketPlaceForId(id);
+        }else if(intent.getAction().equals(START_NEW_ORDER)){
+            OrderItem orderItem = intent.getParcelableExtra(START_NEW_ORDER);
+            networkDataHelper.startAddNewOrderToFirebase(orderItem);
         }
 
 

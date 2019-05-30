@@ -13,6 +13,7 @@ import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.MainMenuItem;
 import online.lahloba.www.lahloba.data.model.MarketPlace;
+import online.lahloba.www.lahloba.data.model.OrderItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.data.model.SubMenuItem;
 import online.lahloba.www.lahloba.data.model.UserItem;
@@ -248,5 +249,17 @@ public class AppRepository {
     public LiveData<List<MarketPlace>> getMarketPlaceFromInternal(List<String> ids) {
 
         return database.marketPlaceDao().getSpecificMarketPlaces(ids);
+    }
+
+    public void startNewOrder(OrderItem orderItem) {
+        networkDataHelper.startNewOrder(orderItem);
+    }
+
+    public void resetIsOrderAdded(boolean isAdded) {
+        networkDataHelper.resetIsOrderAdded(isAdded);
+    }
+
+    public MutableLiveData<Boolean> getIsOrderAdded() {
+        return networkDataHelper.getIsOrderAdded();
     }
 }

@@ -10,6 +10,7 @@ import online.lahloba.www.lahloba.data.AppRepository;
 import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.MarketPlace;
+import online.lahloba.www.lahloba.data.model.OrderItem;
 import online.lahloba.www.lahloba.data.model.VMPHelper;
 import online.lahloba.www.lahloba.data.model.room_entity.CartItemRoom;
 import online.lahloba.www.lahloba.data.model.vm_helper.CartVMHelper;
@@ -66,5 +67,17 @@ public class CartViewModel extends ViewModel {
 
     public void startGetCartItems(String uid) {
         appRepository.startGetCartItems(uid);
+    }
+
+    public void startNewOrder(OrderItem orderItem) {
+        appRepository.startNewOrder(orderItem);
+    }
+
+    public void resetIsOrderAdded(boolean isAdded) {
+        appRepository.resetIsOrderAdded(isAdded);
+    }
+
+    public MutableLiveData<Boolean> getIsOrderAdded() {
+        return appRepository.getIsOrderAdded();
     }
 }
