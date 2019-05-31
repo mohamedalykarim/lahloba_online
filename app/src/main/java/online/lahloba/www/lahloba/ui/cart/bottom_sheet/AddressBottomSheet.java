@@ -10,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,9 +17,6 @@ import java.util.List;
 import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.databinding.BottomSheetAdressBinding;
 import online.lahloba.www.lahloba.ui.adapters.CartAddressAdapter;
-import online.lahloba.www.lahloba.ui.cart.CartViewModel;
-import online.lahloba.www.lahloba.ui.fragments.CartFragment;
-import online.lahloba.www.lahloba.utils.ExpandableHeightRecyclerView;
 
 public class AddressBottomSheet extends BottomSheetDialogFragment
         implements CartAddressAdapter.OnAddressSelected {

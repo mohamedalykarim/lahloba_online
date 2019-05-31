@@ -1,17 +1,8 @@
 package online.lahloba.www.lahloba.ui.cart;
 
-import android.Manifest;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -26,13 +17,12 @@ import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.OrderItem;
-import online.lahloba.www.lahloba.data.model.UserItem;
 import online.lahloba.www.lahloba.data.model.vm_helper.CartVMHelper;
 import online.lahloba.www.lahloba.databinding.CartActivityBinding;
+import online.lahloba.www.lahloba.ui.cart.bottom_sheet.AddOrderConfirmBottomSheet;
 import online.lahloba.www.lahloba.ui.cart.bottom_sheet.AddressBottomSheet;
 import online.lahloba.www.lahloba.ui.cart.bottom_sheet.LogginBottomSheet;
 import online.lahloba.www.lahloba.ui.cart.bottom_sheet.ShippingMethodBottomSheet;
-import online.lahloba.www.lahloba.ui.fragments.CartFragment;
 import online.lahloba.www.lahloba.ui.login.LoginActivity;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
 import online.lahloba.www.lahloba.utils.Injector;
@@ -44,15 +34,18 @@ implements
         LogginBottomSheet.OnLoginSheetClicked,
         ShippingMethodBottomSheet.OnShippingMethodClicked,
         CartFragment.AddressesToActivityFromCart,
-        AddressBottomSheet.SendAddressToCart
+        AddressBottomSheet.SendAddressToCart,
+        AddOrderConfirmBottomSheet.ConfirmClickListener
 
 {
 
     LogginBottomSheet logginBottomSheet;
     ShippingMethodBottomSheet shippingMethodBottomSheet;
     AddressBottomSheet addressBottomSheet;
+    AddOrderConfirmBottomSheet addOrderConfirmBottomSheet;
 
     private LoginViewModel loginViewModel;
+    private boolean isStartAddingNewOrder;
 
 
     @Override
@@ -102,44 +95,26 @@ implements
                                 addressBottomSheet.show(getSupportFragmentManager(),"");
 
                             }else {
-                                /**
-                                 * address selected then choose shipping method
-                                 */
+
+                                  /*
+                                   * address selected then choose shipping method
+                                   */
 
                                 if (((CartFragment)getSupportFragmentManager().getFragments().get(0))
                                         .getmViewModel().cartVMHelper.getShippingMethodSelected() == null){
-                                    /**
+                                    /*
                                      * Shipping method not set
                                      */
 
                                     shippingMethodBottomSheet.show(getSupportFragmentManager(),"");
 
                                 }else{
-                                    /**
+                                    /*
                                      * Start the order
                                      */
 
-                                    OrderItem orderItem = new OrderItem();
-                                    HashMap<String, CartItem> products = new HashMap<>();
-                                    for (CartItem item : ((CartFragment)getSupportFragmentManager().getFragments().get(0)).getCartItemList()){
-                                        products.put(item.getId(), item);
-                                    }
-
-
-                                    orderItem.setProducts(products);
-                                    orderItem.setAddressSelected(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getAddressSelected());
-                                    orderItem.setHyperlocalCost(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getHyperlocalCost());
-                                    orderItem.setTotal(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getTotal());
-                                    orderItem.setPay_method(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getPay_method());
-                                    orderItem.setShippingMethodSelected(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getShippingMethodSelected());
-                                    orderItem.setOrderTotal(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getTotal()
-                                    +((CartFragment)getSupportFragmentManager().getFragments().get(0))
-                                                    .getmViewModel().cartVMHelper.getHyperlocalCost()
-                                    );
-
-                                    ((CartFragment)getSupportFragmentManager().getFragments().get(0))
-                                            .getmViewModel()
-                                            .startNewOrder(orderItem);
+                                    addOrderConfirmBottomSheet = new AddOrderConfirmBottomSheet();
+                                    addOrderConfirmBottomSheet.show(getSupportFragmentManager(),"");
 
                                 }
                             }
@@ -219,5 +194,49 @@ implements
 
         if (addressBottomSheet !=null)
             addressBottomSheet.dismiss();
+    }
+
+    @Override
+    public void onClickConfirmItem(int id) {
+        if (id== R.id.confirmBtn){
+            /**
+             * Confirm adding order
+             */
+
+
+            if (!isStartAddingNewOrder){
+                OrderItem orderItem = new OrderItem();
+                HashMap<String, CartItem> products = new HashMap<>();
+                for (CartItem item : ((CartFragment)getSupportFragmentManager().getFragments().get(0)).getCartItemList()){
+                    products.put(item.getId(), item);
+                }
+
+
+                orderItem.setProducts(products);
+                orderItem.setAddressSelected(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getAddressSelected());
+                orderItem.setHyperlocalCost(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getHyperlocalCost());
+                orderItem.setTotal(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getTotal());
+                orderItem.setPay_method(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getPay_method());
+                orderItem.setShippingMethodSelected(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getShippingMethodSelected());
+                orderItem.setOrderTotal(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getTotal()
+                        +((CartFragment)getSupportFragmentManager().getFragments().get(0))
+                        .getmViewModel().cartVMHelper.getHyperlocalCost()
+                );
+
+                ((CartFragment)getSupportFragmentManager().getFragments().get(0))
+                        .getmViewModel()
+                        .startNewOrder(orderItem);
+
+                isStartAddingNewOrder = true;
+
+
+            }
+
+
+
+
+        }else if (id == R.id.cancelBtn){
+            addOrderConfirmBottomSheet.dismiss();
+        }
     }
 }

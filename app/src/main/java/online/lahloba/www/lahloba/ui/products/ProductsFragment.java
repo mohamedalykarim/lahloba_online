@@ -1,4 +1,4 @@
-package online.lahloba.www.lahloba.ui.fragments;
+package online.lahloba.www.lahloba.ui.products;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -9,14 +9,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,10 +27,8 @@ import online.lahloba.www.lahloba.databinding.FragmentProductBinding;
 import online.lahloba.www.lahloba.ui.adapters.ProductAdapter;
 import online.lahloba.www.lahloba.ui.cart.CartActivity;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
-import online.lahloba.www.lahloba.ui.products.ProductsViewModel;
 import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.Injector;
-import online.lahloba.www.lahloba.utils.Utils;
 
 public class ProductsFragment extends Fragment {
     FragmentProductBinding binding;

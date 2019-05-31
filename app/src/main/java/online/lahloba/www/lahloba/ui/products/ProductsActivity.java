@@ -3,13 +3,8 @@ package online.lahloba.www.lahloba.ui.products;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.Toast;
-
-import com.google.firebase.database.FirebaseDatabase;
 
 import online.lahloba.www.lahloba.R;
-import online.lahloba.www.lahloba.ui.fragments.ProductsFragment;
-import online.lahloba.www.lahloba.utils.Constants;
 
 import static online.lahloba.www.lahloba.utils.Constants.EXTRA_SUBTITLE_ID;
 

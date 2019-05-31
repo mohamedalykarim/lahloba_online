@@ -1,4 +1,4 @@
-package online.lahloba.www.lahloba.ui.fragments;
+package online.lahloba.www.lahloba.ui.address;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -24,9 +24,6 @@ import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.databinding.FragmentAddressBinding;
 import online.lahloba.www.lahloba.ui.adapters.AddressAdapter;
-import online.lahloba.www.lahloba.ui.address.AddAddressActivity;
-import online.lahloba.www.lahloba.ui.address.AddressActivity;
-import online.lahloba.www.lahloba.ui.address.AddressViewModel;
 import online.lahloba.www.lahloba.utils.Injector;
 
 public class AddressFragment extends Fragment {

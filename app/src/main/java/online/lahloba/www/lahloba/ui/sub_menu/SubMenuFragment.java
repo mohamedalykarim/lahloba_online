@@ -1,7 +1,6 @@
-package online.lahloba.www.lahloba.ui.fragments;
+package online.lahloba.www.lahloba.ui.sub_menu;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,7 +11,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +21,6 @@ import online.lahloba.www.lahloba.data.model.SubMenuItem;
 import online.lahloba.www.lahloba.data.model.VMPHelper;
 import online.lahloba.www.lahloba.databinding.FragmentSubMenuBinding;
 import online.lahloba.www.lahloba.ui.adapters.SubMenuAdapter;
-import online.lahloba.www.lahloba.ui.sub_menu.SubMenuViewModel;
 import online.lahloba.www.lahloba.utils.Injector;
 
 import static online.lahloba.www.lahloba.utils.Constants.EXTRA_SUBTITLE_ID;

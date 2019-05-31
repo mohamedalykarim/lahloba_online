@@ -1,4 +1,4 @@
-package online.lahloba.www.lahloba.ui.fragments;
+package online.lahloba.www.lahloba.ui.governerate;
 
 import android.Manifest;
 import android.arch.lifecycle.ViewModelProviders;
@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.databinding.DataBindingUtil;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -18,194 +17,126 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
-import online.lahloba.www.lahloba.data.model.AddressItem;
-import online.lahloba.www.lahloba.databinding.FragmentAddAddressBinding;
-import online.lahloba.www.lahloba.ui.address.AddAddressViewModel;
-import online.lahloba.www.lahloba.ui.address.AddressViewModel;
+import online.lahloba.www.lahloba.data.model.Country;
+import online.lahloba.www.lahloba.data.model.Governerate;
+import online.lahloba.www.lahloba.databinding.FragmentGovernerateBinding;
+import online.lahloba.www.lahloba.ui.adapters.GovernerateAdapter;
 import online.lahloba.www.lahloba.utils.Injector;
 import online.lahloba.www.lahloba.utils.SharedPreferencesManager;
 
-public class AddAddressFragment extends Fragment implements LocationListener {
+
+public class GovernerateFragment extends Fragment implements GovernerateAdapter.OnChildClicked , LocationListener {
     private static final int ACCESS_FINE_LOCATION_REQUEST_CODE = 1;
 
-
-    private AddAddressViewModel mViewModel;
-    FragmentAddAddressBinding binding;
-    private int error = 0;
-    private AddressViewModel addressViewModel;
-    private AddressItem defaultAddress;
-
-    double lat, lon;
-    String locationAddress;
-
+    private GovernerateViewModel mViewModel;
+    RecyclerView governorateRV;
+    FragmentGovernerateBinding binding;
     LocationManager mLocationManager;
     Location location;
 
-    public static AddAddressFragment newInstance() {
-        return new AddAddressFragment();
+    public static GovernerateFragment newInstance() {
+        return new GovernerateFragment();
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        binding = DataBindingUtil.inflate(
-                inflater,
-                R.layout.fragment_add_address,
-                container,
-                false
-        );
+        binding = FragmentGovernerateBinding.inflate(inflater,container, false);
 
         ViewModelProviderFactory factory = Injector.getVMFactory(getContext(),null);
-        mViewModel = ViewModelProviders.of(this,factory).get(AddAddressViewModel.class);
+        mViewModel = ViewModelProviders.of(this, factory).get(GovernerateViewModel.class);
 
-        ViewModelProviderFactory addressFactory = Injector.getVMFactory(getContext(),null);
-        addressViewModel = ViewModelProviders.of(this,addressFactory).get(AddressViewModel.class);
+        mViewModel.startGetGovernorates();
 
-
-
-        mViewModel.setIsAddressAddedFalse();
+        governorateRV = binding.governorateRV;
+        governorateRV.setLayoutManager(new LinearLayoutManager(getContext()));
 
 
-        binding.addAddressBtn.setOnClickListener(new View.OnClickListener() {
+        List<Country> countries = new ArrayList<>();
+
+        if (null == SharedPreferencesManager.getCurrentLocationAddress(getContext()) || SharedPreferencesManager.getCurrentLocationAddress(getContext()).equals("")){
+            binding.currentLocationContainer.setVisibility(View.INVISIBLE);
+        }else{
+            binding.currentLocation.setText(SharedPreferencesManager.getCurrentLocationAddress(getContext()));
+        }
+
+        mViewModel.getGovernorates().observe(this,governorates->{
+            countries.clear();
+
+            for (DataSnapshot child: governorates.getChildren()) {
+                List<Governerate> egyptGovernorate = new ArrayList<>();
+
+                String name = child.child("name").getValue().toString();
+                DataSnapshot governorate = child.child("governorate");
+
+
+                for (DataSnapshot governorateChild : governorate.getChildren()) {
+                    egyptGovernorate.add(governorateChild.getValue(Governerate.class));
+                }
+
+                Country country = new Country(name, egyptGovernorate);
+                countries.add(country);
+
+
+            }
+
+            GovernerateAdapter governerateAdapter = new GovernerateAdapter(countries, this);
+            governorateRV.setAdapter(governerateAdapter);
+
+        });
+
+        binding.getLocationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                validateForm();
-                if (error==0){
-                    AddressItem addressItem = new AddressItem();
-                    addressItem.setDefault(binding.switch1.isChecked());
-                    addressItem.setName(binding.nameET.getText().toString());
-                    addressItem.setCountry(binding.countryET.getText().toString());
-                    addressItem.setCity(binding.cityET.getText().toString());
-                    addressItem.setZone(binding.zoneET.getText().toString());
-                    addressItem.setStreet(binding.streetET.getText().toString());
-                    addressItem.setBuilding(binding.buildingET.getText().toString());
-                    addressItem.setFloor(Integer.parseInt(binding.floorET.getText().toString()));
-                    addressItem.setFlatNumber(Integer.parseInt(binding.flatNumberET.getText().toString()));
-                    addressItem.setLat(lat);
-                    addressItem.setLon(lon);
-                    addressItem.setAddress(locationAddress);
 
 
+                mLocationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
 
-                    mViewModel.startAddNewAddress(
-                            FirebaseAuth.getInstance().getCurrentUser().getUid(),
-                            addressItem
-                    );
+                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
 
+                    ActivityCompat.requestPermissions(getActivity(),
+                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                            ACCESS_FINE_LOCATION_REQUEST_CODE);
 
+
+                } else {
+                    getCurrentLocation();
                 }
-            }
-        });
 
-        mViewModel.getIsAddressAdded().observe(this, isAddressAdded->{
-            if (isAddressAdded){
-                Toast.makeText(getContext(), "New Address Added Successfully", Toast.LENGTH_SHORT).show();
-                getActivity().finish();
+
             }
         });
 
 
-        View view = binding.getRoot();
-        return view;
-    }
-
-
-    public void validateForm(){
-        error = 0;
-
-        if (binding.nameET.getText().length() < 1){
-            binding.nameET.setError("Please Insert The Name Of Address");
-            error++;
-        }
-
-        if (binding.countryET.getText().length() < 1){
-            binding.countryET.setError("Please Insert Country Name");
-            error++;
-        }
-
-        if (binding.cityET.getText().length() < 1){
-            binding.cityET.setError("Please Insert City Name");
-            error++;
-        }
-
-        if (binding.zoneET.getText().length() < 1){
-            binding.zoneET.setError("Please Insert Zone Name");
-            error++;
-        }
-
-        if (binding.streetET.getText().length() < 1){
-            binding.streetET.setError("Please Insert Street Name");
-            error++;
-        }
-
-        if (binding.buildingET.getText().length() < 1){
-            binding.buildingET.setError("Please Insert Building Name Or Number");
-            error++;
-        }
-
-        if (binding.floorET.getText().length() < 1){
-            binding.floorET.setError("Please Insert Floor Number");
-            error++;
-        }
-
-        if (binding.flatNumberET.getText().length() < 1){
-            binding.flatNumberET.setError("Please Insert Flat Number");
-            error++;
-        }
-
-        if (lat == 0 || lon == 0){
-            Toast.makeText(getContext(), "Please select current location", Toast.LENGTH_SHORT).show();
-            error++;
-        }
 
 
 
-    }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (null == FirebaseAuth.getInstance()){
-            getActivity().finish();
-        }
+
+        return binding.getRoot();
     }
 
 
     @Override
-    public void onResume() {
-        super.onResume();
-
-        mLocationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    ACCESS_FINE_LOCATION_REQUEST_CODE);
-
-
-        } else {
-            getCurrentLocation();
-        }
-
-        addressViewModel.getDefaultAddress().observe(this, defaultAddress->{
-            this.defaultAddress = defaultAddress;
-        });
+    public void onChildClicked(String currentLocation) {
+        binding.currentLocation.setText(currentLocation);
+        binding.currentLocationContainer.setVisibility(View.VISIBLE);
     }
 
 
@@ -260,7 +191,7 @@ public class AddAddressFragment extends Fragment implements LocationListener {
 
     private void buildAlertMessageNoGps() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setMessage("Your GPS seems to be disabled to add new address you want to enable it!")
+        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, final int id) {
@@ -452,26 +383,22 @@ public class AddAddressFragment extends Fragment implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
         mLocationManager.removeUpdates(this);
-        if (location != null){
-            lat = location.getLatitude();
-            lon = location.getLongitude();
+        if (getAddressLine(getContext(),location.getLatitude(),location.getLongitude(),1) != null){
+            SharedPreferencesManager.setCurrentLocationLat(getContext(), String.valueOf(location.getLatitude()));
+            SharedPreferencesManager.setCurrentLocationLan(getContext(), String.valueOf(location.getLongitude()));
 
-            String address = getAddressLine(getContext(),location.getLatitude(),location.getLongitude(),1);
+            String cityName = ""+getAdminArea(getContext(),location.getLatitude(),location.getLongitude(),1);
 
-            if (address == null) {
-                address = getAddressLine(getContext(),location.getLatitude(),location.getLongitude(),1);
-                if (address == null){
-                    address = getAddressLine(getContext(),location.getLatitude(),location.getLongitude(),1);
-                    if (address == null){
-                        address = getAddressLine(getContext(),location.getLatitude(),location.getLongitude(),1);
-                    }
-                }
+            if (cityName.equals("null")){
+                cityName = ""+getSubAdminArea(getContext(),location.getLatitude(),location.getLongitude(),1);
             }
 
-            if (address != null){
-                binding.getLocationBtn2.setText(address);
-                locationAddress = address;
-            }
+            SharedPreferencesManager.setCurrentLocationAddress(getContext(), cityName);
+
+            binding.currentLocation.setText(SharedPreferencesManager.getCurrentLocationAddress(getContext()));
+
+        }else{
+            onLocationChanged(location);
         }
 
 
@@ -491,5 +418,6 @@ public class AddAddressFragment extends Fragment implements LocationListener {
     public void onProviderDisabled(String provider) {
 
     }
+
 
 }

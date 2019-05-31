@@ -13,6 +13,7 @@ import online.lahloba.www.lahloba.ui.cart.CartViewModel;
 import online.lahloba.www.lahloba.ui.governerate.GovernerateViewModel;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
 import online.lahloba.www.lahloba.ui.main.MainViewModel;
+import online.lahloba.www.lahloba.ui.order.OrdersViewModel;
 import online.lahloba.www.lahloba.ui.products.ProductsViewModel;
 import online.lahloba.www.lahloba.ui.signup.SignupViewModel;
 import online.lahloba.www.lahloba.ui.sub_menu.SubMenuViewModel;
@@ -47,6 +48,8 @@ public class ViewModelProviderFactory extends ViewModelProvider.NewInstanceFacto
             return (T) new AddAddressViewModel(appRepository);
         }else if(modelClass.isAssignableFrom(GovernerateViewModel.class)){
             return (T) new GovernerateViewModel(appRepository);
+        }else if(modelClass.isAssignableFrom(OrdersViewModel.class)){
+            return (T) new OrdersViewModel(appRepository);
         }
 
 

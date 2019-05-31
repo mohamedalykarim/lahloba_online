@@ -1,9 +1,8 @@
-package online.lahloba.www.lahloba.ui.fragments;
+package online.lahloba.www.lahloba.ui.cart;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.location.Location;
 import android.os.Bundle;
@@ -11,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,27 +17,20 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import okhttp3.internal.Util;
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.MarketPlace;
-import online.lahloba.www.lahloba.data.model.UserItem;
 import online.lahloba.www.lahloba.data.model.VMPHelper;
 import online.lahloba.www.lahloba.data.model.room_entity.CartItemRoom;
-import online.lahloba.www.lahloba.data.model.vm_helper.CartVMHelper;
 import online.lahloba.www.lahloba.databinding.FragmentCartBinding;
 import online.lahloba.www.lahloba.ui.adapters.CartAdapter;
-import online.lahloba.www.lahloba.ui.cart.CartViewModel;
-import online.lahloba.www.lahloba.ui.cart.bottom_sheet.AddressBottomSheet;
-import online.lahloba.www.lahloba.ui.cart.bottom_sheet.ShippingMethodBottomSheet;
+import online.lahloba.www.lahloba.ui.order.OrdersActivity;
 import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.ExpandableHeightRecyclerView;
 import online.lahloba.www.lahloba.utils.Injector;
@@ -112,6 +103,7 @@ public class CartFragment extends Fragment {
                 if (null != isOrderAdded){
                     if (isOrderAdded){
                         getActivity().finish();
+                        startActivity(new Intent(getContext(), OrdersActivity.class));
                         Toast.makeText(getContext(), "added", Toast.LENGTH_SHORT).show();
 
                     }

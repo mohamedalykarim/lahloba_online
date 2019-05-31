@@ -6,15 +6,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.databinding.ActivitySubMenuBinding;
-import online.lahloba.www.lahloba.ui.fragments.SubMenuFragment;
-import online.lahloba.www.lahloba.utils.Constants;
 
 import static online.lahloba.www.lahloba.utils.Constants.EXTRA_SUBTITLE_ID;
-import static online.lahloba.www.lahloba.utils.Constants.GET_SUB_MENU_ITEMS;
 
 public class SubMenuActivity extends AppCompatActivity {
 

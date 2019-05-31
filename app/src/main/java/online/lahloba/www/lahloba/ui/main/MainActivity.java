@@ -18,7 +18,7 @@ import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.databinding.ActivityMainBinding;
 import online.lahloba.www.lahloba.ui.fragments.AccountFragment;
 import online.lahloba.www.lahloba.ui.fragments.FavoriteFragment;
-import online.lahloba.www.lahloba.ui.fragments.LoginFragment;
+import online.lahloba.www.lahloba.ui.login.LoginFragment;
 import online.lahloba.www.lahloba.ui.fragments.ShoppingFragment;
 import online.lahloba.www.lahloba.ui.governerate.GovernerateActivity;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;

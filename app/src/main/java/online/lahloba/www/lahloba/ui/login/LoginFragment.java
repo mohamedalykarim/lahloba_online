@@ -1,7 +1,6 @@
-package online.lahloba.www.lahloba.ui.fragments;
+package online.lahloba.www.lahloba.ui.login;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.arch.persistence.room.util.StringUtil;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -14,13 +13,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.regex.Pattern;
-
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.databinding.FragmentLoginBinding;
-import online.lahloba.www.lahloba.ui.login.LoginActivity;
-import online.lahloba.www.lahloba.ui.login.LoginViewModel;
 import online.lahloba.www.lahloba.ui.signup.SignupActivity;
 import online.lahloba.www.lahloba.utils.Injector;
 

@@ -4,7 +4,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import online.lahloba.www.lahloba.R;
-import online.lahloba.www.lahloba.ui.fragments.GovernerateFragment;
 
 public class GovernerateActivity extends AppCompatActivity {
 
