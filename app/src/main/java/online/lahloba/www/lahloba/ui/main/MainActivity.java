@@ -15,6 +15,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
+import online.lahloba.www.lahloba.data.model.OrderItem;
 import online.lahloba.www.lahloba.databinding.ActivityMainBinding;
 import online.lahloba.www.lahloba.ui.fragments.AccountFragment;
 import online.lahloba.www.lahloba.ui.fragments.FavoriteFragment;
@@ -22,6 +23,7 @@ import online.lahloba.www.lahloba.ui.login.LoginFragment;
 import online.lahloba.www.lahloba.ui.fragments.ShoppingFragment;
 import online.lahloba.www.lahloba.ui.governerate.GovernerateActivity;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
+import online.lahloba.www.lahloba.ui.order.OrdersActivity;
 import online.lahloba.www.lahloba.utils.Injector;
 
 public class MainActivity extends AppCompatActivity  {
@@ -73,6 +75,7 @@ public class MainActivity extends AppCompatActivity  {
 //            }
 //        });
 
+        startActivity(new Intent(this, OrdersActivity.class));
 
     }
 

@@ -104,6 +104,8 @@ public class GovernerateFragment extends Fragment implements GovernerateAdapter.
             @Override
             public void onClick(View v) {
 
+                mLocationManager.removeUpdates(GovernerateFragment.this);
+
 
                 mLocationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
 
@@ -391,7 +393,7 @@ public class GovernerateFragment extends Fragment implements GovernerateAdapter.
 
             String subAdminArea = ""+getSubAdminArea(getContext(),location.getLatitude(),location.getLongitude(),1);
 
-            String cityName = "";
+            String cityName;
 
             if (adminArea.equals("")){
                 cityName = subAdminArea;
