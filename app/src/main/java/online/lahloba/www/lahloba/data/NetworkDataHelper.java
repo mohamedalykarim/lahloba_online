@@ -793,6 +793,9 @@ public class NetworkDataHelper {
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
         String pushKey = mDatabase.child("Orders").child(userId).push().getKey();
         orderItem.setId(pushKey);
+        String randomSt = pushKey.replace("-","");
+        orderItem.setOrderNumber(randomSt.hashCode());
+
         mDatabase.child("Orders").child(userId).child(pushKey).setValue(orderItem)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override

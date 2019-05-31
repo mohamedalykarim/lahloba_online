@@ -16,6 +16,8 @@ public class OrderItem implements Parcelable {
     private String pay_method;
     private HashMap<String, CartItem> products;
     private double orderTotal;
+    private int orderStatus;
+    private int orderNumber;
 
     public OrderItem() {
     }
@@ -30,6 +32,8 @@ public class OrderItem implements Parcelable {
         orderTotal = in.readDouble();
         products = new HashMap<>();
         in.readMap(products, OrderItem.class.getClassLoader());
+        orderStatus = in.readInt();
+        orderNumber = in.readInt();
     }
 
     @Override
@@ -42,6 +46,8 @@ public class OrderItem implements Parcelable {
         dest.writeString(pay_method);
         dest.writeDouble(orderTotal);
         dest.writeMap(products);
+        dest.writeInt(orderStatus);
+        dest.writeInt(orderNumber);
     }
 
     @Override
@@ -93,6 +99,14 @@ public class OrderItem implements Parcelable {
         return orderTotal;
     }
 
+    public int getOrderStatus() {
+        return orderStatus;
+    }
+
+    public int getOrderNumber() {
+        return orderNumber;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -123,5 +137,13 @@ public class OrderItem implements Parcelable {
 
     public void setOrderTotal(double orderTotal) {
         this.orderTotal = orderTotal;
+    }
+
+    public void setOrderStatus(int orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
+    public void setOrderNumber(int orderNumber) {
+        this.orderNumber = orderNumber;
     }
 }

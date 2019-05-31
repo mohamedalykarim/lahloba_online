@@ -15,4 +15,5 @@
     <string name="add_to_cart">اضافة لسلة المشتريات</string>
     <string name="get_your_location">اجلب عنوانك الحالى</string>
     <string name="cost">التكلفة</string>
+    <string name="order_number">رقم الطلب</string>
 </resources>

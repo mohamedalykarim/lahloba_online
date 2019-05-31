@@ -64,7 +64,6 @@ public class OrdersFragment extends Fragment {
                 return;
             }
 
-            Toast.makeText(getContext(), ""+orderItems.size(), Toast.LENGTH_SHORT).show();
 
             this.orderItems.clear();
             this.orderItems.addAll(orderItemsList);
@@ -75,6 +74,7 @@ public class OrdersFragment extends Fragment {
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);    }
+        super.onActivityCreated(savedInstanceState);
+    }
 
 }

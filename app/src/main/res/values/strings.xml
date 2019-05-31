@@ -19,5 +19,6 @@
     <string name="free_shipping">Free Shipping</string>
     <string name="hyperlocal_shipping">Hyperlocal Shipping</string>
     <string name="cost">Cost</string>
+    <string name="order_number">Order number</string>
 
 </resources>

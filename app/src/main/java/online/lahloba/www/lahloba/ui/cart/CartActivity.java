@@ -26,6 +26,7 @@ import online.lahloba.www.lahloba.ui.cart.bottom_sheet.ShippingMethodBottomSheet
 import online.lahloba.www.lahloba.ui.login.LoginActivity;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
 import online.lahloba.www.lahloba.utils.Injector;
+import online.lahloba.www.lahloba.utils.OrderStatusUtils;
 
 import static online.lahloba.www.lahloba.utils.Constants.EXTRA_USER_ID;
 
@@ -222,6 +223,7 @@ implements
                         +((CartFragment)getSupportFragmentManager().getFragments().get(0))
                         .getmViewModel().cartVMHelper.getHyperlocalCost()
                 );
+                orderItem.setOrderStatus(OrderStatusUtils.ORDER_STATUS_NEW);
 
                 ((CartFragment)getSupportFragmentManager().getFragments().get(0))
                         .getmViewModel()
