@@ -38,7 +38,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:id="@+id/currentLocation"
+                android:id="@+id/currentLocationTv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -69,7 +69,7 @@
                 android:paddingStart="40dp"
                 android:text="@string/get_your_location"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/currentLocation" />
+                app:layout_constraintTop_toBottomOf="@+id/currentLocationTv" />
 
             <ImageView
                 android:id="@+id/imageView10"

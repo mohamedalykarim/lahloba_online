@@ -8,6 +8,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
@@ -28,14 +31,25 @@ public class OrdersFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         FragmentOrdersBinding binding = FragmentOrdersBinding.inflate(inflater,container, false);
 
+        ViewModelProviderFactory factory = Injector.getVMFactory(getContext(),null);
+        mViewModel = ViewModelProviders.of(this,factory).get(OrdersViewModel.class);
+
+
         return binding.getRoot();
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        ViewModelProviderFactory factory = Injector.getVMFactory(getContext(),null);
-        mViewModel = ViewModelProviders.of(this,factory).get(OrdersViewModel.class);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mViewModel.startGetCurrentOrders();
+        mViewModel.getCurrentOrders().observe(this, orderItems -> {
+            Toast.makeText(getContext(), ""+orderItems.size(), Toast.LENGTH_SHORT).show();
+        });
     }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);    }
 
 }

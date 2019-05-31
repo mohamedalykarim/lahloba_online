@@ -251,6 +251,9 @@ public class AppRepository {
         return database.marketPlaceDao().getSpecificMarketPlaces(ids);
     }
 
+
+    //############################### Orders ############################//
+
     public void startNewOrder(OrderItem orderItem) {
         networkDataHelper.startNewOrder(orderItem);
     }
@@ -261,5 +264,13 @@ public class AppRepository {
 
     public MutableLiveData<Boolean> getIsOrderAdded() {
         return networkDataHelper.getIsOrderAdded();
+    }
+
+    public void startGetCurrentOrders() {
+        networkDataHelper.startGetCurrentOrders();
+    }
+
+    public MutableLiveData<List<OrderItem>> getCurrentOrders(){
+        return networkDataHelper.getCurrentOrders();
     }
 }

@@ -4,7 +4,6 @@ import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
@@ -51,6 +50,7 @@ import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRES
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_ADDRESS_ITEM;
 import static online.lahloba.www.lahloba.utils.Constants.START_DELETE_ADDRESS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_ADDRESSES;
+import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_ORDERS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_USER_DETAILS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_DEFAULT_ADDRESS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_GOVERNORATES;
@@ -78,6 +78,8 @@ public class NetworkDataHelper {
     MutableLiveData<DataSnapshot> governorates;
     MutableLiveData<MarketPlace> marketPlace;
     MutableLiveData<Boolean> isOrderAdded;
+    private MutableLiveData<List<OrderItem>> orderItems;
+
 
     private MutableLiveData<List<ProductItem>> productsItems;
 
@@ -91,6 +93,7 @@ public class NetworkDataHelper {
         cartItems = new MutableLiveData<>();
         governorates = new MutableLiveData<>();
         marketPlace = new MutableLiveData<>();
+        orderItems = new MutableLiveData<>();
 
         defaultAddress = new MutableLiveData<>();
 
@@ -777,13 +780,12 @@ public class NetworkDataHelper {
         marketPlace.setValue(null);
     }
 
-    //############################### Order ############################//
+    //############################### Orders ############################//
     public void startNewOrder(OrderItem orderItem) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
         intent.setAction(START_NEW_ORDER);
         intent.putExtra(START_NEW_ORDER,orderItem);
         mContext.startService(intent);
-
     }
 
     public void startAddNewOrderToFirebase(OrderItem orderItem) {
@@ -813,5 +815,39 @@ public class NetworkDataHelper {
 
     public MutableLiveData<Boolean> getIsOrderAdded() {
         return isOrderAdded;
+    }
+
+    public void startGetCurrentOrders() {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(START_GET_CURRENT_ORDERS);
+        mContext.startService(intent);
+    }
+
+    public void startGetCurrentOrdersFromFirebase() {
+        String userId = FirebaseAuth.getInstance().getUid();
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        mDatabase.child("Orders").child(userId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        List<OrderItem> orderItemsList = new ArrayList<>();
+                        for (DataSnapshot item : dataSnapshot.getChildren()){
+                            orderItemsList.add(item.getValue(OrderItem.class));
+                        }
+
+                        orderItems.setValue(orderItemsList);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+    }
+
+    public MutableLiveData<List<OrderItem>> getCurrentOrders(){
+        return orderItems;
     }
 }

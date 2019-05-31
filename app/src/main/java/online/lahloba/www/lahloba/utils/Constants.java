@@ -33,4 +33,5 @@ public class Constants {
     public static final String START_GET_GOVERNORATES = "start_get_governorates";
     public static final String START_GET_MARKETPLACE = "start_get_marketplace";
     public static final String START_NEW_ORDER = "start_new_order";
+    public static final String START_GET_CURRENT_ORDERS = "start_get_current_orders";
 }

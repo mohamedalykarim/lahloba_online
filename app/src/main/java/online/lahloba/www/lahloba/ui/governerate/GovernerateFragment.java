@@ -70,9 +70,9 @@ public class GovernerateFragment extends Fragment implements GovernerateAdapter.
         List<Country> countries = new ArrayList<>();
 
         if (null == SharedPreferencesManager.getCurrentLocationAddress(getContext()) || SharedPreferencesManager.getCurrentLocationAddress(getContext()).equals("")){
-            binding.currentLocationContainer.setVisibility(View.INVISIBLE);
+            binding.currentLocationTv.setVisibility(View.INVISIBLE);
         }else{
-            binding.currentLocation.setText(SharedPreferencesManager.getCurrentLocationAddress(getContext()));
+            binding.currentLocationTv.setText(SharedPreferencesManager.getCurrentLocationAddress(getContext()));
         }
 
         mViewModel.getGovernorates().observe(this,governorates->{
@@ -135,8 +135,8 @@ public class GovernerateFragment extends Fragment implements GovernerateAdapter.
 
     @Override
     public void onChildClicked(String currentLocation) {
-        binding.currentLocation.setText(currentLocation);
-        binding.currentLocationContainer.setVisibility(View.VISIBLE);
+        binding.currentLocationTv.setText(currentLocation);
+        binding.currentLocationTv.setVisibility(View.VISIBLE);
     }
 
 
@@ -387,15 +387,23 @@ public class GovernerateFragment extends Fragment implements GovernerateAdapter.
             SharedPreferencesManager.setCurrentLocationLat(getContext(), String.valueOf(location.getLatitude()));
             SharedPreferencesManager.setCurrentLocationLan(getContext(), String.valueOf(location.getLongitude()));
 
-            String cityName = ""+getAdminArea(getContext(),location.getLatitude(),location.getLongitude(),1);
+            String adminArea = ""+getAdminArea(getContext(),location.getLatitude(),location.getLongitude(),1);
 
-            if (cityName.equals("null")){
-                cityName = ""+getSubAdminArea(getContext(),location.getLatitude(),location.getLongitude(),1);
+            String subAdminArea = ""+getSubAdminArea(getContext(),location.getLatitude(),location.getLongitude(),1);
+
+            String cityName = "";
+
+            if (adminArea.equals("")){
+                cityName = subAdminArea;
+            } else if (!adminArea.equals("") && !subAdminArea.equals("") ){
+                cityName = subAdminArea;
+            }else {
+                cityName = adminArea;
             }
 
             SharedPreferencesManager.setCurrentLocationAddress(getContext(), cityName);
 
-            binding.currentLocation.setText(SharedPreferencesManager.getCurrentLocationAddress(getContext()));
+            binding.currentLocationTv.setText(SharedPreferencesManager.getCurrentLocationAddress(getContext()));
 
         }else{
             onLocationChanged(location);

@@ -24,6 +24,7 @@ import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRES
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_ADDRESS_ITEM;
 import static online.lahloba.www.lahloba.utils.Constants.START_DELETE_ADDRESS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_ADDRESSES;
+import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_ORDERS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_USER_DETAILS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_DEFAULT_ADDRESS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_GOVERNORATES;
@@ -95,6 +96,9 @@ public class LahlobaMainService extends IntentService {
         }else if(intent.getAction().equals(START_NEW_ORDER)){
             OrderItem orderItem = intent.getParcelableExtra(START_NEW_ORDER);
             networkDataHelper.startAddNewOrderToFirebase(orderItem);
+        }else if(intent.getAction().equals(START_GET_CURRENT_ORDERS)){
+            String userId = intent.getStringExtra(START_GET_CURRENT_ORDERS);
+            networkDataHelper.startGetCurrentOrdersFromFirebase();
         }
 
 
