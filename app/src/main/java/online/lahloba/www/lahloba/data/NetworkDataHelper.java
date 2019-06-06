@@ -59,6 +59,7 @@ import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_EMAIL;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_PASSWORD;
 import static online.lahloba.www.lahloba.utils.Constants.START_NEW_ORDER;
+import static online.lahloba.www.lahloba.utils.Constants.START_REMOVE_ORDER;
 import static online.lahloba.www.lahloba.utils.Constants.START_SET_DEFAULT_ADDRESS;
 
 public class NetworkDataHelper {
@@ -828,10 +829,14 @@ public class NetworkDataHelper {
 
     public void startGetCurrentOrdersFromFirebase() {
         String userId = FirebaseAuth.getInstance().getUid();
+        if (userId==null) {
+            return;
+        }
+
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
         mDatabase.child("Orders").child(userId)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         List<OrderItem> orderItemsList = new ArrayList<>();
@@ -852,5 +857,27 @@ public class NetworkDataHelper {
 
     public MutableLiveData<List<OrderItem>> getCurrentOrders(){
         return orderItems;
+    }
+
+    public void startRemoveOrder(String orderId) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.START_REMOVE_ORDER);
+        intent.putExtra(START_REMOVE_ORDER,orderId);
+        mContext.startService(intent);
+    }
+
+    public void removeOrderFromFireBase(String orderId) {
+        if (orderId==null) {
+            return;
+        }
+
+        String userId = FirebaseAuth.getInstance().getUid();
+        if (userId==null) {
+            return;
+        }
+
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        mDatabase.child("Orders").child(userId).child(orderId).removeValue();
     }
 }

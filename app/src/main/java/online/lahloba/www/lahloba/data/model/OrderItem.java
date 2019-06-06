@@ -1,13 +1,15 @@
 package online.lahloba.www.lahloba.data.model;
 
+import android.databinding.BaseObservable;
+import android.databinding.Bindable;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-public class OrderItem implements Parcelable {
+import online.lahloba.www.lahloba.BR;
+
+public class OrderItem extends BaseObservable implements Parcelable {
     String id;
     private double total;
     private AddressItem addressSelected;
@@ -103,6 +105,7 @@ public class OrderItem implements Parcelable {
         return orderStatus;
     }
 
+    @Bindable
     public int getOrderNumber() {
         return orderNumber;
     }
@@ -145,5 +148,6 @@ public class OrderItem implements Parcelable {
 
     public void setOrderNumber(int orderNumber) {
         this.orderNumber = orderNumber;
+        notifyPropertyChanged(BR.orderNumber);
     }
 }

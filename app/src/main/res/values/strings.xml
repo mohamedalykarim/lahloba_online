@@ -20,5 +20,13 @@
     <string name="hyperlocal_shipping">Hyperlocal Shipping</string>
     <string name="cost">Cost</string>
     <string name="order_number">Order number</string>
+    <string name="new_order">New Order</string>
+    <string name="ongoing_order">Ongoing order</string>
+    <string name="old_order">Old order</string>
+    <string name="pending_order">Pending order</string>
+    <string name="processing_order">Processing order</string>
+    <string name="processed_order">Processed order</string>
+    <string name="shipped_order">Shipped order</string>
+    <string name="completed_order">Completed order</string>
 
 </resources>

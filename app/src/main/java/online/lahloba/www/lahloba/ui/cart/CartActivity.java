@@ -223,7 +223,8 @@ implements
                         +((CartFragment)getSupportFragmentManager().getFragments().get(0))
                         .getmViewModel().cartVMHelper.getHyperlocalCost()
                 );
-                orderItem.setOrderStatus(OrderStatusUtils.ORDER_STATUS_NEW);
+
+                orderItem.setOrderStatus(OrderStatusUtils.ORDER_STATUS_PENDING);
 
                 ((CartFragment)getSupportFragmentManager().getFragments().get(0))
                         .getmViewModel()

@@ -1,37 +1,33 @@
 package online.lahloba.www.lahloba.ui.adapters;
 
-import android.arch.persistence.room.PrimaryKey;
-import android.renderscript.ScriptGroup;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.OrderItem;
 import online.lahloba.www.lahloba.databinding.RowOrderListBinding;
-import online.lahloba.www.lahloba.databinding.RowOrderListProductBinding;
+import online.lahloba.www.lahloba.ui.cart.CartViewModel;
+import online.lahloba.www.lahloba.ui.order.OrdersViewModel;
 
 public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewHolder> {
     List<OrderItem> orderItemList;
+    RowOrderListBinding binding;
+    private OrdersViewModel mViewModel;
+
 
     @NonNull
     @Override
     public OrderViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        RowOrderListBinding binding = RowOrderListBinding.inflate(LayoutInflater.from(viewGroup.getContext()), viewGroup, false);
-        binding.setOrder(orderItemList.get(i));
+        binding = RowOrderListBinding.inflate(LayoutInflater.from(viewGroup.getContext()), viewGroup, false);
         return new OrderViewHolder(binding);
     }
 
@@ -39,16 +35,15 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int i) {
 
         OrderItem orderItem = orderItemList.get(i);
+        holder.binding.setOrder(orderItem);
 
         /*
          * Add Products to view
          */
         HashMap<String, CartItem> products = orderItem.getProducts();
-        Iterator iterator = products.entrySet().iterator();
-        while(iterator.hasNext()){
 
-            Map.Entry entry = (Map.Entry) iterator.next();
-            CartItem product = (CartItem) entry.getValue();
+        holder.binding.productsContainer.removeAllViews();
+        for(CartItem product: products.values()){
 
             if (product!=null){
                 LayoutInflater inflater = LayoutInflater.from(holder.binding.getRoot().getContext());
@@ -66,8 +61,16 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             }
         }
 
+        holder.binding.cancelOrderBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mViewModel.startRemoveOrder(orderItem.getId());
+            }
+        });
+
 
     }
+
 
     @Override
     public int getItemCount() {
@@ -86,5 +89,9 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
 
     public void setOrderItemList(List<OrderItem> orderItemList) {
         this.orderItemList = orderItemList;
+    }
+
+    public void setViewModel(OrdersViewModel mViewModel) {
+        this.mViewModel = mViewModel;
     }
 }

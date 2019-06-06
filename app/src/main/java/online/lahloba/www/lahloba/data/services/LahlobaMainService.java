@@ -33,6 +33,7 @@ import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_EMAIL;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_PASSWORD;
 import static online.lahloba.www.lahloba.utils.Constants.START_NEW_ORDER;
+import static online.lahloba.www.lahloba.utils.Constants.START_REMOVE_ORDER;
 import static online.lahloba.www.lahloba.utils.Constants.START_SET_DEFAULT_ADDRESS;
 
 public class LahlobaMainService extends IntentService {
@@ -97,8 +98,10 @@ public class LahlobaMainService extends IntentService {
             OrderItem orderItem = intent.getParcelableExtra(START_NEW_ORDER);
             networkDataHelper.startAddNewOrderToFirebase(orderItem);
         }else if(intent.getAction().equals(START_GET_CURRENT_ORDERS)){
-            String userId = intent.getStringExtra(START_GET_CURRENT_ORDERS);
             networkDataHelper.startGetCurrentOrdersFromFirebase();
+        }else if(intent.getAction().equals(START_REMOVE_ORDER)){
+            String orderId = intent.getStringExtra(START_REMOVE_ORDER);
+            networkDataHelper.removeOrderFromFireBase(orderId);
         }
 
 

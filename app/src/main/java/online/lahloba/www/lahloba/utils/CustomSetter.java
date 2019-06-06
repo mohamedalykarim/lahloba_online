@@ -35,8 +35,8 @@ public static void setFont(View view, String font){
     }
 }
 
-    @BindingAdapter("android:shippingIcon")
-    public static void setShippingIcon(ImageView imageView, String shippingType){
+@BindingAdapter("android:shippingIcon")
+public static void setShippingIcon(ImageView imageView, String shippingType){
     if (shippingType.equals(CartVMHelper.FREE_SHIPPING)){
         Picasso.get().load(R.drawable.free_shipping).placeholder(R.drawable.progress_animation).into(imageView);
     }else if (shippingType.equals(CartVMHelper.HYPERLOCAL_SHIPPING)){
@@ -44,6 +44,51 @@ public static void setFont(View view, String font){
     }
 
 
+    }
+
+    @BindingAdapter("android:orderStatusCategory")
+    public static void setOrderStatusCategory(TextView textView, int order){
+        if (order == 1){
+            textView.setText(textView.getResources().getString(R.string.new_order));
+        }else if (order == 2){
+            textView.setText(textView.getResources().getString(R.string.ongoing_order));
+        }else if (order == 3){
+            textView.setText(textView.getResources().getString(R.string.ongoing_order));
+        }else if (order == 4){
+            textView.setText(textView.getResources().getString(R.string.ongoing_order));
+        }else if (order == 5){
+            textView.setText(textView.getResources().getString(R.string.old_order));
+        }
+    }
+
+    @BindingAdapter("android:orderStatus")
+    public static void setOrderStatus(TextView textView, int order){
+        if (order == 1){
+            textView.setText(textView.getResources().getString(R.string.pending_order));
+        }else if (order == 2){
+            textView.setText(textView.getResources().getString(R.string.processing_order));
+        }else if (order == 3){
+            textView.setText(textView.getResources().getString(R.string.processed_order));
+        }else if (order == 4){
+            textView.setText(textView.getResources().getString(R.string.shipped_order));
+        }else if (order == 5){
+            textView.setText(textView.getResources().getString(R.string.completed_order));
+        }
+    }
+
+    @BindingAdapter("android:orderStatusImage")
+    public static void setOrderStatusImage(ImageView imageView, int order){
+        if (order == 1){
+            Picasso.get().load(R.drawable.order_pending_icon).into(imageView);
+        }else if (order == 2){
+            Picasso.get().load(R.drawable.order_processing_icon).into(imageView);
+        }else if (order == 3){
+            Picasso.get().load(R.drawable.order_processed_icon).into(imageView);
+        }else if (order == 4){
+            Picasso.get().load(R.drawable.order_shipped_icon).into(imageView);
+        }else if (order == 5){
+            Picasso.get().load(R.drawable.order_completed_icon).into(imageView);
+        }
     }
 
 

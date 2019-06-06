@@ -273,4 +273,8 @@ public class AppRepository {
     public MutableLiveData<List<OrderItem>> getCurrentOrders(){
         return networkDataHelper.getCurrentOrders();
     }
+
+    public void startRemoveOrder(String orderId) {
+        networkDataHelper.startRemoveOrder(orderId);
+    }
 }

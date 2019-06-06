@@ -19,17 +19,27 @@ import java.util.List;
 
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
+import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.OrderItem;
 import online.lahloba.www.lahloba.databinding.FragmentOrdersBinding;
 import online.lahloba.www.lahloba.ui.adapters.OrdersAdapter;
+import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.Injector;
+import online.lahloba.www.lahloba.utils.OrderStatusUtils;
+
+import static online.lahloba.www.lahloba.utils.Constants.ORDER_TYPE_NEW;
+import static online.lahloba.www.lahloba.utils.Constants.ORDER_TYPE_OLD;
+import static online.lahloba.www.lahloba.utils.Constants.ORDER_TYPE_ONGOING;
 
 public class OrdersFragment extends Fragment {
 
     private OrdersViewModel mViewModel;
     RecyclerView orderRv;
     OrdersAdapter ordersAdapter;
+    List<OrderItem> filteredOrderItems;
     List<OrderItem> orderItems;
+    String currentOrderType = ORDER_TYPE_NEW;
+
 
     public static OrdersFragment newInstance() {
         return new OrdersFragment();
@@ -46,8 +56,10 @@ public class OrdersFragment extends Fragment {
 
         orderRv = binding.ordersRv;
         ordersAdapter = new OrdersAdapter();
+        ordersAdapter.setViewModel(mViewModel);
+        filteredOrderItems = new ArrayList<>();
         orderItems = new ArrayList<>();
-        ordersAdapter.setOrderItemList(orderItems);
+        ordersAdapter.setOrderItemList(filteredOrderItems);
         orderRv.setAdapter(ordersAdapter);
         orderRv.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -68,7 +80,8 @@ public class OrdersFragment extends Fragment {
             this.orderItems.clear();
             this.orderItems.addAll(orderItemsList);
 
-            ordersAdapter.notifyDataSetChanged();
+            selectOrderType();
+
         });
     }
 
@@ -77,4 +90,46 @@ public class OrdersFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
     }
 
+    public void setCurrentOrderType(String currentOrderTybe) {
+        this.currentOrderType = currentOrderTybe;
+    }
+
+    public void selectOrderType(){
+        filteredOrderItems.clear();
+        ordersAdapter.notifyDataSetChanged();
+
+        switch (currentOrderType){
+            case ORDER_TYPE_NEW:
+                for (OrderItem item : orderItems){
+                    if (item.getOrderStatus() == OrderStatusUtils.ORDER_STATUS_PENDING){
+                        filteredOrderItems.add(item);
+                    }
+                    ordersAdapter.notifyDataSetChanged();
+                }
+                break;
+
+            case ORDER_TYPE_ONGOING:
+                for (OrderItem item : orderItems){
+                    if (item.getOrderStatus() == OrderStatusUtils.ORDER_STATUS_PROCESSING
+                            || item.getOrderStatus() == OrderStatusUtils.ORDER_STATUS_PROCESSED
+                            || item.getOrderStatus() == OrderStatusUtils.ORDER_STATUS_SHIPPED){
+                        filteredOrderItems.add(item);
+                    }
+                    ordersAdapter.notifyDataSetChanged();
+                }
+
+                break;
+
+            case ORDER_TYPE_OLD:
+                for (OrderItem item : orderItems){
+                    if (item.getOrderStatus() == OrderStatusUtils.ORDER_STATUS_COMPLETED){
+                        filteredOrderItems.add(item);
+                    }
+                    ordersAdapter.notifyDataSetChanged();
+                }
+
+
+                break;
+        }
+    }
 }

@@ -22,4 +22,8 @@ public class OrdersViewModel extends ViewModel {
     public MutableLiveData<List<OrderItem>> getCurrentOrders(){
         return appRepository.getCurrentOrders();
     }
+
+    public void startRemoveOrder(String orderId) {
+        appRepository.startRemoveOrder(orderId);
+    }
 }

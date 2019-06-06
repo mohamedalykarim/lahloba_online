@@ -140,10 +140,6 @@ public class ProductsFragment extends Fragment {
         if (currentUser!= null){
             mViewModel.startGetCartItems(userId);
         }
-
-
-
-
     }
 
     public void floatButton(View container){

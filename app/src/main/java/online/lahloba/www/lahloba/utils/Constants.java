@@ -34,4 +34,11 @@ public class Constants {
     public static final String START_GET_MARKETPLACE = "start_get_marketplace";
     public static final String START_NEW_ORDER = "start_new_order";
     public static final String START_GET_CURRENT_ORDERS = "start_get_current_orders";
+    public static final String START_REMOVE_ORDER = "start_remove_order";
+
+
+
+    public static final String ORDER_TYPE_NEW = "order_type_new";
+    public static final String ORDER_TYPE_ONGOING = "order_type_ongoing";
+    public static final String ORDER_TYPE_OLD = "order_type_old";
 }

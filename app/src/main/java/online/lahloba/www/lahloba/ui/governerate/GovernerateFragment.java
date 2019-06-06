@@ -104,6 +104,7 @@ public class GovernerateFragment extends Fragment implements GovernerateAdapter.
             @Override
             public void onClick(View v) {
 
+                if(mLocationManager != null)
                 mLocationManager.removeUpdates(GovernerateFragment.this);
 
 

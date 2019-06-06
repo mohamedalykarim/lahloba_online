@@ -12,6 +12,7 @@ public class ProductItem extends BaseObservable {
     private String id;
     private String image;
     private String title;
+    private String description;
     private String price;
     private Object images;
     private String parentId;
@@ -36,6 +37,11 @@ public class ProductItem extends BaseObservable {
     @Bindable
     public String getTitle() {
         return title;
+    }
+
+    @Bindable
+    public String getDescription() {
+        return description;
     }
 
     @Bindable
@@ -79,17 +85,21 @@ public class ProductItem extends BaseObservable {
 
     public void setImage(String image) {
         this.image = image;
-//        notifyPropertyChanged(BR.image);
     }
 
     public void setTitle(String title) {
         this.title = title;
-//        notifyPropertyChanged(BR.title);
+        notifyPropertyChanged(BR.title);
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+        notifyPropertyChanged(BR.description);
     }
 
     public void setPrice(String price) {
         this.price = price;
-//        notifyPropertyChanged(BR.price);
+        notifyPropertyChanged(BR.price);
     }
 
     public void setImages(Object images) {
