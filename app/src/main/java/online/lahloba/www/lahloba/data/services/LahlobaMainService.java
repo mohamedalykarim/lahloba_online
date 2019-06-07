@@ -14,6 +14,7 @@ import online.lahloba.www.lahloba.utils.Injector;
 import static online.lahloba.www.lahloba.utils.Constants.GET_CART_ITEM;
 import static online.lahloba.www.lahloba.utils.Constants.GET_PRODUCTS_FOR_CATEGORY;
 import static online.lahloba.www.lahloba.utils.Constants.GET_SUB_MENU_ITEMS;
+import static online.lahloba.www.lahloba.utils.Constants.RESET_CART_ITEM;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_EMAIL;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_FIRSTNAME;
@@ -102,6 +103,8 @@ public class LahlobaMainService extends IntentService {
         }else if(intent.getAction().equals(START_REMOVE_ORDER)){
             String orderId = intent.getStringExtra(START_REMOVE_ORDER);
             networkDataHelper.removeOrderFromFireBase(orderId);
+        }else if(intent.getAction().equals(RESET_CART_ITEM)){
+            networkDataHelper.resetFirebaseCart();
         }
 
 

@@ -76,6 +76,8 @@ public class CartFragment extends Fragment {
         cartRecyclerView = binding.cartItemRecyclerView;
         linearLayoutManager = new LinearLayoutManager(this.getContext());
         cartAdapter = new CartAdapter(getContext());
+        cartAdapter.setCartViewModel(mViewModel);
+
         cartItemList = new ArrayList<>();
         cartAdapter.setCartItemList(cartItemList);
         cartRecyclerView.setAdapter(cartAdapter);

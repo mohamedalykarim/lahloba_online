@@ -6,6 +6,7 @@ import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -90,12 +91,19 @@ implements
                              * user is log in
                              */
 
+
+
                             if (((CartFragment)getSupportFragmentManager().getFragments().get(0))
                                     .getmViewModel().cartVMHelper.getAddressSelected() == null){
 
                                 addressBottomSheet.show(getSupportFragmentManager(),"");
 
                             }else {
+
+                                if (((CartFragment)getSupportFragmentManager().getFragments().get(0)).getCartItemList().size() < 1){
+                                    Toast.makeText(CartActivity.this, "Add products first", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
 
                                   /*
                                    * address selected then choose shipping method
@@ -110,6 +118,12 @@ implements
                                     shippingMethodBottomSheet.show(getSupportFragmentManager(),"");
 
                                 }else{
+
+                                    if (((CartFragment)getSupportFragmentManager().getFragments().get(0)).getCartItemList().size() < 1){
+                                        Toast.makeText(CartActivity.this, "Add products first", Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+
                                     /*
                                      * Start the order
                                      */
@@ -206,6 +220,12 @@ implements
 
 
             if (!isStartAddingNewOrder){
+                if (((CartFragment)getSupportFragmentManager().getFragments().get(0)).getCartItemList().size() < 1){
+                    Toast.makeText(CartActivity.this, "Add products first", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+
                 OrderItem orderItem = new OrderItem();
                 HashMap<String, CartItem> products = new HashMap<>();
                 for (CartItem item : ((CartFragment)getSupportFragmentManager().getFragments().get(0)).getCartItemList()){

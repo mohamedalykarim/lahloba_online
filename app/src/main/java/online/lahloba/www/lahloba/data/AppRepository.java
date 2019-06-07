@@ -118,7 +118,9 @@ public class AppRepository {
     }
 
 
-
+    public void startResetFirebaseCart() {
+        networkDataHelper.startResetFirebaseCart();
+    }
 
 
     //############################### Login ############################//
@@ -277,4 +279,5 @@ public class AppRepository {
     public void startRemoveOrder(String orderId) {
         networkDataHelper.startRemoveOrder(orderId);
     }
+
 }

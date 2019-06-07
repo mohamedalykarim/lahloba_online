@@ -41,6 +41,7 @@ import static online.lahloba.www.lahloba.utils.Constants.GET_CART_ITEM;
 import static online.lahloba.www.lahloba.utils.Constants.GET_MAIN_MENU_ITEMS;
 import static online.lahloba.www.lahloba.utils.Constants.GET_PRODUCTS_FOR_CATEGORY;
 import static online.lahloba.www.lahloba.utils.Constants.GET_SUB_MENU_ITEMS;
+import static online.lahloba.www.lahloba.utils.Constants.RESET_CART_ITEM;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_EMAIL;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_FIRSTNAME;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_PASSWORD;
@@ -324,7 +325,8 @@ public class NetworkDataHelper {
         Query database = FirebaseDatabase
                 .getInstance()
                 .getReference("Cart")
-                .child(userId).orderByChild("count").startAt(1);
+                .child(userId)
+                .child("CartItems").orderByChild("count").startAt(1);
 
         database.addValueEventListener(new ValueEventListener() {
             @Override
@@ -345,6 +347,46 @@ public class NetworkDataHelper {
 
             }
         });
+
+    }
+
+    public void addCartItemsToFireBase(List<CartItemRoom> cartItems, String userId) {
+        for (int i=0; i< cartItems.size(); i++){
+
+            CartItem cartItem = new CartItem();
+            cartItem.setCurrency(cartItems.get(i).getCurrency());
+            cartItem.setProductName(cartItems.get(i).getProductName());
+            cartItem.setCount(cartItems.get(i).getCount());
+            cartItem.setProductId(cartItems.get(i).getProductId());
+            cartItem.setImage(cartItems.get(i).getImage());
+            cartItem.setPrice(cartItems.get(i).getPrice());
+
+
+
+            FirebaseDatabase.getInstance().getReference()
+                    .child("Cart")
+                    .child(userId)
+                    .child("CartItems")
+                    .child(cartItem.getProductId())
+                    .setValue(cartItem);
+        }
+    }
+
+
+    public void startResetFirebaseCart() {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(RESET_CART_ITEM);
+        mContext.startService(intent);
+    }
+
+    public void resetFirebaseCart(){
+        if (FirebaseAuth.getInstance().getCurrentUser() == null)return;
+
+        String userId = FirebaseAuth.getInstance().getUid();
+
+        FirebaseDatabase.getInstance().getReference()
+                .child("Cart")
+                .child(userId).removeValue();
 
     }
 
@@ -463,27 +505,9 @@ public class NetworkDataHelper {
         return isUserCreated;
     }
 
-
-    public void addCartItemsToFireBase(List<CartItemRoom> cartItems, String userId) {
-        for (int i=0; i< cartItems.size(); i++){
-
-            CartItem cartItem = new CartItem();
-            cartItem.setCurrency(cartItems.get(i).getCurrency());
-            cartItem.setProductName(cartItems.get(i).getProductName());
-            cartItem.setCount(cartItems.get(i).getCount());
-            cartItem.setProductId(cartItems.get(i).getProductId());
-            cartItem.setImage(cartItems.get(i).getImage());
-            cartItem.setPrice(cartItems.get(i).getPrice());
+    //############################### Create New Account ############################//
 
 
-
-            FirebaseDatabase.getInstance().getReference()
-                    .child("Cart")
-                    .child(userId)
-                    .child(cartItem.getProductId())
-                    .setValue(cartItem);
-        }
-    }
 
 
 
@@ -745,7 +769,7 @@ public class NetworkDataHelper {
     }
 
 
-    //############################### Governorates ############################//
+    //############################### MarketPlace ############################//
     public void startGetMarketPlaceForId(String id) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
         intent.setAction(START_GET_MARKETPLACE);
@@ -880,4 +904,6 @@ public class NetworkDataHelper {
 
         mDatabase.child("Orders").child(userId).child(orderId).removeValue();
     }
+
+
 }

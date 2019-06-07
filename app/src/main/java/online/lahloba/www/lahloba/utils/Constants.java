@@ -6,7 +6,10 @@ public class Constants {
     public static final String BASE_URI = "https://lahloba-dd68e.firebaseio.com/";
     public static final String EXTRA_SUBTITLE_ID = "extra_subtitle_id";
     public static final String GET_PRODUCTS_FOR_CATEGORY = "create_product_for_category";
+
     public static final String GET_CART_ITEM = "get_cart_item";
+    public static final String RESET_CART_ITEM = "reset_cart_item";
+
     public static final String EXTRA_USER_ID = "user_id";
     public static final String START_LOGIN = "start_login";
     public static final String START_LOGIN_EMAIL = "start_login_email";
@@ -41,4 +44,5 @@ public class Constants {
     public static final String ORDER_TYPE_NEW = "order_type_new";
     public static final String ORDER_TYPE_ONGOING = "order_type_ongoing";
     public static final String ORDER_TYPE_OLD = "order_type_old";
+
 }

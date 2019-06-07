@@ -1,7 +1,9 @@
 package online.lahloba.www.lahloba.ui.adapters;
 
 import android.arch.lifecycle.LifecycleOwner;
+import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
+import android.location.Location;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,6 +28,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
 import java.util.List;
 
 import online.lahloba.www.lahloba.R;
@@ -34,14 +37,17 @@ import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.data.model.room_entity.CartItemRoom;
 import online.lahloba.www.lahloba.databinding.RowProductListBinding;
 import online.lahloba.www.lahloba.utils.Injector;
+import online.lahloba.www.lahloba.utils.SharedPreferencesManager;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
     private final Context context;
     List<ProductItem> productItemList;
     String userId ="userId";
+    MutableLiveData<Boolean> cartHasOLdFarProducts;
 
     public ProductAdapter(Context context) {
         this.context = context;
+        cartHasOLdFarProducts = new MutableLiveData<>();
     }
 
     @NonNull
@@ -104,6 +110,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
                 databaseReference.child("Cart")
                         .child(userId)
+                        .child("CartItems")
                         .child(item.getId())
                         .addValueEventListener(new ValueEventListener() {
                             @Override
@@ -196,7 +203,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                     productItemList.get(i).setCount(1);
 
                     if (FirebaseAuth.getInstance().getCurrentUser() != null){
-                        addItemTofirebase(item);
+                        addItemTofirebase(item,i);
                     }else{
                         Injector.getExecuter().diskIO().execute(new Runnable() {
                             @Override
@@ -221,6 +228,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
             databaseReference.child("Cart")
                     .child(userId)
+                    .child("CartItems")
                     .child(item.getId()).child("count")
                     .runTransaction(new Transaction.Handler() {
                         @NonNull
@@ -257,6 +265,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         databaseReference.child("Cart")
                 .child(userId)
+                .child("CartItems")
                 .child(item.getId()).child("count")
                 .runTransaction(new Transaction.Handler() {
                     @NonNull
@@ -294,7 +303,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     }
 
 
-    public void addItemTofirebase(ProductItem item){
+    public void addItemTofirebase(ProductItem item, int position){
         DatabaseReference databaseReference = FirebaseDatabase.getInstance()
                 .getReference().child("Cart");
 
@@ -308,8 +317,62 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         cartItem.setProductName(item.getTitle());
         cartItem.setMarketId(item.getMarketPlaceId());
 
-        databaseReference.child(userId).child(item.getId())
-                .setValue(cartItem);
+        databaseReference.child(userId).child("CartLocation")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                        if (dataSnapshot.hasChildren()){
+                            /**
+                             * Cart Location is set
+                             */
+                            Location cartLocation = new Location("");
+                            cartLocation.setLatitude(Double.parseDouble(dataSnapshot.child("lat").getValue().toString()));
+                            cartLocation.setLongitude(Double.parseDouble(dataSnapshot.child("lon").getValue().toString()));
+
+                            Location myLocation = new Location("");
+                            myLocation.setLatitude(Double.parseDouble(SharedPreferencesManager.getCurrentLocationLat(context)));
+                            myLocation.setLongitude(Double.parseDouble(SharedPreferencesManager.getCurrentLocationLan(context)));
+
+                            if (cartLocation.distanceTo(myLocation)/1000 < 30){
+                                databaseReference.child(userId).child("CartItems").child(cartItem.getId())
+                                        .setValue(cartItem);
+
+                            }else{
+                                /**
+                                 * Old far Poducts exists
+                                 */
+
+                                cartHasOLdFarProducts.setValue(true);
+                                cartHasOLdFarProducts.setValue(false);
+                                productItemList.get(position).setCount(0);
+
+
+                            }
+
+                        }else{
+                            /**
+                             * Cart Location not set
+                             */
+                            databaseReference.child(userId).child("CartItems").child(cartItem.getProductId())
+                                    .setValue(cartItem);
+
+                            HashMap<String,Object> newCartLocation = new HashMap<>();
+                            newCartLocation.put("lat", SharedPreferencesManager.getCurrentLocationLat(context));
+                            newCartLocation.put("lon", SharedPreferencesManager.getCurrentLocationLan(context));
+
+                            databaseReference.child(userId).child("CartLocation").setValue(newCartLocation);
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
     }
 
     private void addItemToInternal(ProductItem item) {
@@ -325,5 +388,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         Injector.provideRepository(context).insertCartItemToInternaldb(cartItem);
 
 
+    }
+
+    public MutableLiveData<Boolean> getCartHasOLdFarProducts() {
+        return cartHasOLdFarProducts;
     }
 }

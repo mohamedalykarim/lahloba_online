@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -23,10 +24,12 @@ import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.data.model.UserItem;
 import online.lahloba.www.lahloba.data.model.VMPHelper;
+import online.lahloba.www.lahloba.databinding.BottomSheetResetCartBinding;
 import online.lahloba.www.lahloba.databinding.FragmentProductBinding;
 import online.lahloba.www.lahloba.ui.adapters.ProductAdapter;
 import online.lahloba.www.lahloba.ui.cart.CartActivity;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
+import online.lahloba.www.lahloba.ui.products.bottom_sheet.ResetCartBottomSheet;
 import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.Injector;
 
@@ -39,6 +42,7 @@ public class ProductsFragment extends Fragment {
     RecyclerView productsRV;
     String userId;
     private UserItem currentUser;
+    ResetCartBottomSheet resetCartBottomSheet;
 
 
     public static ProductsFragment newInstance(Bundle args) {
@@ -55,6 +59,8 @@ public class ProductsFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_product, container, false);
         binding.setLifecycleOwner(this);
+
+        resetCartBottomSheet = new ResetCartBottomSheet();
 
         View view = binding.getRoot();
         productItemList = new ArrayList<>();
@@ -95,6 +101,13 @@ public class ProductsFragment extends Fragment {
         productsRV.setAdapter(productAdapter);
 
 
+        productAdapter.getCartHasOLdFarProducts().observe(this, isOldFarProducts->{
+            if (isOldFarProducts == null)return;
+
+            if (isOldFarProducts){
+                resetCartBottomSheet.show(getFragmentManager(),"");
+            }
+        });
 
 
         return view;
@@ -151,5 +164,15 @@ public class ProductsFragment extends Fragment {
                 container.getContext().startActivity(intent);
             }
         });
+    }
+
+
+    public void onResetCartItemClicked(int id) {
+        if (id== R.id.confirmBtn){
+            mViewModel.startResetFirebaseCart();
+            resetCartBottomSheet.dismiss();
+        }else if (id == R.id.cancelBtn){
+            resetCartBottomSheet.dismiss();
+        }
     }
 }

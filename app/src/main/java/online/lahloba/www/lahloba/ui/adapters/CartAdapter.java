@@ -2,6 +2,7 @@ package online.lahloba.www.lahloba.ui.adapters;
 
 import android.arch.lifecycle.LifecycleOwner;
 import android.content.Context;
+import android.location.Location;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,6 +26,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
 import java.util.List;
 
 import online.lahloba.www.lahloba.data.model.CartItem;
@@ -32,12 +34,15 @@ import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.data.model.room_entity.CartItemRoom;
 import online.lahloba.www.lahloba.databinding.RowCartListBinding;
 import online.lahloba.www.lahloba.ui.cart.CartActivity;
+import online.lahloba.www.lahloba.ui.cart.CartViewModel;
 import online.lahloba.www.lahloba.utils.Injector;
+import online.lahloba.www.lahloba.utils.SharedPreferencesManager;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
     private final Context context;
     List<CartItem> cartItemList;
     String userId ="userId";
+    private CartViewModel cartViewModel;
 
     public CartAdapter(Context context) {
         this.context = context;
@@ -70,7 +75,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                                     .into(viewHolder.binding.cartImage);
                         }
                     }
-                });
+        });
 
     }
 
@@ -101,6 +106,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
                 databaseReference.child("Cart")
                         .child(userId)
+                        .child("CartItems")
                         .child(item.getId())
                         .addValueEventListener(new ValueEventListener() {
                             @Override
@@ -127,6 +133,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                             if (cartItem!= null){
                                 cartItemList.get(i).setCount(cartItem.getCount());
                             }else {
+                                if(cartItemList.size() > 0)
                                 cartItemList.get(i).setCount(0);
                             }
                         });
@@ -222,6 +229,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
             databaseReference.child("Cart")
                     .child(userId)
+                    .child("CartItems")
                     .child(item.getProductId()).child("count")
                     .runTransaction(new Transaction.Handler() {
                         @NonNull
@@ -258,6 +266,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         databaseReference.child("Cart")
                 .child(userId)
+                .child("CartItems")
                 .child(item.getProductId()).child("count")
                 .runTransaction(new Transaction.Handler() {
                     @NonNull
@@ -292,8 +301,57 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                 .getReference().child("Cart");
 
 
-        databaseReference.child(userId).child(item.getProductId())
-                .setValue(item);
+        databaseReference.child(userId).child("CartLocation")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                        if (dataSnapshot.hasChildren()){
+                            /**
+                             * Cart Location is set
+                             */
+                            Location cartLocation = new Location("");
+                            cartLocation.setLatitude(Double.parseDouble(dataSnapshot.child("lat").getValue().toString()));
+                            cartLocation.setLongitude(Double.parseDouble(dataSnapshot.child("lon").getValue().toString()));
+
+                            Location myLocation = new Location("");
+                            myLocation.setLatitude(Double.parseDouble(SharedPreferencesManager.getCurrentLocationLat(context)));
+                            myLocation.setLongitude(Double.parseDouble(SharedPreferencesManager.getCurrentLocationLan(context)));
+
+                            if (cartLocation.distanceTo(myLocation)/1000 < 30){
+                                databaseReference.child(userId).child("CartItems").child(item.getId())
+                                        .setValue(item);
+
+                            }else{
+
+                            }
+
+                        }else{
+                            /**
+                             * Cart Location not set
+                             */
+                            databaseReference.child(userId).child("CartItems").child(item.getId())
+                                    .setValue(item);
+
+                            HashMap<String,Object> newCartLocation = new HashMap<>();
+                            newCartLocation.put("lat", SharedPreferencesManager.getCurrentLocationLat(context));
+                            newCartLocation.put("lon", SharedPreferencesManager.getCurrentLocationLan(context));
+
+                            databaseReference.child(userId).child("CartLocation").setValue(newCartLocation);
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+
+
+
     }
 
 
@@ -305,9 +363,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         cartItem.setPrice(item.getPrice());
         cartItem.setProductName(item.getProductName());
         cartItem.setCurrency("EGP");
-
-
-
 
 
         Injector.provideRepository(context).insertCartItemToInternaldb(cartItem);
@@ -322,6 +377,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+
+    public void setCartViewModel(CartViewModel cartViewModel) {
+        this.cartViewModel = cartViewModel;
     }
 
 

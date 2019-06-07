@@ -53,4 +53,8 @@ public class ProductsViewModel extends ViewModel {
             }
         });
     }
+
+    public void startResetFirebaseCart() {
+        appRepository.startResetFirebaseCart();
+    }
 }
