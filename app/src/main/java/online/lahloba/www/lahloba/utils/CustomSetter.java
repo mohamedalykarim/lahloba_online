@@ -11,6 +11,9 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.data.model.vm_helper.CartVMHelper;
 import online.lahloba.www.lahloba.ui.cart.CartViewModel;
@@ -89,6 +92,12 @@ public static void setShippingIcon(ImageView imageView, String shippingType){
         }else if (order == 5){
             Picasso.get().load(R.drawable.order_completed_icon).into(imageView);
         }
+    }
+
+    @BindingAdapter("android:dateText")
+    public static void setDateText(TextView textView, Date date){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yyyy");
+        textView.setText(simpleDateFormat.format(date));
     }
 
 

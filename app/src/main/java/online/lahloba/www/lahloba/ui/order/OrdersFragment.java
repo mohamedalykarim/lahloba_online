@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import online.lahloba.www.lahloba.R;
@@ -26,6 +27,7 @@ import online.lahloba.www.lahloba.ui.adapters.OrdersAdapter;
 import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.Injector;
 import online.lahloba.www.lahloba.utils.OrderStatusUtils;
+import online.lahloba.www.lahloba.utils.comparator.OrderItemDateComparable;
 
 import static online.lahloba.www.lahloba.utils.Constants.ORDER_TYPE_NEW;
 import static online.lahloba.www.lahloba.utils.Constants.ORDER_TYPE_OLD;
@@ -36,7 +38,6 @@ public class OrdersFragment extends Fragment {
     private OrdersViewModel mViewModel;
     RecyclerView orderRv;
     OrdersAdapter ordersAdapter;
-    List<OrderItem> filteredOrderItems;
     List<OrderItem> orderItems;
     String currentOrderType = ORDER_TYPE_NEW;
 
@@ -57,9 +58,8 @@ public class OrdersFragment extends Fragment {
         orderRv = binding.ordersRv;
         ordersAdapter = new OrdersAdapter();
         ordersAdapter.setViewModel(mViewModel);
-        filteredOrderItems = new ArrayList<>();
         orderItems = new ArrayList<>();
-        ordersAdapter.setOrderItemList(filteredOrderItems);
+        ordersAdapter.setOrderItemList(orderItems);
         orderRv.setAdapter(ordersAdapter);
         orderRv.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -78,9 +78,9 @@ public class OrdersFragment extends Fragment {
 
 
             this.orderItems.clear();
+            Collections.sort(orderItemsList, new OrderItemDateComparable());
             this.orderItems.addAll(orderItemsList);
-
-            selectOrderType();
+            ordersAdapter.notifyDataSetChanged();
 
         });
     }
@@ -94,42 +94,5 @@ public class OrdersFragment extends Fragment {
         this.currentOrderType = currentOrderTybe;
     }
 
-    public void selectOrderType(){
-        filteredOrderItems.clear();
-        ordersAdapter.notifyDataSetChanged();
 
-        switch (currentOrderType){
-            case ORDER_TYPE_NEW:
-                for (OrderItem item : orderItems){
-                    if (item.getOrderStatus() == OrderStatusUtils.ORDER_STATUS_PENDING){
-                        filteredOrderItems.add(item);
-                    }
-                    ordersAdapter.notifyDataSetChanged();
-                }
-                break;
-
-            case ORDER_TYPE_ONGOING:
-                for (OrderItem item : orderItems){
-                    if (item.getOrderStatus() == OrderStatusUtils.ORDER_STATUS_PROCESSING
-                            || item.getOrderStatus() == OrderStatusUtils.ORDER_STATUS_PROCESSED
-                            || item.getOrderStatus() == OrderStatusUtils.ORDER_STATUS_SHIPPED){
-                        filteredOrderItems.add(item);
-                    }
-                    ordersAdapter.notifyDataSetChanged();
-                }
-
-                break;
-
-            case ORDER_TYPE_OLD:
-                for (OrderItem item : orderItems){
-                    if (item.getOrderStatus() == OrderStatusUtils.ORDER_STATUS_COMPLETED){
-                        filteredOrderItems.add(item);
-                    }
-                    ordersAdapter.notifyDataSetChanged();
-                }
-
-
-                break;
-        }
-    }
 }

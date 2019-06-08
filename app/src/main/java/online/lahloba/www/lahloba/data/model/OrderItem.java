@@ -5,6 +5,7 @@ import android.databinding.Bindable;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Date;
 import java.util.HashMap;
 
 import online.lahloba.www.lahloba.BR;
@@ -20,6 +21,7 @@ public class OrderItem extends BaseObservable implements Parcelable {
     private double orderTotal;
     private int orderStatus;
     private int orderNumber;
+    private Date date;
 
     public OrderItem() {
     }
@@ -36,6 +38,7 @@ public class OrderItem extends BaseObservable implements Parcelable {
         in.readMap(products, OrderItem.class.getClassLoader());
         orderStatus = in.readInt();
         orderNumber = in.readInt();
+        date = (Date) in.readSerializable();
     }
 
     @Override
@@ -50,6 +53,7 @@ public class OrderItem extends BaseObservable implements Parcelable {
         dest.writeMap(products);
         dest.writeInt(orderStatus);
         dest.writeInt(orderNumber);
+        dest.writeSerializable(date);
     }
 
     @Override
@@ -110,6 +114,10 @@ public class OrderItem extends BaseObservable implements Parcelable {
         return orderNumber;
     }
 
+    public Date getDate() {
+        return date;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -149,5 +157,9 @@ public class OrderItem extends BaseObservable implements Parcelable {
     public void setOrderNumber(int orderNumber) {
         this.orderNumber = orderNumber;
         notifyPropertyChanged(BR.orderNumber);
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 }

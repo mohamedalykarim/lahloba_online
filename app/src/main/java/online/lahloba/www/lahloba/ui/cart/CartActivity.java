@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -209,6 +210,23 @@ implements
 
         if (addressBottomSheet !=null)
             addressBottomSheet.dismiss();
+
+
+
+        /**
+         *   Choose hyperlocal automatically
+         *
+         *
+         */
+
+        ((CartFragment)getSupportFragmentManager().getFragments().get(0))
+                .getmViewModel().cartVMHelper.setShippingMethodSelected(CartVMHelper.HYPERLOCAL_SHIPPING);
+
+        ((CartFragment)getSupportFragmentManager().getFragments().get(0))
+                .getmViewModel().cartVMHelper
+                .setHyperlocalCost(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getNonFinalHyperLocalCost());
+
+
     }
 
     @Override
@@ -244,6 +262,9 @@ implements
                         .getmViewModel().cartVMHelper.getHyperlocalCost()
                 );
 
+                Date now = new Date();
+                orderItem.setDate(now);
+
                 orderItem.setOrderStatus(OrderStatusUtils.ORDER_STATUS_PENDING);
 
                 ((CartFragment)getSupportFragmentManager().getFragments().get(0))
@@ -254,7 +275,6 @@ implements
 
 
             }
-
 
 
 
