@@ -4,6 +4,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
@@ -21,6 +22,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import online.lahloba.www.lahloba.data.model.AddressItem;
@@ -818,8 +820,10 @@ public class NetworkDataHelper {
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
         String pushKey = mDatabase.child("Orders").child(userId).push().getKey();
         orderItem.setId(pushKey);
-        String randomSt = pushKey.replace("-","");
-        orderItem.setOrderNumber(randomSt.hashCode());
+        int uNumber = pushKey.hashCode();
+
+        long orderNumber = Math.abs(uNumber);
+        orderItem.setOrderNumber(orderNumber);
 
         mDatabase.child("Orders").child(userId).child(pushKey).setValue(orderItem)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {

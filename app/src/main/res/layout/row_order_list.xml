@@ -23,7 +23,7 @@
         <LinearLayout
             android:id="@+id/orderHeaderContainer"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="120dp"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -34,12 +34,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="4"
-                android:padding="16dp"
-                android:orderStatusImage="@{order.orderStatus}" />
+                android:orderStatusImage="@{order.orderStatus}"
+                android:padding="16dp" />
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="120dp"
                 android:layout_weight="1">
 
                 <TextView
@@ -62,13 +62,10 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
                     android:text='@{order.orderNumber+""}'
-                    android:textColor="@color/black"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="@+id/textView17"
+                    android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/textView17"
-                    app:layout_constraintTop_toTopOf="@+id/textView17" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView17" />
 
                 <TextView
                     android:id="@+id/textView19"
@@ -80,17 +77,20 @@
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="18sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView17" />
+                    app:layout_constraintTop_toBottomOf="@+id/textView18" />
 
                 <TextView
-                    android:id="@+id/textView23"
+                    android:id="@+id/textView22"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:dateText='@{order.date }'
+                    android:layout_marginEnd="16dp"
+                    android:text='@{order.orderTotal + " "+ "EGP"}'
+                    android:textColor="@color/colorAccent"
+                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="@+id/textView19"
-                    app:layout_constraintStart_toEndOf="@+id/textView19"
-                    app:layout_constraintTop_toTopOf="@+id/textView19" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/textView19"
+                    tools:textSize="30sp" />
 
             </android.support.constraint.ConstraintLayout>
         </LinearLayout>
@@ -121,6 +121,18 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp">
 
+            <TextView
+                android:id="@+id/textView23"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
+                android:dateText='@{order.date }'
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <Button
                 android:id="@+id/cancelOrderBtn"
                 android:layout_width="wrap_content"
@@ -131,20 +143,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/textView22"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="8dp"
-                android:text='@{order.orderTotal + " "+ "EGP"}'
-                android:textColor="@color/colorAccent"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:textSize="30sp" />
         </android.support.constraint.ConstraintLayout>
 
     </LinearLayout>

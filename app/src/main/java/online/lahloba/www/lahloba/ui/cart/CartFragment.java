@@ -180,6 +180,8 @@ public class CartFragment extends Fragment {
                     cartItemList.add(cartItem);
                 }
 
+                calculateTotal();
+
 
                 cartAdapter.notifyDataSetChanged();
 

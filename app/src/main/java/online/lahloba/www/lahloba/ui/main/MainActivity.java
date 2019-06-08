@@ -10,6 +10,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Toast;
+
 import com.google.firebase.auth.FirebaseAuth;
 
 
@@ -110,9 +112,10 @@ public class MainActivity extends AppCompatActivity  {
 
 
     private void loadFragment(Fragment fragment) {
+        getSupportFragmentManager().getFragments().clear();
         // load fragment
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.frame_container, fragment);
+        transaction.replace(R.id.frame_container, fragment, fragment.getClass().getName());
         transaction.commit();
     }
 
@@ -143,6 +146,36 @@ public class MainActivity extends AppCompatActivity  {
         return super.onOptionsItemSelected(item);
     }
 
+
+    @Override
+    public void onBackPressed() {
+        Fragment shoppingF = getSupportFragmentManager().findFragmentByTag(ShoppingFragment.class.getName());
+        Fragment favoriteF = getSupportFragmentManager().findFragmentByTag(FavoriteFragment.class.getName());
+        Fragment accountF = getSupportFragmentManager().findFragmentByTag(AccountFragment.class.getName());
+        Fragment loginF = getSupportFragmentManager().findFragmentByTag(LoginFragment.class.getName());
+
+        if (shoppingF != null){
+            super.onBackPressed();
+        }
+
+        if(favoriteF != null){
+            ShoppingFragment fragment = new ShoppingFragment();
+            loadFragment(fragment);
+            binding.bottomNavigation.setSelectedItemId(R.id.ic_action_shopping);
+        }
+
+        if(accountF != null){
+            ShoppingFragment fragment = new ShoppingFragment();
+            loadFragment(fragment);
+            binding.bottomNavigation.setSelectedItemId(R.id.ic_action_shopping);
+        }
+
+        if(loginF != null){
+            ShoppingFragment fragment = new ShoppingFragment();
+            loadFragment(fragment);
+            binding.bottomNavigation.setSelectedItemId(R.id.ic_action_shopping);
+        }
+    }
 
 
 }

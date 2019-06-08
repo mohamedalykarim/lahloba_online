@@ -4,6 +4,12 @@ import java.util.Locale;
 
 public class LocalUtils {
     public static String getLangauge(){
-        return Locale.getDefault().getLanguage();
+        String language = Locale.getDefault().getLanguage();
+        if (language.equals("en") || language.equals("ar")){
+            return language;
+        }
+
+        return "en";
+
     }
 }

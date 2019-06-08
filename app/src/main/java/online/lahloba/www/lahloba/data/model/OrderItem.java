@@ -20,7 +20,7 @@ public class OrderItem extends BaseObservable implements Parcelable {
     private HashMap<String, CartItem> products;
     private double orderTotal;
     private int orderStatus;
-    private int orderNumber;
+    private long orderNumber;
     private Date date;
 
     public OrderItem() {
@@ -37,7 +37,7 @@ public class OrderItem extends BaseObservable implements Parcelable {
         products = new HashMap<>();
         in.readMap(products, OrderItem.class.getClassLoader());
         orderStatus = in.readInt();
-        orderNumber = in.readInt();
+        orderNumber = in.readLong();
         date = (Date) in.readSerializable();
     }
 
@@ -52,7 +52,7 @@ public class OrderItem extends BaseObservable implements Parcelable {
         dest.writeDouble(orderTotal);
         dest.writeMap(products);
         dest.writeInt(orderStatus);
-        dest.writeInt(orderNumber);
+        dest.writeLong(orderNumber);
         dest.writeSerializable(date);
     }
 
@@ -110,7 +110,7 @@ public class OrderItem extends BaseObservable implements Parcelable {
     }
 
     @Bindable
-    public int getOrderNumber() {
+    public long getOrderNumber() {
         return orderNumber;
     }
 
@@ -154,7 +154,7 @@ public class OrderItem extends BaseObservable implements Parcelable {
         this.orderStatus = orderStatus;
     }
 
-    public void setOrderNumber(int orderNumber) {
+    public void setOrderNumber(long orderNumber) {
         this.orderNumber = orderNumber;
         notifyPropertyChanged(BR.orderNumber);
     }

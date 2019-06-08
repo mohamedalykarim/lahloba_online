@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:textColor="#313131"
             android:textSize="14sp"
-            android:fontType="@{CustomSetter.FONT_HACEN_LINER_XXL}"
+            android:fontType="@{CustomSetter.getSelectedFont()}"
             app:layout_constraintEnd_toEndOf="@+id/imageView2"
             app:layout_constraintStart_toStartOf="@+id/imageView2"
             app:layout_constraintTop_toBottomOf="@+id/imageView2" />

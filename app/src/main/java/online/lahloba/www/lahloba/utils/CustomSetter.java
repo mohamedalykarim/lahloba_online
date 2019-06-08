@@ -22,6 +22,11 @@ public class CustomSetter {
     static Typeface type;
 
     public static final String FONT_HACEN_LINER_XXL = "fonts/Hacen Liner XXL.ttf";
+    public static final String FONT_EXO2_BOLD = "fonts/Exo2-Bold.otf";
+    public static final String FONT_ROBOTO_LIGHT = "fonts/Roboto-Light.ttf";
+    public static final String FONT_ROBOTO_BLACK = "fonts/Roboto-Black.ttf";
+
+
 
 @BindingAdapter("android:fontType")
 public static void setFont(View view, String font){
@@ -101,7 +106,14 @@ public static void setShippingIcon(ImageView imageView, String shippingType){
     }
 
 
-
+    public static String getSelectedFont(){
+        if (LocalUtils.getLangauge().equals("en")){
+            return FONT_ROBOTO_BLACK;
+        }else if (LocalUtils.getLangauge().equals("ar")){
+            return FONT_HACEN_LINER_XXL;
+        }
+        return FONT_EXO2_BOLD;
+    }
 
 
 }
