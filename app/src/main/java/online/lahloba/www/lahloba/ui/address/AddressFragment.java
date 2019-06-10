@@ -13,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -24,15 +25,19 @@ import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.databinding.FragmentAddressBinding;
 import online.lahloba.www.lahloba.ui.adapters.AddressAdapter;
+import online.lahloba.www.lahloba.ui.interfaces.EditAddressFromFragmentListener;
 import online.lahloba.www.lahloba.utils.Injector;
 
-public class AddressFragment extends Fragment {
-    private AddressViewModel mViewModel;
+public class AddressFragment extends Fragment implements AddressAdapter.EditAddressClickListener {
+    AddressViewModel mViewModel;
     RecyclerView addressRV;
     LinearLayoutManager linearLayoutManager;
     AddressAdapter addressAdapter;
     List<AddressItem> addressItems;
     private AddressItem defaultAddress;
+
+    EditAddressFromFragmentListener editAddressFromFragmentListener;
+
 
     public static AddressFragment newInstance() {
         return new AddressFragment();
@@ -62,6 +67,7 @@ public class AddressFragment extends Fragment {
         addressRV = binding.addressRV;
         linearLayoutManager = new LinearLayoutManager(getContext());
         addressAdapter = new AddressAdapter(mViewModel);
+        addressAdapter.setEditAddressClickListener(this);
         addressRV.setLayoutManager(linearLayoutManager);
         addressRV.setAdapter(addressAdapter);
 
@@ -108,5 +114,15 @@ public class AddressFragment extends Fragment {
         mViewModel.startGetAddrresses(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
 
+    }
+
+    @Override
+    public void onEditAddressClicked(AddressItem addressItem) {
+        editAddressFromFragmentListener.onClickEditAddressFromFragment(addressItem);
+    }
+
+
+    public void setEditAddressFromFragmentListener(EditAddressFromFragmentListener editAddressFromFragmentListener) {
+        this.editAddressFromFragmentListener = editAddressFromFragmentListener;
     }
 }

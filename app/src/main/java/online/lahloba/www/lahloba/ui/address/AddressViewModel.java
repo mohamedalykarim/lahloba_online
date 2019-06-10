@@ -7,17 +7,19 @@ import java.util.List;
 
 import online.lahloba.www.lahloba.data.AppRepository;
 import online.lahloba.www.lahloba.data.model.AddressItem;
+import online.lahloba.www.lahloba.data.model.vm_helper.AddressVMHelper;
 
 public class AddressViewModel extends ViewModel {
     AppRepository appRepository;
+    public AddressVMHelper addressVMHelper;
 
     public AddressViewModel(AppRepository appRepository) {
         this.appRepository = appRepository;
+        addressVMHelper = new AddressVMHelper();
     }
 
     public void startGetAddrresses(String userId){
         appRepository.startGetAddrresses(userId);
-
     }
 
     public MutableLiveData<List<AddressItem>> getAddrresses() {

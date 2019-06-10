@@ -1,11 +1,15 @@
 package online.lahloba.www.lahloba.data.model;
 
+import android.databinding.BaseObservable;
+import android.databinding.Bindable;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.firebase.database.Exclude;
 
-public class AddressItem implements Parcelable {
+import online.lahloba.www.lahloba.BR;
+
+public class AddressItem extends BaseObservable implements Parcelable {
     private String id;
     private String name;
     private String country;
@@ -17,7 +21,7 @@ public class AddressItem implements Parcelable {
     private double lon;
     private int floor;
     private int flatNumber;
-    private boolean isDefault;
+    private boolean isDefaultAddress;
     private String address;
 
     public AddressItem() {
@@ -35,7 +39,7 @@ public class AddressItem implements Parcelable {
         lon = in.readDouble();
         floor = in.readInt();
         flatNumber = in.readInt();
-        isDefault = in.readByte() != 0;
+        isDefaultAddress = in.readByte() != 0;
         address = in.readString();
     }
 
@@ -52,7 +56,7 @@ public class AddressItem implements Parcelable {
         dest.writeDouble(lon);
         dest.writeInt(floor);
         dest.writeInt(flatNumber);
-        dest.writeByte((byte) (isDefault ? 1 : 0));
+        dest.writeByte((byte) (isDefaultAddress ? 1 : 0));
         dest.writeString(address);
     }
 
@@ -117,8 +121,9 @@ public class AddressItem implements Parcelable {
         return flatNumber;
     }
 
-    public boolean isDefault() {
-        return isDefault;
+    @Bindable
+    public boolean isDefaultAddress() {
+        return isDefaultAddress;
     }
 
     public String getAddress() {
@@ -169,11 +174,16 @@ public class AddressItem implements Parcelable {
         this.flatNumber = flatNumber;
     }
 
-    public void setDefault(boolean aDefault) {
-        isDefault = aDefault;
+
+    public void setDefaultAddress(boolean aDefault) {
+        isDefaultAddress = aDefault;
+        notifyPropertyChanged(BR.defaultAddress);
     }
 
     public void setAddress(String address) {
         this.address = address;
     }
+
+
+
 }

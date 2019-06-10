@@ -1,12 +1,13 @@
-package online.lahloba.www.lahloba.ui.address;
+package online.lahloba.www.lahloba.ui.address.bottom_sheet;
 
 import android.Manifest;
-import android.arch.lifecycle.ViewModelProviders;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.databinding.DataBindingUtil;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -15,177 +16,78 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetDialog;
+import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.Toast;
-
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-import online.lahloba.www.lahloba.R;
-import online.lahloba.www.lahloba.ViewModelProviderFactory;
-import online.lahloba.www.lahloba.data.model.AddressItem;
-import online.lahloba.www.lahloba.databinding.FragmentAddAddressBinding;
-import online.lahloba.www.lahloba.utils.Injector;
+import online.lahloba.www.lahloba.databinding.BottomSheetEditAddressBinding;
+import online.lahloba.www.lahloba.ui.address.AddressViewModel;
 
-public class AddAddressFragment extends Fragment implements LocationListener {
-    private static final int ACCESS_FINE_LOCATION_REQUEST_CODE = 1;
+public class EditAddressBottomSheet extends BottomSheetDialogFragment implements LocationListener {
+    AddressViewModel addressViewModel;
 
-
-    private AddAddressViewModel mViewModel;
-    FragmentAddAddressBinding binding;
-    private int error = 0;
-    private AddressViewModel addressViewModel;
-    private AddressItem defaultAddress;
-
-    double lat, lon;
-    String locationAddress;
 
     LocationManager mLocationManager;
     Location location;
+    double lat, lon;
+    private static final int ACCESS_FINE_LOCATION_REQUEST_CODE = 1;
 
-    public static AddAddressFragment newInstance() {
-        return new AddAddressFragment();
-    }
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        binding = DataBindingUtil.inflate(
-                inflater,
-                R.layout.fragment_add_address,
-                container,
-                false
-        );
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        BottomSheetEditAddressBinding binding = BottomSheetEditAddressBinding.inflate(inflater,container,false);
+        binding.setViewmodel(addressViewModel);
 
-        ViewModelProviderFactory factory = Injector.getVMFactory(getContext(),null);
-        mViewModel = ViewModelProviders.of(this,factory).get(AddAddressViewModel.class);
-
-        ViewModelProviderFactory addressFactory = Injector.getVMFactory(getContext(),null);
-        addressViewModel = ViewModelProviders.of(this,addressFactory).get(AddressViewModel.class);
-
-
-
-        mViewModel.setIsAddressAddedFalse();
-
-
-        binding.addAddressBtn.setOnClickListener(new View.OnClickListener() {
+        binding.getLocationBtn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                validateForm();
-                if (error==0){
-                    AddressItem addressItem = new AddressItem();
-                    addressItem.setDefaultAddress(binding.switch1.isChecked());
-                    addressItem.setName(binding.nameET.getText().toString());
-                    addressItem.setCountry(binding.countryET.getText().toString());
-                    addressItem.setCity(binding.cityET.getText().toString());
-                    addressItem.setZone(binding.zoneET.getText().toString());
-                    addressItem.setStreet(binding.streetET.getText().toString());
-                    addressItem.setBuilding(binding.buildingET.getText().toString());
-                    addressItem.setFloor(Integer.parseInt(binding.floorET.getText().toString()));
-                    addressItem.setFlatNumber(Integer.parseInt(binding.flatNumberET.getText().toString()));
-                    addressItem.setLat(lat);
-                    addressItem.setLon(lon);
-                    addressItem.setAddress(locationAddress);
 
-
-
-                    mViewModel.startAddNewAddress(
-                            FirebaseAuth.getInstance().getCurrentUser().getUid(),
-                            addressItem
-                    );
-
-
-
-                }
             }
         });
 
-        mViewModel.getIsAddressAdded().observe(this, isAddressAdded->{
-            if (isAddressAdded){
-                Toast.makeText(getContext(), "New Address Added Successfully", Toast.LENGTH_SHORT).show();
-                getActivity().finish();
-            }
-        });
-
-
-        View view = binding.getRoot();
-        return view;
+        return binding.getRoot();
     }
 
-
-    public void validateForm(){
-        error = 0;
-
-        if (binding.nameET.getText().length() < 1){
-            binding.nameET.setError("Please Insert The Name Of Address");
-            error++;
-        }
-
-        if (binding.countryET.getText().length() < 1){
-            binding.countryET.setError("Please Insert Country Name");
-            error++;
-        }
-
-        if (binding.cityET.getText().length() < 1){
-            binding.cityET.setError("Please Insert City Name");
-            error++;
-        }
-
-        if (binding.zoneET.getText().length() < 1){
-            binding.zoneET.setError("Please Insert Zone Name");
-            error++;
-        }
-
-        if (binding.streetET.getText().length() < 1){
-            binding.streetET.setError("Please Insert Street Name");
-            error++;
-        }
-
-        if (binding.buildingET.getText().length() < 1){
-            binding.buildingET.setError("Please Insert Building Name Or Number");
-            error++;
-        }
-
-        if (binding.floorET.getText().length() < 1){
-            binding.floorET.setError("Please Insert Floor Number");
-            error++;
-        }
-
-        if (binding.flatNumberET.getText().length() < 1){
-            binding.flatNumberET.setError("Please Insert Flat Number");
-            error++;
-        }
-
-        if (lat == 0 || lon == 0){
-            Toast.makeText(getContext(), "Please select current location", Toast.LENGTH_SHORT).show();
-            error++;
-        }
-
-
-
-    }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        if (null == FirebaseAuth.getInstance()){
-            getActivity().finish();
-        }
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        BottomSheetDialog bottomSheetDialog=(BottomSheetDialog)super.onCreateDialog(savedInstanceState);
+        bottomSheetDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                BottomSheetDialog d = (BottomSheetDialog) dialog;
+                FrameLayout bottomSheet =  d.findViewById(android.support.design.R.id.design_bottom_sheet);
+                BottomSheetBehavior.from(bottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
+                BottomSheetBehavior.from(bottomSheet).setSkipCollapsed(true);
+                BottomSheetBehavior.from(bottomSheet).setHideable(true);
+            }
+        });
+        return bottomSheetDialog;
+    }
+
+    public void setAddressViewModel(AddressViewModel addressViewModel) {
+        this.addressViewModel = addressViewModel;
     }
 
 
     @Override
     public void onResume() {
         super.onResume();
+
 
         mLocationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -199,13 +101,7 @@ public class AddAddressFragment extends Fragment implements LocationListener {
         } else {
             getCurrentLocation();
         }
-
-        addressViewModel.getDefaultAddress().observe(this, defaultAddress->{
-            this.defaultAddress = defaultAddress;
-        });
     }
-
-
 
     private void getCurrentLocation() {
         boolean gps_enabled = false;
@@ -450,6 +346,7 @@ public class AddAddressFragment extends Fragment implements LocationListener {
     public void onLocationChanged(Location location) {
         mLocationManager.removeUpdates(this);
         if (location != null){
+            Toast.makeText(getContext(), ""+location.getLongitude(), Toast.LENGTH_SHORT).show();
             lat = location.getLatitude();
             lon = location.getLongitude();
 
@@ -465,10 +362,7 @@ public class AddAddressFragment extends Fragment implements LocationListener {
                 }
             }
 
-            if (address != null){
-                binding.getLocationBtn2.setText(address);
-                locationAddress = address;
-            }
+
         }
 
 
@@ -488,5 +382,4 @@ public class AddAddressFragment extends Fragment implements LocationListener {
     public void onProviderDisabled(String provider) {
 
     }
-
 }

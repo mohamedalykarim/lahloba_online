@@ -16,6 +16,7 @@ import online.lahloba.www.lahloba.ui.address.AddressViewModel;
 public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressViewHolder> {
     List<AddressItem> addressItemList;
     AddressViewModel addressViewModel;
+    EditAddressClickListener editAddressClickListener;
 
     public AddressAdapter(AddressViewModel addressViewModel) {
         this.addressViewModel = addressViewModel;
@@ -52,25 +53,45 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressV
                             addressItemList.get(i).getCountry()
             );
 
-            if (addressItemList.get(i).isDefault()){
+            if (addressItemList.get(i).isDefaultAddress()){
                 holder.binding.defaultBtn.setBackgroundResource(R.drawable.btn_bg_3);
             }else {
                 holder.binding.defaultBtn.setBackgroundResource(R.drawable.btn_bg_2);
             }
 
-            holder.binding.defaultBtn.setOnClickListener(new View.OnClickListener() {
+
+        /**
+         * Default Button
+         */
+
+        holder.binding.defaultBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     addressViewModel.startSetDefaultAddress(addressItemList.get(i).getId());
                 }
             });
 
-            holder.binding.deleteBtn.setOnClickListener(new View.OnClickListener() {
+        /**
+         * Delete Button
+         */
+
+        holder.binding.deleteBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     addressViewModel.startDeleteAddress(addressItemList.get(i).getId());
                 }
             });
+
+
+        /**
+         * Edit Button
+         */
+        holder.binding.editBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editAddressClickListener.onEditAddressClicked(addressItemList.get(i));
+            }
+        });
 
     }
 
@@ -95,5 +116,16 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressV
     public void setAddressItemList(List<AddressItem> addressItemList) {
         this.addressItemList = addressItemList;
     }
+
+
+    public void setEditAddressClickListener(EditAddressClickListener editAddressClickListener) {
+        this.editAddressClickListener = editAddressClickListener;
+    }
+
+    public interface EditAddressClickListener{
+        void onEditAddressClicked(AddressItem addressItem);
+    }
+
+
 
 }

@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity  {
 //            }
 //        });
 
-        startActivity(new Intent(this, OrdersActivity.class));
+//        startActivity(new Intent(this, OrdersActivity.class));
 
     }
 

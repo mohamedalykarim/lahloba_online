@@ -536,7 +536,7 @@ public class NetworkDataHelper {
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()){
 
-                            if (addressItem.isDefault()){
+                            if (addressItem.isDefaultAddress()){
                                 FirebaseDatabase.getInstance().getReference()
                                         .child("Address")
                                         .child(userId)
