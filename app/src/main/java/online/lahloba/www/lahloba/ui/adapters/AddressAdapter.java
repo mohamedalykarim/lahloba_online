@@ -2,6 +2,7 @@ package online.lahloba.www.lahloba.ui.adapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +53,8 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressV
                             + " - " +
                             addressItemList.get(i).getCountry()
             );
+
+            holder.binding.nameTV.setText(addressItemList.get(i).getName());
 
             if (addressItemList.get(i).isDefaultAddress()){
                 holder.binding.defaultBtn.setBackgroundResource(R.drawable.btn_bg_3);

@@ -42,4 +42,12 @@ public class AddressViewModel extends ViewModel {
     public void startDeleteAddress(String id) {
         appRepository.startDeleteAddress(id);
     }
+
+    public void startEditAddress(AddressItem editedAddress) {
+        appRepository.startEditAddress(editedAddress);
+    }
+
+    public MutableLiveData<Boolean> getIsAddressEdited() {
+        return appRepository.getIsAddressEdited();
+    }
 }

@@ -280,4 +280,11 @@ public class AppRepository {
         networkDataHelper.startRemoveOrder(orderId);
     }
 
+    public void startEditAddress(AddressItem editedAddress) {
+        networkDataHelper.startEditAddress(editedAddress);
+    }
+
+    public MutableLiveData<Boolean> getIsAddressEdited() {
+        return networkDataHelper.getIsAddressEdited();
+    }
 }

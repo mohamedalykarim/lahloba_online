@@ -30,8 +30,7 @@ public class AddressActivity extends AppCompatActivity implements EditAddressFro
         EditAddressBottomSheet editAddressBottomSheet = new EditAddressBottomSheet();
         editAddressBottomSheet.show(getSupportFragmentManager(), "");
         editAddressBottomSheet.setAddressViewModel(((AddressFragment) getSupportFragmentManager().getFragments().get(0)).mViewModel);
-
-
+        editAddressBottomSheet.setAddressItem(addressItem);
 
     }
 }

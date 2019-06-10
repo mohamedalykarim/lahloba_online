@@ -25,6 +25,8 @@ public class Constants {
 
     public static final String START_CREATE_NEW_ADDRESS = "start_create_new_address";
     public static final String START_CREATE_NEW_ADDRESS_ADDRESS_ITEM = "start_create_new_address_address_item";
+    public static final String START_EDIT_ADDRESS = "start_edit_address";
+
 
     public static final String START_GET_ADDRESSES = "start_get_addresses";
     public static final String START_GET_DEFAULT_ADDRESS = "start_get_default_address";

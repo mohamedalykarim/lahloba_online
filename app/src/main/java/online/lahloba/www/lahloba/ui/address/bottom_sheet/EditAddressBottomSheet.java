@@ -33,11 +33,13 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.databinding.BottomSheetEditAddressBinding;
 import online.lahloba.www.lahloba.ui.address.AddressViewModel;
 
 public class EditAddressBottomSheet extends BottomSheetDialogFragment implements LocationListener {
     AddressViewModel addressViewModel;
+    AddressItem addressItem;
 
 
     LocationManager mLocationManager;
@@ -55,13 +57,38 @@ public class EditAddressBottomSheet extends BottomSheetDialogFragment implements
         binding.getLocationBtn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                getCurrentLocation();
             }
         });
+
+
+
+        addressViewModel.addressVMHelper.setEditedAddress(addressItem);
+
+        binding.editAddressBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addressViewModel.startEditAddress(addressViewModel.addressVMHelper.getEditedAddress());
+            }
+        });
+
+
 
         return binding.getRoot();
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        addressViewModel.getIsAddressEdited().observe(getActivity(), isAddressEdited->{
+            if (null == isAddressEdited) return;
+
+            if (isAddressEdited){
+                this.dismiss();
+            }
+        });
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -83,6 +110,9 @@ public class EditAddressBottomSheet extends BottomSheetDialogFragment implements
         this.addressViewModel = addressViewModel;
     }
 
+    public void setAddressItem(AddressItem addressItem) {
+        this.addressItem = addressItem;
+    }
 
     @Override
     public void onResume() {

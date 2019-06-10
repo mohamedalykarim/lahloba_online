@@ -46,6 +46,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="32dp"
+                android:checked="@={viewmodel.addressVMHelper.editedAddress.defaultAddress}"
                 android:onCheckedChanged="@{(switch, checked) -> viewmodel.addressVMHelper.onEditedAddressCheckedChanged(checked)}"
                 android:text="Is Default Address"
                 android:textSize="18sp"
@@ -53,7 +54,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/flatNumberET" />
 
             <Button
-                android:id="@+id/addAddressBtn"
+                android:id="@+id/editAddressBtn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"

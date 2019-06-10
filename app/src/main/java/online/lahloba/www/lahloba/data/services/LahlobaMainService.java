@@ -24,6 +24,7 @@ import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUN
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_ADDRESS_ITEM;
 import static online.lahloba.www.lahloba.utils.Constants.START_DELETE_ADDRESS;
+import static online.lahloba.www.lahloba.utils.Constants.START_EDIT_ADDRESS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_ADDRESSES;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_ORDERS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_USER_DETAILS;
@@ -71,7 +72,6 @@ public class LahlobaMainService extends IntentService {
             networkDataHelper.startCreateFirebaseAccount(firstname,secondname,phone,email,password);
         }else if(intent.getAction().equals(START_GET_CURRENT_USER_DETAILS)){
             String uid = intent.getStringExtra(START_GET_CURRENT_USER_DETAILS);
-
             networkDataHelper.fetchCurrentUserDetails(uid);
         }else if(intent.getAction().equals(START_CREATE_NEW_ADDRESS)){
             String userId = intent.getStringExtra(START_CREATE_NEW_ADDRESS);
@@ -90,7 +90,17 @@ public class LahlobaMainService extends IntentService {
         }else if(intent.getAction().equals(START_DELETE_ADDRESS)){
             String id = intent.getStringExtra(START_DELETE_ADDRESS);
             networkDataHelper.deleteAddress(id);
-        }else if(intent.getAction().equals(START_GET_GOVERNORATES)){
+        }else if(intent.getAction().equals(START_EDIT_ADDRESS)){
+            AddressItem addressItem = intent.getParcelableExtra(START_EDIT_ADDRESS);
+            networkDataHelper.editAddress(addressItem);
+        }
+
+
+
+
+
+
+        else if(intent.getAction().equals(START_GET_GOVERNORATES)){
             networkDataHelper.getGovernoratesFromFirebase();
         }else if(intent.getAction().equals(START_GET_MARKETPLACE)){
             String id = intent.getStringExtra(START_GET_MARKETPLACE);

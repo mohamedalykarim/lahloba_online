@@ -11,6 +11,7 @@ import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryDataEventListener;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -21,6 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -52,6 +54,7 @@ import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUN
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_ADDRESS_ITEM;
 import static online.lahloba.www.lahloba.utils.Constants.START_DELETE_ADDRESS;
+import static online.lahloba.www.lahloba.utils.Constants.START_EDIT_ADDRESS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_ADDRESSES;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_ORDERS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_USER_DETAILS;
@@ -82,6 +85,8 @@ public class NetworkDataHelper {
     MutableLiveData<DataSnapshot> governorates;
     MutableLiveData<MarketPlace> marketPlace;
     MutableLiveData<Boolean> isOrderAdded;
+    private MutableLiveData<Boolean> isAddressEdited;
+
     private MutableLiveData<List<OrderItem>> orderItems;
 
 
@@ -105,6 +110,7 @@ public class NetworkDataHelper {
         userDetails = new MutableLiveData<>();
         isUserCreated = new MutableLiveData<>();
         isOrderAdded = new MutableLiveData<>();
+        isAddressEdited = new MutableLiveData<>();
 
 
         isUserCreated.setValue(false);
@@ -674,7 +680,7 @@ public class NetworkDataHelper {
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         mDatabase.child("Address").child(userId).child(id)
-                .child("default")
+                .child("defaultAddress")
                 .setValue(true)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -684,7 +690,7 @@ public class NetworkDataHelper {
                                 FirebaseDatabase.getInstance().getReference()
                                         .child("Address")
                                         .child(userId)
-                                        .orderByChild("default")
+                                        .orderByChild("defaultAddress")
                                         .equalTo(true)
                                         .addListenerForSingleValueEvent(new ValueEventListener() {
                                             @Override
@@ -696,7 +702,7 @@ public class NetworkDataHelper {
                                                                 .child("Address")
                                                                 .child(userId)
                                                                 .child(address.getId())
-                                                                .child("default")
+                                                                .child("defaultAddress")
                                                                 .setValue(false);
                                                     }
 
@@ -738,6 +744,35 @@ public class NetworkDataHelper {
 
         mDatabase.child("Address").child(userId).child(id)
                 .removeValue();
+    }
+
+
+    public void startEditAddress(AddressItem editedAddress) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(START_EDIT_ADDRESS);
+        intent.putExtra(START_EDIT_ADDRESS, editedAddress);
+        mContext.startService(intent);
+    }
+
+    public void editAddress(AddressItem addressItem){
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        mDatabase.child("Address").child(userId).child(addressItem.getId())
+                .setValue(addressItem)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        isAddressEdited.setValue(true);
+                        isAddressEdited.setValue(false);
+                    }
+                });
+
+    }
+
+
+    public MutableLiveData<Boolean> getIsAddressEdited() {
+        return isAddressEdited;
     }
 
     //############################### Governorates ############################//
