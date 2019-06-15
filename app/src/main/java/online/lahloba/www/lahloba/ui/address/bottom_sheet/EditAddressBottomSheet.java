@@ -376,7 +376,6 @@ public class EditAddressBottomSheet extends BottomSheetDialogFragment implements
     public void onLocationChanged(Location location) {
         mLocationManager.removeUpdates(this);
         if (location != null){
-            Toast.makeText(getContext(), ""+location.getLongitude(), Toast.LENGTH_SHORT).show();
             lat = location.getLatitude();
             lon = location.getLongitude();
 

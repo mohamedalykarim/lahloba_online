@@ -1,5 +1,6 @@
 package online.lahloba.www.lahloba.data.model.vm_helper;
 
+import android.arch.lifecycle.MutableLiveData;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import online.lahloba.www.lahloba.BR;
@@ -7,11 +8,16 @@ import online.lahloba.www.lahloba.data.model.UserItem;
 
 
 public class LoginVMHelper extends BaseObservable {
-    boolean isLogged;
+    MutableLiveData<Boolean> isLogged;
     UserItem currentUser;
 
+    public LoginVMHelper() {
+        isLogged = new MutableLiveData<>();
+    }
+
+
     @Bindable
-    public boolean isLogged() {
+    public MutableLiveData<Boolean> getIsLogged() {
         return isLogged;
     }
 
@@ -21,8 +27,8 @@ public class LoginVMHelper extends BaseObservable {
     }
 
     public void setLogged(boolean logged) {
-        isLogged = logged;
-        notifyPropertyChanged(BR.logged);
+        isLogged.setValue(logged);
+        notifyPropertyChanged(BR.isLogged);
     }
 
     public void setCurrentUser(UserItem currentUser) {

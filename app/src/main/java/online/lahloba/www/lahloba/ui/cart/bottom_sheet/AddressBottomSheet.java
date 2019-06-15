@@ -11,12 +11,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.databinding.BottomSheetAdressBinding;
 import online.lahloba.www.lahloba.ui.adapters.CartAddressAdapter;
+import online.lahloba.www.lahloba.ui.cart.CartViewModel;
 
 public class AddressBottomSheet extends BottomSheetDialogFragment
         implements CartAddressAdapter.OnAddressSelected {
@@ -25,6 +28,7 @@ public class AddressBottomSheet extends BottomSheetDialogFragment
     CartAddressAdapter cartAddressAdapter;
     RecyclerView addressRv;
     SendAddressToCart sendAddressToCart;
+    CartViewModel cartViewModel;
 
     public AddressBottomSheet() {
         addresses = new ArrayList<>();
@@ -45,9 +49,18 @@ public class AddressBottomSheet extends BottomSheetDialogFragment
         return binding.getRoot();
     }
 
+
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onResume() {
+        super.onResume();
+
+        cartViewModel.startGetAddress(FirebaseAuth.getInstance().getUid());
+
+        cartViewModel.getAddresses().observe(getActivity(), addresses->{
+            setAddresses(addresses);
+
+        });
+
     }
 
     public void setAddresses(List<AddressItem> addresses) {
@@ -57,6 +70,11 @@ public class AddressBottomSheet extends BottomSheetDialogFragment
         if (cartAddressAdapter != null)
         cartAddressAdapter.notifyDataSetChanged();
     }
+
+
+    /**
+     * Select Address
+     */
 
     @Override
     public void onAddressItemSelected(AddressItem addressItems) {
@@ -79,5 +97,10 @@ public class AddressBottomSheet extends BottomSheetDialogFragment
 
     public interface SendAddressToCart{
         void onSendAddressToCart(AddressItem addressItems);
+    }
+
+
+    public void setCartViewModel(CartViewModel cartViewModel) {
+        this.cartViewModel = cartViewModel;
     }
 }

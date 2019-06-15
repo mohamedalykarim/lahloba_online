@@ -1,5 +1,7 @@
 package online.lahloba.www.lahloba.data.model;
 
+import com.google.firebase.database.Exclude;
+
 import java.io.Serializable;
 
 public class CartItem implements Serializable {
@@ -11,6 +13,10 @@ public class CartItem implements Serializable {
     String image;
     String currency;
     String marketId;
+
+    @Exclude
+    boolean isFavorite;
+
 
 
     public String getId() {
@@ -45,6 +51,11 @@ public class CartItem implements Serializable {
         return marketId;
     }
 
+    @Exclude
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -75,5 +86,10 @@ public class CartItem implements Serializable {
 
     public void setMarketId(String marketId) {
         this.marketId = marketId;
+    }
+
+    @Exclude
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
     }
 }

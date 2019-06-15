@@ -47,4 +47,5 @@ public class Constants {
     public static final String ORDER_TYPE_ONGOING = "order_type_ongoing";
     public static final String ORDER_TYPE_OLD = "order_type_old";
 
+    public static final String START_GET_FAVORITES = "start_get_favorites";
 }

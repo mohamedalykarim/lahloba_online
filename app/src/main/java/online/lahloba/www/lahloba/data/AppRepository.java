@@ -287,4 +287,16 @@ public class AppRepository {
     public MutableLiveData<Boolean> getIsAddressEdited() {
         return networkDataHelper.getIsAddressEdited();
     }
+
+
+    //############################### Favorites ############################//
+
+    public void startGetFavoriteItems() {
+        networkDataHelper.startGetFavoriteItems();
+    }
+
+
+    public MutableLiveData<List<ProductItem>> getFavoritesItems() {
+        return networkDataHelper.getFavoritesItems();
+    }
 }

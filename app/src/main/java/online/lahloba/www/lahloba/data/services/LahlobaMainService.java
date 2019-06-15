@@ -29,6 +29,7 @@ import static online.lahloba.www.lahloba.utils.Constants.START_GET_ADDRESSES;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_ORDERS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_USER_DETAILS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_DEFAULT_ADDRESS;
+import static online.lahloba.www.lahloba.utils.Constants.START_GET_FAVORITES;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_GOVERNORATES;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_MARKETPLACE;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN;
@@ -115,6 +116,11 @@ public class LahlobaMainService extends IntentService {
             networkDataHelper.removeOrderFromFireBase(orderId);
         }else if(intent.getAction().equals(RESET_CART_ITEM)){
             networkDataHelper.resetFirebaseCart();
+        }
+
+
+        else if(intent.getAction().equals(START_GET_FAVORITES)){
+            networkDataHelper.getFavoritesFromFirebase();
         }
 
 

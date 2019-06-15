@@ -91,6 +91,7 @@ public class NetworkDataHelper {
 
 
     private MutableLiveData<List<ProductItem>> productsItems;
+    private MutableLiveData<List<ProductItem>> favoritesItems;
 
 
     public NetworkDataHelper(Context applicationContext) {
@@ -103,6 +104,7 @@ public class NetworkDataHelper {
         governorates = new MutableLiveData<>();
         marketPlace = new MutableLiveData<>();
         orderItems = new MutableLiveData<>();
+        favoritesItems = new MutableLiveData<>();
 
         defaultAddress = new MutableLiveData<>();
 
@@ -945,4 +947,47 @@ public class NetworkDataHelper {
     }
 
 
+    //############################### Favorites ############################//
+
+    public void startGetFavoriteItems() {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.START_GET_FAVORITES);
+        mContext.startService(intent);
+    }
+
+    public void getFavoritesFromFirebase() {
+        if (FirebaseAuth.getInstance().getUid()==null) {
+            return;
+        }
+
+        String userId = FirebaseAuth.getInstance().getUid();
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        mDatabase.child("Favorites").child(userId)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        List<ProductItem> productItemsList = new ArrayList<>();
+                        for (DataSnapshot item : dataSnapshot.getChildren()){
+                            productItemsList.add(item.getValue(ProductItem.class));
+                        }
+
+                        favoritesItems.setValue(productItemsList);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+
+
+
+    }
+
+
+    public MutableLiveData<List<ProductItem>> getFavoritesItems() {
+        return favoritesItems;
+    }
 }

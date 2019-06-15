@@ -29,6 +29,7 @@ import com.squareup.picasso.Picasso;
 import java.util.HashMap;
 import java.util.List;
 
+import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.data.model.room_entity.CartItemRoom;
@@ -41,7 +42,7 @@ import online.lahloba.www.lahloba.utils.SharedPreferencesManager;
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
     private final Context context;
     List<CartItem> cartItemList;
-    String userId ="userId";
+    String userId;
     private CartViewModel cartViewModel;
 
     public CartAdapter(Context context) {
@@ -62,6 +63,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         viewHolder.bind(item);
         viewHolder.clicks(i, item);
 
+        if (FirebaseAuth.getInstance().getUid() != null){
+            userId = FirebaseAuth.getInstance().getUid();
+        }
+
+
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
         storageRef.child(item.getImage())
@@ -76,6 +82,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                         }
                     }
         });
+
+
+        favorites(viewHolder,i,item);
+
+
 
     }
 
@@ -113,10 +124,14 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                                 if(null != dataSnapshot.getValue()){
-                                    CartItem cartItem = dataSnapshot.getValue(CartItem.class);
-                                    if(cartItem.getProductId().equals( cartItemList.get(i).getId())){
-                                        cartItemList.get(i).setCount(cartItem.getCount());
+                                    if (cartItemList.size() != 0){
+                                        CartItem cartItem = dataSnapshot.getValue(CartItem.class);
+                                        if(cartItem.getProductId().equals( cartItemList.get(i).getId())){
+                                            cartItemList.get(i).setCount(cartItem.getCount());
+                                        }
                                     }
+
+
 
                                 }
 
@@ -222,6 +237,49 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
         }
     }
+
+
+    private void favorites(@NonNull CartViewHolder holder, int i, CartItem item) {
+        if (userId == null)return;
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        databaseReference.child("Favorites")
+                .child(userId)
+                .child(item.getProductId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.hasChildren()){
+                            Picasso.get().load(R.drawable.favorite_icon).into(holder.binding.favoriteImage);
+                            cartItemList.get(i).setFavorite(true);
+                        }else{
+                            Picasso.get().load(R.drawable.no_favorite_icon).into(holder.binding.favoriteImage);
+                            cartItemList.get(i).setFavorite(false);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+        holder.binding.favoriteImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (cartItemList.get(i).isFavorite()){
+                    databaseReference.child("Favorites")
+                            .child(userId)
+                            .child(item.getProductId()).removeValue();
+                }else {
+                    databaseReference.child("Favorites")
+                            .child(userId)
+                            .child(item.getProductId()).setValue(item);
+                }
+            }
+        });
+    }
+
 
     private void removeFromCountFirebase(CartItem item) {
         if(item.getCount()>0){

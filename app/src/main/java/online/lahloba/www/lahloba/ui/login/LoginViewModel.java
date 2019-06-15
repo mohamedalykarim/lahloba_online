@@ -13,15 +13,13 @@ import online.lahloba.www.lahloba.utils.Injector;
 
 public class LoginViewModel extends ViewModel {
     AppRepository appRepository;
-    LoginVMHelper loginVMHelper;
+    public LoginVMHelper loginVMHelper;
 
     public LoginViewModel(AppRepository appRepository) {
         this.appRepository = appRepository;
         loginVMHelper = new LoginVMHelper();
 
         getIsLogged().observeForever(isLogged->{
-            loginVMHelper.setLogged(isLogged);
-
             if (isLogged){
                 startGetUserDetails(FirebaseAuth.getInstance().getCurrentUser().getUid());
             }
@@ -48,7 +46,9 @@ public class LoginViewModel extends ViewModel {
 
     public void startLogOut(){
         appRepository.startLogout();
+        loginVMHelper.setLogged(false);
     }
+
 
     public MutableLiveData<Boolean> getIsLogged(){
         return appRepository.getIsLogged();

@@ -10,7 +10,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -18,13 +17,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.databinding.ActivityMainBinding;
+import online.lahloba.www.lahloba.ui.favorites.FavoritesFragment;
 import online.lahloba.www.lahloba.ui.fragments.AccountFragment;
-import online.lahloba.www.lahloba.ui.fragments.FavoriteFragment;
 import online.lahloba.www.lahloba.ui.login.LoginFragment;
 import online.lahloba.www.lahloba.ui.fragments.ShoppingFragment;
 import online.lahloba.www.lahloba.ui.governerate.GovernerateActivity;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
-import online.lahloba.www.lahloba.ui.order.OrdersActivity;
 import online.lahloba.www.lahloba.utils.Injector;
 
 public class MainActivity extends AppCompatActivity  {
@@ -81,6 +79,17 @@ public class MainActivity extends AppCompatActivity  {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (FirebaseAuth.getInstance().getUid() != null){
+            loginViewModel.loginVMHelper.setLogged(true);
+        }else{
+            loginViewModel.loginVMHelper.setLogged(false);
+        }
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         mAuth = FirebaseAuth.getInstance();
@@ -98,7 +107,7 @@ public class MainActivity extends AppCompatActivity  {
                     loadFragment(fragment);
                     return true;
                 case R.id.ic_action_favorite:
-                    fragment = new FavoriteFragment();
+                    fragment = new FavoritesFragment();
                     loadFragment(fragment);
                     return true;
                 case R.id.ic_action_my_account:
@@ -121,7 +130,7 @@ public class MainActivity extends AppCompatActivity  {
 
     public void loginAccountFragmetReplace() {
         loginViewModel.getIsLogged().observe(MainActivity.this, isLogged -> {
-            if (isLogged) {
+            if (FirebaseAuth.getInstance().getUid() != null) {
                 Fragment accountFragment = new AccountFragment();
                 loadFragment(accountFragment);
             } else {
@@ -129,6 +138,12 @@ public class MainActivity extends AppCompatActivity  {
                 loadFragment(loginFragment);
             }
         });
+
+
+
+
+
+
     }
 
 
@@ -150,7 +165,7 @@ public class MainActivity extends AppCompatActivity  {
     @Override
     public void onBackPressed() {
         Fragment shoppingF = getSupportFragmentManager().findFragmentByTag(ShoppingFragment.class.getName());
-        Fragment favoriteF = getSupportFragmentManager().findFragmentByTag(FavoriteFragment.class.getName());
+        Fragment favoriteF = getSupportFragmentManager().findFragmentByTag(FavoritesFragment.class.getName());
         Fragment accountF = getSupportFragmentManager().findFragmentByTag(AccountFragment.class.getName());
         Fragment loginF = getSupportFragmentManager().findFragmentByTag(LoginFragment.class.getName());
 

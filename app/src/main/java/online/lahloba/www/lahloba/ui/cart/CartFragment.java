@@ -30,6 +30,7 @@ import online.lahloba.www.lahloba.data.model.VMPHelper;
 import online.lahloba.www.lahloba.data.model.room_entity.CartItemRoom;
 import online.lahloba.www.lahloba.databinding.FragmentCartBinding;
 import online.lahloba.www.lahloba.ui.adapters.CartAdapter;
+import online.lahloba.www.lahloba.ui.login.LoginViewModel;
 import online.lahloba.www.lahloba.ui.order.OrdersActivity;
 import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.ExpandableHeightRecyclerView;
@@ -48,8 +49,11 @@ public class CartFragment extends Fragment {
     AddressesToActivityFromCart addressesToActivityFromCart;
     List<String> marketIds;
     double nonFinalHyperLocalCost;
+    VMPHelper vmpHelper;
 
-    public static CartFragment newInstance(Bundle args, AddressesToActivityFromCart listener) {
+    LoginViewModel loginViewModel;
+
+    public static CartFragment newInstance(Bundle args) {
         CartFragment fragment = new CartFragment();
         fragment.setArguments(args);
         return fragment;
@@ -62,7 +66,7 @@ public class CartFragment extends Fragment {
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_cart, container, false);
         binding.setLifecycleOwner(this);
 
-        VMPHelper vmpHelper = new VMPHelper();
+        vmpHelper = new VMPHelper();
         vmpHelper.setUserId(getArguments().getString(Constants.EXTRA_USER_ID));
         ViewModelProviderFactory factory = Injector.getVMFactory(this.getContext(), vmpHelper);
         mViewModel = ViewModelProviders.of(this, factory).get(CartViewModel.class);
@@ -95,18 +99,15 @@ public class CartFragment extends Fragment {
          * Observe the addresses to show on address selection
          */
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            mViewModel.startGetAddress(FirebaseAuth.getInstance().getUid());
 
-            mViewModel.getAddresses(FirebaseAuth.getInstance().getUid()).observe(this,addresses->{
-                addressesToActivityFromCart.onAddressesToActivityFromCart(addresses);
-            });
+
 
             mViewModel.getIsOrderAdded().observe(this, isOrderAdded->{
                 if (null != isOrderAdded){
                     if (isOrderAdded){
                         getActivity().finish();
                         startActivity(new Intent(getContext(), OrdersActivity.class));
-                        Toast.makeText(getContext(), "added", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Order added", Toast.LENGTH_SHORT).show();
 
                     }
                 }
@@ -189,6 +190,7 @@ public class CartFragment extends Fragment {
         });
 
 
+
         /**
          *  get Market place of current cart item
          */
@@ -202,19 +204,19 @@ public class CartFragment extends Fragment {
         });
 
 
+
+        loginViewModel.loginVMHelper.getIsLogged().observe(this,isLogged->{
+            if (isLogged==null)return;
+
+            if (isLogged){
+                mViewModel.startGetCartItems(FirebaseAuth.getInstance().getUid());
+                mViewModel.startGetAddress(FirebaseAuth.getInstance().getUid());
+            }
+        });
+
+
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        try{
-            addressesToActivityFromCart = (AddressesToActivityFromCart) context;
-        }catch (ClassCastException e){
-            throw new ClassCastException(context.toString() + "Must implement AddressesToActivityFromCart");
-        }
-
-    }
 
 
     void calculateDistance(){
@@ -317,5 +319,9 @@ public class CartFragment extends Fragment {
 
     public List<CartItem> getCartItemList() {
         return cartItemList;
+    }
+
+    public void setLoginViewModel(LoginViewModel loginViewModel) {
+        this.loginViewModel = loginViewModel;
     }
 }

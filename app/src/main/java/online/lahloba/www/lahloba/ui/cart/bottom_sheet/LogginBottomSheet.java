@@ -33,6 +33,13 @@ public class LogginBottomSheet extends BottomSheetDialogFragment {
             }
         });
 
+        binding.googleLoginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onLoginSheetClicked.onLoginSheetItemClicked(v.getId());
+            }
+        });
+
         return binding.getRoot();
     }
 

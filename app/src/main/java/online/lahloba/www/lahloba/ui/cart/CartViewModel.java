@@ -49,7 +49,7 @@ public class CartViewModel extends ViewModel {
         appRepository.cleerMarketPlaceForId();
     }
 
-    public MutableLiveData<List<AddressItem>> getAddresses(String userId){
+    public MutableLiveData<List<AddressItem>> getAddresses(){
         return appRepository.getAddressItems();
     }
 

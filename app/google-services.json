@@ -15,11 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "520489206066-3n1mjrbine671nroh8qnqba4h3l371j8.apps.googleusercontent.com",
+          "client_id": "520489206066-i3mk9ue0keblpeqhinup6t6e8oumc0i2.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "online.lahloba.www.lahloba",
-            "certificate_hash": "7e25ee0e114260cdfad565a0be278c7811433142"
+            "certificate_hash": "255a2d58cd4526f40c7706f5c451a4f671646c0d"
           }
         },
         {

@@ -19,9 +19,11 @@ public class ProductItem extends BaseObservable {
     private String marketPlaceId;
 
     @Exclude
-    private String currency;
-    @Exclude
     private int count;
+
+
+    @Exclude
+    private String currency;
     @Exclude
     private boolean isFavorite;
 
@@ -75,6 +77,10 @@ public class ProductItem extends BaseObservable {
         return isFavorite;
     }
 
+
+
+
+
     public String getMarketPlaceId() {
         return marketPlaceId;
     }
@@ -127,6 +133,8 @@ public class ProductItem extends BaseObservable {
         isFavorite = favorite;
         notifyPropertyChanged(BR.favorite);
     }
+
+
 
     public void setMarketPlaceId(String marketPlaceId) {
         this.marketPlaceId = marketPlaceId;

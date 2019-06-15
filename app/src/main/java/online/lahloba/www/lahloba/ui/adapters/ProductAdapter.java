@@ -59,11 +59,15 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ProductViewHolder productViewHolder, int i) {
+    public void onBindViewHolder(@NonNull ProductViewHolder holder, int i) {
         productItemList.get(i).setCount(0);
         ProductItem item = productItemList.get(i);
-        productViewHolder.bind(item);
-        productViewHolder.clicks(i, item);
+        holder.bind(item);
+        holder.clicks(i, item);
+
+        if (FirebaseAuth.getInstance().getUid() != null){
+            userId = FirebaseAuth.getInstance().getUid();
+        }
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
@@ -76,11 +80,54 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                             Picasso.get()
                                     .load(task.getResult())
                                     .placeholder(R.drawable.progress_animation)
-                                    .into(productViewHolder.binding.productImage);
+                                    .into(holder.binding.productImage);
                         }
                     }
                 });
 
+
+        favorites(holder, i, item);
+
+
+    }
+
+    private void favorites(@NonNull ProductViewHolder holder, int i, ProductItem item) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        databaseReference.child("Favorites")
+                .child(userId)
+                .child(item.getId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.hasChildren()){
+                            Picasso.get().load(R.drawable.favorite_icon).into(holder.binding.favoriteImage);
+                            productItemList.get(i).setFavorite(true);
+                        }else{
+                            Picasso.get().load(R.drawable.no_favorite_icon).into(holder.binding.favoriteImage);
+                            productItemList.get(i).setFavorite(false);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+        });
+
+        holder.binding.favoriteImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (productItemList.get(i).isFavorite()){
+                    databaseReference.child("Favorites")
+                            .child(userId)
+                            .child(item.getId()).removeValue();
+                }else {
+                    databaseReference.child("Favorites")
+                            .child(userId)
+                            .child(item.getId()).setValue(item);
+                }
+            }
+        });
     }
 
     @Override
@@ -307,9 +354,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         DatabaseReference databaseReference = FirebaseDatabase.getInstance()
                 .getReference().child("Cart");
 
-        String push = databaseReference.push().getKey();
         CartItem cartItem = new CartItem();
-        cartItem.setId(push);
+        cartItem.setId(item.getId());
         cartItem.setCount(1);
         cartItem.setProductId(item.getId());
         cartItem.setImage(item.getImage());
