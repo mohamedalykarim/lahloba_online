@@ -24,6 +24,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -34,6 +39,7 @@ import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.OrderItem;
+import online.lahloba.www.lahloba.data.model.UserItem;
 import online.lahloba.www.lahloba.data.model.vm_helper.CartVMHelper;
 import online.lahloba.www.lahloba.databinding.CartActivityBinding;
 import online.lahloba.www.lahloba.ui.cart.bottom_sheet.AddOrderConfirmBottomSheet;
@@ -359,6 +365,8 @@ implements
                     GoogleSignInAccount account = task.getResult(ApiException.class);
                     firebaseAuthWithGoogle(account);
 
+
+
                 } catch (ApiException e) {
                     // Google Sign In failed, update UI appropriately
                     Log.w("mmm", "Google sign in failed", e);
@@ -388,6 +396,35 @@ implements
                                     .cartAdapter.setUserId(user.getUid());
 
                             loginViewModel.loginVMHelper.setLogged(true);
+
+
+                            String familyName = acct.getFamilyName();
+                            String firstName = user.getDisplayName().replace(familyName,"");
+
+                            UserItem userItem = new UserItem();
+                            userItem.setEmail(user.getEmail());
+                            userItem.setFirstName(firstName);
+                            userItem.setLastName(familyName);
+                            userItem.setId(FirebaseAuth.getInstance().getUid());
+                            userItem.setSeller(false);
+                            userItem.setSellerId("");
+                            userItem.setStatus(true);
+
+                            DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
+                            mRef.child("User").child(FirebaseAuth.getInstance().getUid())
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            if (!dataSnapshot.exists()){
+                                                mRef.child("User").child(userItem.getId()).setValue(userItem);
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
 
                             Toast.makeText(CartActivity.this, ""+loginViewModel.loginVMHelper.getIsLogged().getValue(), Toast.LENGTH_SHORT).show();
 

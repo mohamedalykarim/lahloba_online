@@ -1,4 +1,4 @@
-package online.lahloba.www.lahloba.ui.fragments;
+package online.lahloba.www.lahloba.ui.signup;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
@@ -17,9 +17,10 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
+import online.lahloba.www.lahloba.databinding.BottomSheetConfirmPhoneBinding;
 import online.lahloba.www.lahloba.databinding.FragmentSignupBinding;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
-import online.lahloba.www.lahloba.ui.signup.SignupViewModel;
+import online.lahloba.www.lahloba.ui.signup.bottom_sheet.ConfirmPhoneBottomSheet;
 import online.lahloba.www.lahloba.utils.Injector;
 
 import static online.lahloba.www.lahloba.utils.Utils.checkValidEmail;
@@ -28,7 +29,7 @@ public class SignupFragment extends Fragment {
 
     private SignupViewModel mViewModel;
     private LoginViewModel loginViewModel;
-    EditText firstNameET, secondNameET, phoneET, emailET, passwordET, passwordAgainET;
+    EditText firstNameET, secondNameET, phoneET, passwordET, passwordAgainET;
     Button createAccountBtn;
 
 
@@ -45,7 +46,6 @@ public class SignupFragment extends Fragment {
         firstNameET = binding.firstNameET;
         secondNameET = binding.secondNameET;
         phoneET = binding.phoneET;
-        emailET = binding.emailET;
         passwordET = binding.passwordET;
         passwordAgainET = binding.passwordAgainET;
         createAccountBtn = binding.createAccountBtn;
@@ -57,18 +57,27 @@ public class SignupFragment extends Fragment {
                         firstNameET.getText().toString(),
                         secondNameET.getText().toString(),
                         phoneET.getText().toString(),
-                        emailET.getText().toString(),
                         passwordET.getText().toString(),
                         passwordAgainET.getText().toString()
                 );
 
-                mViewModel.createNewAccount(
-                        firstNameET.getText().toString(),
-                        secondNameET.getText().toString(),
-                        phoneET.getText().toString(),
-                        emailET.getText().toString(),
-                        passwordET.getText().toString()
-                );
+                if (itemCheck){
+                    String email = "lahloba"+phoneET.getText().toString()+"@lahloba.net";
+
+                    ConfirmPhoneBottomSheet confirmPhoneBottomSheet = new ConfirmPhoneBottomSheet();
+                    confirmPhoneBottomSheet.show(getActivity().getSupportFragmentManager(),"");
+                    confirmPhoneBottomSheet.setSignupViewModel(mViewModel);
+                    confirmPhoneBottomSheet.setData(
+                            firstNameET.getText().toString(),
+                            secondNameET.getText().toString(),
+                            "+2"+phoneET.getText().toString(),
+                            email,
+                            passwordET.getText().toString()
+                    );
+
+                }
+
+
             }
         });
 
@@ -92,6 +101,8 @@ public class SignupFragment extends Fragment {
         super.onResume();
 
         mViewModel.getIsUserCreated().observe(this,isUserCreated->{
+            if (isUserCreated == null) return;
+
             if(isUserCreated){
                 mViewModel.addCartItemsToFireBase(FirebaseAuth.getInstance().getCurrentUser().getUid());
                 Toast.makeText(getContext(),
@@ -104,13 +115,9 @@ public class SignupFragment extends Fragment {
 
 
     private boolean checksignUp(String firsName, String secondName,
-                                String phone, String email,
+                                String phone,
                                 String password, String passwordAgain) {
         int error = 0;
-        if (email.equals("") || null==email || !checkValidEmail(email) ){
-            emailET.setError("Please Enter Valid Email Address");
-            error++;
-        }
 
         // Password
         if (password.equals("") || null == password){

@@ -24,7 +24,7 @@ import static online.lahloba.www.lahloba.utils.Utils.checkValidEmail;
 public class LoginFragment extends Fragment {
 
     private LoginViewModel mViewModel;
-    TextView emailET, passwordET;
+    TextView phoneET, passwordET;
     FragmentLoginBinding binding;
     int error = 0;
 
@@ -38,7 +38,7 @@ public class LoginFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_login, container, false);
         binding.setLifecycleOwner(this);
-        emailET = binding.emailET;
+        phoneET = binding.phoneET;
         passwordET = binding.passwordET;
 
         createAccount();
@@ -54,20 +54,28 @@ public class LoginFragment extends Fragment {
         binding.loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                checkloginInput(emailET.getText().toString(), passwordET.getText().toString());
+                checkloginInput(phoneET.getText().toString(), passwordET.getText().toString());
                 if (error==0){
-                    mViewModel.startLogin(emailET.getText().toString(), passwordET.getText().toString());
+                    String email = "lahloba"+phoneET.getText().toString()+"@lahloba.net";
+                    mViewModel.startLogin(email, passwordET.getText().toString());
                     binding.loginProgressBar.setVisibility(View.VISIBLE);
                 }
             }
         });
     }
 
-    private void checkloginInput(String email, String password) {
-        if (email.equals("") || null==email || !checkValidEmail(email) ){
-            emailET.setError("Please Enter Valid Email Address");
+    private void checkloginInput(String phone, String password) {
+        if (phone.length() > 0 && phone.length() < 10 ){
+            phoneET.setError("Phone length must be between 10 to 13 character");
             error++;
         }
+
+        if (phone.length() > 13 ){
+            phoneET.setError("Phone length must be between 10 to 13 character");
+            error++;
+        }
+
+
 
         if (password.equals("") || null == password){
             passwordET.setError("Please Enter Valid Password");
