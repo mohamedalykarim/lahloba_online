@@ -17,6 +17,7 @@ public class ProductItem extends BaseObservable {
     private Object images;
     private String parentId;
     private String marketPlaceId;
+    private boolean status;
 
     @Exclude
     private int count;
@@ -77,9 +78,10 @@ public class ProductItem extends BaseObservable {
         return isFavorite;
     }
 
-
-
-
+    @Bindable
+    public boolean isStatus() {
+        return status;
+    }
 
     public String getMarketPlaceId() {
         return marketPlaceId;
@@ -134,7 +136,10 @@ public class ProductItem extends BaseObservable {
         notifyPropertyChanged(BR.favorite);
     }
 
-
+    public void setStatus(boolean status) {
+        this.status = status;
+        notifyPropertyChanged(BR.status);
+    }
 
     public void setMarketPlaceId(String marketPlaceId) {
         this.marketPlaceId = marketPlaceId;

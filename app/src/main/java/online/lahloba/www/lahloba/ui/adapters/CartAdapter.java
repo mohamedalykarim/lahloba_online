@@ -37,6 +37,7 @@ import online.lahloba.www.lahloba.databinding.RowCartListBinding;
 import online.lahloba.www.lahloba.ui.cart.CartActivity;
 import online.lahloba.www.lahloba.ui.cart.CartViewModel;
 import online.lahloba.www.lahloba.utils.Injector;
+import online.lahloba.www.lahloba.utils.LocalUtils;
 import online.lahloba.www.lahloba.utils.SharedPreferencesManager;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
@@ -109,16 +110,43 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
         public void clicks(int i, CartItem item){
 
+            String language = LocalUtils.getLangauge();
+            DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
+            mRef.child("Product").child(language).child(item.getProductId())
+                    .addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()){
+                                ProductItem productItem = dataSnapshot.getValue(ProductItem.class);
+                                Log.v("mmm", productItem.isStatus()+"");
+                                if (!productItem.isStatus()){
+                                    mRef.child("Cart").child(userId)
+                                            .child("CartItems")
+                                            .child(item.getProductId())
+                                            .removeValue();
+
+
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
+
+
 
             /**
              * Read Count Value
              */
             if (FirebaseAuth.getInstance().getCurrentUser() != null){
-                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-                databaseReference.child("Cart")
+                mRef.child("Cart")
                         .child(userId)
                         .child("CartItems")
-                        .child(item.getId())
+                        .child(item.getProductId())
                         .addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -162,25 +190,54 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             binding.minusContainer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (FirebaseAuth.getInstance().getCurrentUser() != null){
-                        removeFromCountFirebase(item);
-                    }else {
-                        Injector.getExecuter().diskIO().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (item.getCount() >0){
-                                    if (item.getCount() == 1){
-                                        removeFromCountInternal(item);
-                                        Injector.provideRepository(context).deleteSpecificCartItem(item.getId());
-                                    }else {
-                                        removeFromCountInternal(item);
+                    String langauge = LocalUtils.getLangauge();
+
+                    mRef.child("Product")
+                            .child(langauge)
+                            .child(item.getProductId())
+                            .addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.exists()){
+                                        ProductItem productItem = dataSnapshot.getValue(ProductItem.class);
+                                        if (productItem.isStatus()){
+
+
+                                            if (FirebaseAuth.getInstance().getCurrentUser() != null){
+                                                removeFromCountFirebase(item);
+                                            }else {
+                                                Injector.getExecuter().diskIO().execute(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        if (item.getCount() >0){
+                                                            if (item.getCount() == 1){
+                                                                removeFromCountInternal(item);
+                                                                Injector.provideRepository(context).deleteSpecificCartItem(item.getId());
+                                                            }else {
+                                                                removeFromCountInternal(item);
+                                                            }
+
+                                                        }
+
+                                                    }
+                                                });
+                                            }
+
+
+
+                                        }
                                     }
 
                                 }
 
-                            }
-                        });
-                    }
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+
+
+
                 }
             });
 
@@ -191,19 +248,49 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             binding.plusContainer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (FirebaseAuth.getInstance().getCurrentUser() != null){
-                        addToCountFirebase(item);
-                        Log.v("mmm","add to count firebase");
-                    }else{
-                        Injector.getExecuter().diskIO().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                Log.v("mmm","add to count internal");
+                    String langauge = LocalUtils.getLangauge();
 
-                                addToCountInternal(item);
-                            }
-                        });
-                    }
+                    mRef.child("Product")
+                            .child(langauge)
+                            .child(item.getProductId())
+                            .addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.exists()){
+                                        ProductItem productItem = dataSnapshot.getValue(ProductItem.class);
+                                        if (productItem.isStatus()){
+
+                                            if (FirebaseAuth.getInstance().getCurrentUser() != null){
+                                                addToCountFirebase(item);
+                                                Log.v("mmm","add to count firebase");
+                                            }else{
+                                                Injector.getExecuter().diskIO().execute(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        Log.v("mmm","add to count internal");
+
+                                                        addToCountInternal(item);
+                                                    }
+                                                });
+                                            }
+
+                                        }
+                                    }
+
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+
+
+
+
+
+
+
                 }
             });
 
@@ -215,20 +302,50 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                 @Override
                 public void onClick(View v) {
 
-                    cartItemList.get(i).setCount(1);
+                    String langauge = LocalUtils.getLangauge();
 
-                    if (FirebaseAuth.getInstance().getCurrentUser() != null){
-                        addItemTofirebase(item);
-                    }else{
-                        Injector.getExecuter().diskIO().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                Log.v("mmm","add item to internal");
+                    mRef.child("Product")
+                            .child(langauge)
+                            .child(item.getProductId())
+                            .addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.exists()){
+                                        ProductItem productItem = dataSnapshot.getValue(ProductItem.class);
+                                        if (productItem.isStatus()){
 
-                                addItemToInternal(item);
-                            }
-                        });
-                    }
+
+                                            cartItemList.get(i).setCount(1);
+
+                                            if (FirebaseAuth.getInstance().getCurrentUser() != null){
+                                                addItemTofirebase(item);
+                                            }else{
+                                                Injector.getExecuter().diskIO().execute(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        Log.v("mmm","add item to internal");
+
+                                                        addItemToInternal(item);
+                                                    }
+                                                });
+                                            }
+
+
+
+                                        }
+                                    }
+
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+
+
+
+
 
 
 

@@ -150,6 +150,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         public void clicks(int i, ProductItem item){
 
 
+
             /**
              * Read Count Value
              */
@@ -197,6 +198,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             binding.minusContainer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
+                    if (!item.isStatus())return;
+
+
                     if (FirebaseAuth.getInstance().getCurrentUser() != null){
                         removeFromCountFirebase(item);
                     }else {
@@ -226,6 +231,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             binding.plusContainer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (!item.isStatus())return;
+
+
                     if (FirebaseAuth.getInstance().getCurrentUser() != null){
                         addToCountFirebase(item);
                     }else{
@@ -246,6 +254,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             binding.addContainer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
+                    if (!item.isStatus())return;
+
 
                     productItemList.get(i).setCount(1);
 
