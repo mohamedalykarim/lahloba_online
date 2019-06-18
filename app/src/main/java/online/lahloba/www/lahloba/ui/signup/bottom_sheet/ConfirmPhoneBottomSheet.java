@@ -16,7 +16,6 @@ import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 
@@ -50,7 +49,7 @@ public class ConfirmPhoneBottomSheet extends BottomSheetDialogFragment {
         binding.confirmPhoneBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String verficationCode = binding.verificationCodeTv.toString();
+                String verficationCode = binding.verificationCodeTv.getText().toString();
 
                 confirmPhone(verficationCode);
             }
@@ -63,6 +62,10 @@ public class ConfirmPhoneBottomSheet extends BottomSheetDialogFragment {
 
     private void confirmPhone(String verificationCode) {
         if (verificationCode == null) return;
+        Toast.makeText(getContext(), ""+verificationCode, Toast.LENGTH_SHORT).show();
+
+        if (codeSent == null) return;
+
         PhoneAuthCredential credential = PhoneAuthProvider.getCredential(codeSent,verificationCode);
         signInWithPhoneAuthCredential(credential);
 
@@ -100,6 +103,11 @@ public class ConfirmPhoneBottomSheet extends BottomSheetDialogFragment {
                             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                                 // The verification code entered was invalid
                                 Toast.makeText(getContext(), "The verification code entered was invalid", Toast.LENGTH_SHORT).show();
+
+
+
+
+
                             }
                         }
                     }
