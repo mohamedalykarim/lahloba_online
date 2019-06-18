@@ -51,11 +51,14 @@ public class ShoppingFragment extends Fragment {
         indicator= view.findViewById(R.id.indicator);
 
         sliderItems = new ArrayList<>();
-        Uri uri = Uri.parse("http://www.lahloba.online/image/cache/catalog/Lahloba/Cover2-1140x380.png").buildUpon().build();
-        sliderItems.add(new SliderItem(uri));
+        SliderItem item = new SliderItem();
+        item.setImageUri("http://www.lahloba.online/image/cache/catalog/Lahloba/Cover2-1140x380.png");
+        item.setActivityName(".ui.products.ProductsActivity");
+        item.setExtra("-LdKhIbxY8qwF5yypAOf");
 
-        uri = Uri.parse("http://www.lahloba.online/image/cache/catalog/Lahloba/Cover1-1140x380.png").buildUpon().build();
-        sliderItems.add(new SliderItem(uri));
+        sliderItems.add(item);
+        sliderItems.add(item);
+        sliderItems.add(item);
 
 
         SliderAdapter sliderAdapter = new SliderAdapter(this.getContext());

@@ -3,18 +3,32 @@ package online.lahloba.www.lahloba.data.model;
 import android.net.Uri;
 
 public class SliderItem {
-    Uri uri;
+    String imageUri;
+    String activityName;
+    String extra;
 
-
-    public SliderItem(Uri uri) {
-        this.uri = uri;
+    public String getImageUri() {
+        return imageUri;
     }
 
-    public Uri getUri() {
-        return uri;
+    public String getActivityName() {
+        return activityName;
     }
 
-    public void setUri(Uri uri) {
-        this.uri = uri;
+    public String getExtra() {
+        return extra;
+    }
+
+
+    public void setImageUri(String imageUri) {
+        this.imageUri = imageUri;
+    }
+
+    public void setActivityName(String activityName) {
+        this.activityName = activityName;
+    }
+
+    public void setExtra(String extra) {
+        this.extra = extra;
     }
 }
