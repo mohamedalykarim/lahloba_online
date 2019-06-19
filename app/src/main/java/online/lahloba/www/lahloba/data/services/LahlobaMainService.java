@@ -12,9 +12,12 @@ import online.lahloba.www.lahloba.data.model.OrderItem;
 import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.Injector;
 
+import static online.lahloba.www.lahloba.utils.Constants.CHANGE_ORDER_STATUS;
 import static online.lahloba.www.lahloba.utils.Constants.GET_CART_ITEM;
 import static online.lahloba.www.lahloba.utils.Constants.GET_PRODUCTS_FOR_CATEGORY;
 import static online.lahloba.www.lahloba.utils.Constants.GET_SUB_MENU_ITEMS;
+import static online.lahloba.www.lahloba.utils.Constants.ORDER_ID;
+import static online.lahloba.www.lahloba.utils.Constants.ORDER_STATUS;
 import static online.lahloba.www.lahloba.utils.Constants.RESET_CART_ITEM;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_EMAIL;
@@ -152,6 +155,10 @@ public class LahlobaMainService extends IntentService {
         }else if(intent.getAction().equals(START_REORDER)){
             OrderItem orderItem = intent.getParcelableExtra(START_REORDER);
             networkDataHelper.startAddNewOrderToFirebase(orderItem, START_REORDER);
+        }else if(intent.getAction().equals(CHANGE_ORDER_STATUS)){
+            String orderId = intent.getStringExtra(ORDER_ID);
+            int orderStatus = intent.getIntExtra(ORDER_STATUS,0);
+            networkDataHelper.changeOrderStatusFirebase(orderId, orderStatus);
         }
 
 

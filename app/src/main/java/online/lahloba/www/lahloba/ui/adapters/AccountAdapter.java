@@ -1,11 +1,8 @@
 package online.lahloba.www.lahloba.ui.adapters;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,23 +10,17 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 import online.lahloba.www.lahloba.R;
-import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.MainMenuItem;
 import online.lahloba.www.lahloba.ui.address.AddressActivity;
+import online.lahloba.www.lahloba.ui.favorites.FavoritesActivity;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
 import online.lahloba.www.lahloba.ui.order.OrdersActivity;
-import online.lahloba.www.lahloba.ui.sub_menu.SubMenuActivity;
-import online.lahloba.www.lahloba.utils.Constants;
-import online.lahloba.www.lahloba.utils.Injector;
+import online.lahloba.www.lahloba.ui.seller.SellerMainActivity;
 
 public class AccountAdapter extends BaseAdapter {
     LoginViewModel loginViewModel;
@@ -79,6 +70,12 @@ public class AccountAdapter extends BaseAdapter {
                     loginViewModel.startLogOut();
                 }else if (accountItemList.get(position).getTitle().equals(context.getResources().getString(R.string.my_Orders))){
                     Intent intent = new Intent(context, OrdersActivity.class);
+                    context.startActivity(intent);
+                }else if (accountItemList.get(position).getTitle().equals(context.getResources().getString(R.string.my_favorite))){
+                    Intent intent = new Intent(context, FavoritesActivity.class);
+                    context.startActivity(intent);
+                }else if (accountItemList.get(position).getTitle().equals(context.getResources().getString(R.string.seller))){
+                    Intent intent = new Intent(context, SellerMainActivity.class);
                     context.startActivity(intent);
                 }
             }

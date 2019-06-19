@@ -25,4 +25,7 @@
     <string name="shipped_order">Shipped order</string>
     <string name="completed_order">Completed order</string>
     <string name="my_Orders">طلباتى</string>
+    <string name="my_favorite">مفضلتى</string>
+    <string name="order_recieved">تم استلام الطلب</string>
+    <string name="seller">البائع</string>
 </resources>

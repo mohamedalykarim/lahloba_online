@@ -42,10 +42,13 @@ import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.LocalUtils;
 import online.lahloba.www.lahloba.utils.SharedPreferencesManager;
 
+import static online.lahloba.www.lahloba.utils.Constants.CHANGE_ORDER_STATUS;
 import static online.lahloba.www.lahloba.utils.Constants.GET_CART_ITEM;
 import static online.lahloba.www.lahloba.utils.Constants.GET_MAIN_MENU_ITEMS;
 import static online.lahloba.www.lahloba.utils.Constants.GET_PRODUCTS_FOR_CATEGORY;
 import static online.lahloba.www.lahloba.utils.Constants.GET_SUB_MENU_ITEMS;
+import static online.lahloba.www.lahloba.utils.Constants.ORDER_ID;
+import static online.lahloba.www.lahloba.utils.Constants.ORDER_STATUS;
 import static online.lahloba.www.lahloba.utils.Constants.RESET_CART_ITEM;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_EMAIL;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_FIRSTNAME;
@@ -519,9 +522,6 @@ public class NetworkDataHelper {
         return isUserCreated;
     }
 
-    //############################### Create New Account ############################//
-
-
 
 
 
@@ -966,6 +966,22 @@ public class NetworkDataHelper {
         mContext.startService(intent);
     }
 
+    public void startChangeOrderStatus(String orderId, int orderStatus) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(CHANGE_ORDER_STATUS);
+        intent.putExtra(ORDER_ID,orderId);
+        intent.putExtra(ORDER_STATUS,orderStatus);
+        mContext.startService(intent);
+    }
+
+    public void changeOrderStatusFirebase(String orderId, int orderStatus) {
+        if (FirebaseAuth.getInstance().getCurrentUser() == null)return;
+        String userId = FirebaseAuth.getInstance().getUid();
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.child("Orders").child(userId).child(orderId)
+                .child("orderStatus").setValue(orderStatus);
+    }
+
 
     //############################### Favorites ############################//
 
@@ -1047,6 +1063,7 @@ public class NetworkDataHelper {
     public MutableLiveData<List<BannerItem>> getBannerItems() {
         return bannerItems;
     }
+
 
 
 }

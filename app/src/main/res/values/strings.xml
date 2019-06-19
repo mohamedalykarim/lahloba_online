@@ -29,5 +29,8 @@
     <string name="shipped_order">Shipped order</string>
     <string name="completed_order">Completed order</string>
     <string name="my_Orders">My orders</string>
+    <string name="my_favorite">My favorite</string>
+    <string name="order_recieved">Order recieved</string>
+    <string name="seller">Seller</string>
 
 </resources>

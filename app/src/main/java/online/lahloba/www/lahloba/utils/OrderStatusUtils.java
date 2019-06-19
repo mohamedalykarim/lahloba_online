@@ -6,5 +6,8 @@ public class OrderStatusUtils {
     public static final int ORDER_STATUS_PROCESSED = 3;
     public static final int ORDER_STATUS_SHIPPED = 4;
     public static final int ORDER_STATUS_COMPLETED = 5;
+    public static final int ORDER_STATUS_RECIEVED = 6;
+
+
 
 }

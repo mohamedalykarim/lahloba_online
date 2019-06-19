@@ -15,4 +15,8 @@ public class OrderDetailsViewModel extends ViewModel {
     public void startReorder(OrderItem orderItem) {
         appRepository.startReorder(orderItem);
     }
+
+    public void startChangeOrderStatus(String orderId, int orderStatus) {
+        appRepository.startChangeOrderStatus(orderId, orderStatus);
+    }
 }

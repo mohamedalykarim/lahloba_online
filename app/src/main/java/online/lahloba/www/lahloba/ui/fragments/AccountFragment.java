@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ public class AccountFragment extends Fragment {
 
     ExpandableHeightGridView accountGridView;
     List<MainMenuItem> mainMenuItems;
+    AccountAdapter accountAdapter;
 
 
     @Nullable
@@ -46,23 +48,37 @@ public class AccountFragment extends Fragment {
 
         mainMenuItems = new ArrayList<>();
 
-        addMenuItem(
-                "android.resource://online.lahloba.www.lahloba/drawable/order",
-                getResources().getString(R.string.my_Orders)
-        );
-
-        addMenuItem(
-                "android.resource://online.lahloba.www.lahloba/drawable/address",
-                getResources().getString(R.string.my_adresses)
-        );
-
-        addMenuItem(
-                "android.resource://online.lahloba.www.lahloba/drawable/signout",
-                getResources().getString(R.string.sign_out)
-        );
 
 
-        AccountAdapter accountAdapter = new AccountAdapter(getContext(), loginViewModel);
+        loginViewModel.getCurrentUserDetails().observe(this, userItem -> {
+            mainMenuItems.clear();
+            accountAdapter.notifyDataSetChanged();
+
+
+            if (userItem.isSeller()){
+                addDefaultItems();
+
+                MainMenuItem menuItem = new MainMenuItem();
+                Uri uri = Uri.parse("android.resource://online.lahloba.www.lahloba/drawable/seller_order");
+                menuItem.setImage(uri.toString());
+                menuItem.setTitle(getResources().getString(R.string.seller));
+
+                mainMenuItems.add(menuItem);
+
+            }else {
+                addDefaultItems();
+            }
+
+
+
+
+
+
+
+        });
+
+
+        accountAdapter = new AccountAdapter(getContext(), loginViewModel);
         accountAdapter.setAccountItemList(mainMenuItems);
         accountAdapter.notifyDataSetChanged();
         accountGridView = binding.gridview;
@@ -81,6 +97,37 @@ public class AccountFragment extends Fragment {
         Uri uri = Uri.parse(imageUri);
         menuItem.setImage(uri.toString());
         menuItem.setTitle(title);
+
         mainMenuItems.add(menuItem);
+        if (accountAdapter != null){
+            accountAdapter.notifyDataSetChanged();
+        }
+
     }
+
+
+    private void addDefaultItems(){
+        addMenuItem(
+                "android.resource://online.lahloba.www.lahloba/drawable/favorite",
+                getResources().getString(R.string.my_favorite)
+        );
+
+        addMenuItem(
+                "android.resource://online.lahloba.www.lahloba/drawable/order",
+                getResources().getString(R.string.my_Orders)
+        );
+
+        addMenuItem(
+                "android.resource://online.lahloba.www.lahloba/drawable/address",
+                getResources().getString(R.string.my_adresses)
+        );
+
+
+        addMenuItem(
+                "android.resource://online.lahloba.www.lahloba/drawable/signout",
+                getResources().getString(R.string.sign_out)
+        );
+    }
+
+
 }

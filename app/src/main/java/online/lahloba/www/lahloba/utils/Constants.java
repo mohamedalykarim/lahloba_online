@@ -43,12 +43,17 @@ public class Constants {
 
 
 
+
     public static final String ORDER_TYPE_NEW = "order_type_new";
     public static final String ORDER_TYPE_ONGOING = "order_type_ongoing";
     public static final String ORDER_TYPE_OLD = "order_type_old";
     public static final String START_REORDER = "start_reorder";
     public static final String ORDER_ID = "order_id";
+    public static final String ORDER_STATUS = "order_status";
     public static final String ORDER_ITEM = "order_item";
+    public static final String CHANGE_ORDER_STATUS = "change_order_status";
+
+
 
     public static final String START_GET_FAVORITES = "start_get_favorites";
 
@@ -59,7 +64,6 @@ public class Constants {
 
 
     public static final String SLIDER_ITEM_EXTRA = "slider_item_extra";
-
 
 
 }

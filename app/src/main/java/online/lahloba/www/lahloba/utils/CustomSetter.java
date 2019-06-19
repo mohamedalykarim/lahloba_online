@@ -81,6 +81,8 @@ public static void setFont(View view, String font){
             textView.setText(textView.getResources().getString(R.string.shipped_order));
         }else if (order == 5){
             textView.setText(textView.getResources().getString(R.string.completed_order));
+        }else if (order == 65){
+            textView.setText(textView.getResources().getString(R.string.order_recieved));
         }
     }
 
@@ -96,6 +98,8 @@ public static void setFont(View view, String font){
             Picasso.get().load(R.drawable.order_shipped_icon).into(imageView);
         }else if (order == 5){
             Picasso.get().load(R.drawable.order_completed_icon).into(imageView);
+        }else if (order == 6){
+            Picasso.get().load(R.drawable.order_recieved_icon).into(imageView);
         }
     }
 

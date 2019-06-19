@@ -289,6 +289,10 @@ public class AppRepository {
         return networkDataHelper.getIsAddressEdited();
     }
 
+    public void startChangeOrderStatus(String orderId, int orderStatus) {
+        networkDataHelper.startChangeOrderStatus(orderId, orderStatus);
+    }
+
 
     //############################### Favorites ############################//
 
@@ -316,4 +320,6 @@ public class AppRepository {
     public void startReorder(OrderItem orderItem) {
         networkDataHelper.startReorder(orderItem);
     }
+
+
 }
