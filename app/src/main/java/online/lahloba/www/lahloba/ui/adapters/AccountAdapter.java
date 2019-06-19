@@ -26,6 +26,7 @@ import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.MainMenuItem;
 import online.lahloba.www.lahloba.ui.address.AddressActivity;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
+import online.lahloba.www.lahloba.ui.order.OrdersActivity;
 import online.lahloba.www.lahloba.ui.sub_menu.SubMenuActivity;
 import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.Injector;
@@ -76,6 +77,9 @@ public class AccountAdapter extends BaseAdapter {
                     context.startActivity(intent);
                 }else if (accountItemList.get(position).getTitle().equals(context.getResources().getString(R.string.sign_out))){
                     loginViewModel.startLogOut();
+                }else if (accountItemList.get(position).getTitle().equals(context.getResources().getString(R.string.my_Orders))){
+                    Intent intent = new Intent(context, OrdersActivity.class);
+                    context.startActivity(intent);
                 }
             }
         });

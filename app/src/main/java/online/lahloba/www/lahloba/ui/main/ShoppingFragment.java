@@ -24,7 +24,6 @@ import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.BannerItem;
 import online.lahloba.www.lahloba.ui.adapters.ShoppingAdapter;
 import online.lahloba.www.lahloba.ui.adapters.SliderAdapter;
-import online.lahloba.www.lahloba.ui.main.MainViewModel;
 import online.lahloba.www.lahloba.utils.ExpandableHeightGridView;
 import online.lahloba.www.lahloba.utils.Injector;
 
@@ -40,7 +39,7 @@ public class ShoppingFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.shopping_fragment,container,false);
+        View view = inflater.inflate(R.layout.fragment_shopping,container,false);
         viewPager= view.findViewById(R.id.viewPager);
         indicator= view.findViewById(R.id.indicator);
 

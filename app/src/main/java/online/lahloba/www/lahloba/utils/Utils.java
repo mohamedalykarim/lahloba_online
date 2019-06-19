@@ -3,13 +3,21 @@ package online.lahloba.www.lahloba.utils;
 import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.text.format.DateUtils;
 
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import online.lahloba.www.lahloba.ui.products.ProductsActivity;
 
 public class Utils {
+    private static final int SECOND_MILLIS = 1000;
+    private static final int MINUTE_MILLIS = 60 * SECOND_MILLIS;
+    private static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;
+    private static final int DAY_MILLIS = 24 * HOUR_MILLIS;
+
 
     public static boolean checkValidEmail(String email){
         Pattern pattern = Pattern.compile("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}");
@@ -48,6 +56,24 @@ public class Utils {
             return ".ui.news.NewsActivity";
         }else {
             return "";
+        }
+    }
+
+
+    public static String getRelationTime(Date past) {
+        long now = System.currentTimeMillis();
+        long difference = now - past.getTime();
+
+        if (difference > 0 && difference < DateUtils.MINUTE_IN_MILLIS){
+            return (String) DateUtils.getRelativeTimeSpanString(past.getTime(), now, DateUtils.SECOND_IN_MILLIS);
+        }else if (difference >= DateUtils.MINUTE_IN_MILLIS && difference < DateUtils.HOUR_IN_MILLIS){
+            return (String) DateUtils.getRelativeTimeSpanString(past.getTime(), now, DateUtils.MINUTE_IN_MILLIS);
+        }else if (difference >= DateUtils.HOUR_IN_MILLIS && difference < DateUtils.DAY_IN_MILLIS){
+            return (String) DateUtils.getRelativeTimeSpanString(past.getTime(), now, DateUtils.HOUR_IN_MILLIS);
+        }else if ( difference >= DateUtils.DAY_IN_MILLIS){
+            return (String) DateUtils.getRelativeTimeSpanString(past.getTime(), now, DateUtils.DAY_IN_MILLIS);
+        }else {
+            return (String) android.text.format.DateFormat.format("hh:mm:ss a", past);
         }
     }
 

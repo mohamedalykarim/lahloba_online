@@ -1,7 +1,9 @@
 package online.lahloba.www.lahloba.ui.adapters;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +18,10 @@ import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.OrderItem;
 import online.lahloba.www.lahloba.databinding.RowOrderListBinding;
 import online.lahloba.www.lahloba.ui.cart.CartViewModel;
+import online.lahloba.www.lahloba.ui.order.OrderDetailsActivity;
 import online.lahloba.www.lahloba.ui.order.OrdersViewModel;
+import online.lahloba.www.lahloba.utils.Constants;
+import online.lahloba.www.lahloba.utils.Injector;
 
 public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewHolder> {
     List<OrderItem> orderItemList;
@@ -37,34 +42,22 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         OrderItem orderItem = orderItemList.get(i);
         holder.binding.setOrder(orderItem);
 
-        /*
-         * Add Products to view
-         */
-        HashMap<String, CartItem> products = orderItem.getProducts();
 
-        holder.binding.productsContainer.removeAllViews();
-        for(CartItem product: products.values()){
-
-            if (product!=null){
-                LayoutInflater inflater = LayoutInflater.from(holder.binding.getRoot().getContext());
-                View view = inflater.inflate(R.layout.row_order_list_product,null,false);
-                TextView nameTv = view.findViewById(R.id.productNameTv);
-                TextView quantityTv = view.findViewById(R.id.productQuantityTv);
-                TextView priceTv = view.findViewById(R.id.producPriceTv);
-
-                nameTv.setText(product.getProductName());
-                quantityTv.setText("Qty: "+product.getCount());
-                priceTv.setText(product.getPrice()+" " + "EGP");
-
-
-                holder.binding.productsContainer.addView(view);
-            }
-        }
-
-        holder.binding.cancelOrderBtn.setOnClickListener(new View.OnClickListener() {
+        holder.binding.reorderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mViewModel.startRemoveOrder(orderItem.getId());
+                mViewModel.startReorder(orderItem);
+            }
+        });
+
+        holder.binding.getRoot().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(holder.binding.getRoot().getContext(), OrderDetailsActivity.class);
+                intent.putExtra(Constants.ORDER_ID, orderItem.getId());
+                intent.putExtra(Constants.ORDER_ITEM, orderItem);
+
+                holder.binding.getRoot().getContext().startActivity(intent);
             }
         });
 

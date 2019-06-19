@@ -324,9 +324,6 @@ implements
                         .getmViewModel().cartVMHelper.getHyperlocalCost()
                 );
 
-                Date now = new Date();
-                orderItem.setDate(now);
-
                 orderItem.setOrderStatus(OrderStatusUtils.ORDER_STATUS_PENDING);
 
                 ((CartFragment)getSupportFragmentManager().getFragments().get(0))

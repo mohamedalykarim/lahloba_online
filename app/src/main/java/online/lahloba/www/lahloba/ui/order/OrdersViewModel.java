@@ -26,4 +26,8 @@ public class OrdersViewModel extends ViewModel {
     public void startRemoveOrder(String orderId) {
         appRepository.startRemoveOrder(orderId);
     }
+
+    public void startReorder(OrderItem orderItem) {
+        appRepository.startReorder(orderItem);
+    }
 }

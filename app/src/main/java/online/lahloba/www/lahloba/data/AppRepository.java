@@ -312,4 +312,8 @@ public class AppRepository {
     public MutableLiveData<List<BannerItem>> getBannerItems() {
         return networkDataHelper.getBannerItems();
     }
+
+    public void startReorder(OrderItem orderItem) {
+        networkDataHelper.startReorder(orderItem);
+    }
 }

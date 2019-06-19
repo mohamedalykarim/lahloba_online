@@ -28,5 +28,6 @@
     <string name="processed_order">Processed order</string>
     <string name="shipped_order">Shipped order</string>
     <string name="completed_order">Completed order</string>
+    <string name="my_Orders">My orders</string>
 
 </resources>

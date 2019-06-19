@@ -43,13 +43,13 @@ public static void setFont(View view, String font){
     }
 }
 
-@BindingAdapter("android:shippingIcon")
-public static void setShippingIcon(ImageView imageView, String shippingType){
-    if (shippingType.equals(CartVMHelper.FREE_SHIPPING)){
-        Picasso.get().load(R.drawable.free_shipping).placeholder(R.drawable.progress_animation).into(imageView);
-    }else if (shippingType.equals(CartVMHelper.HYPERLOCAL_SHIPPING)){
-        Picasso.get().load(R.drawable.hyperlocal_icon).placeholder(R.drawable.progress_animation).into(imageView);
-    }
+    @BindingAdapter("android:shippingIcon")
+    public static void setShippingIcon(ImageView imageView, String shippingType){
+        if (shippingType.equals(CartVMHelper.FREE_SHIPPING)){
+            Picasso.get().load(R.drawable.free_shipping).placeholder(R.drawable.progress_animation).into(imageView);
+        }else if (shippingType.equals(CartVMHelper.HYPERLOCAL_SHIPPING)){
+            Picasso.get().load(R.drawable.hyperlocal_icon).placeholder(R.drawable.progress_animation).into(imageView);
+        }
 
 
     }
@@ -99,10 +99,17 @@ public static void setShippingIcon(ImageView imageView, String shippingType){
         }
     }
 
-    @BindingAdapter("android:dateText")
-    public static void setDateText(TextView textView, Date date){
+    @BindingAdapter("android:orderDate")
+    public static void setOrderDate(TextView textView, Date date){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yyyy");
         textView.setText(simpleDateFormat.format(date));
+    }
+
+    @BindingAdapter("android:orderTime")
+    public static void setOrderTime(TextView textView, Date date){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HHmms");
+//        textView.setText(simpleDateFormat.format(date));
+        textView.setText(Utils.getRelationTime(date));
     }
 
 

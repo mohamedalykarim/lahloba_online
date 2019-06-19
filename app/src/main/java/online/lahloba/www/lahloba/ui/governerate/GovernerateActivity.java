@@ -10,7 +10,7 @@ public class GovernerateActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.governerate_activity);
+        setContentView(R.layout.activity_governerate);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container, GovernerateFragment.newInstance())

@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import online.lahloba.www.lahloba.R;
-import online.lahloba.www.lahloba.ui.cart.CartFragment;
 import online.lahloba.www.lahloba.ui.products.bottom_sheet.ResetCartBottomSheet;
 
 import static online.lahloba.www.lahloba.utils.Constants.EXTRA_SUBTITLE_ID;
@@ -15,7 +14,7 @@ public class ProductsActivity extends AppCompatActivity implements ResetCartBott
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.products_activity);
+        setContentView(R.layout.activity_products);
         if(savedInstanceState == null){
             Intent intent = getIntent();
             if(null != intent && intent.hasExtra(EXTRA_SUBTITLE_ID)){

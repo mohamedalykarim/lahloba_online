@@ -67,6 +67,7 @@ import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_EMAIL;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_PASSWORD;
 import static online.lahloba.www.lahloba.utils.Constants.START_NEW_ORDER;
 import static online.lahloba.www.lahloba.utils.Constants.START_REMOVE_ORDER;
+import static online.lahloba.www.lahloba.utils.Constants.START_REORDER;
 import static online.lahloba.www.lahloba.utils.Constants.START_SET_DEFAULT_ADDRESS;
 
 public class NetworkDataHelper {
@@ -855,7 +856,13 @@ public class NetworkDataHelper {
         mContext.startService(intent);
     }
 
-    public void startAddNewOrderToFirebase(OrderItem orderItem) {
+    public void startAddNewOrderToFirebase(OrderItem orderItem, String from) {
+        if (from.equals(START_REORDER)){
+            orderItem.setOrderStatus(1);
+        }
+
+
+
         String userId = FirebaseAuth.getInstance().getUid();
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
         String pushKey = mDatabase.child("Orders").child(userId).push().getKey();
@@ -864,6 +871,9 @@ public class NetworkDataHelper {
 
         long orderNumber = Math.abs(uNumber);
         orderItem.setOrderNumber(orderNumber);
+
+        Date now = new Date();
+        orderItem.setDate(now);
 
         mDatabase.child("Orders").child(userId).child(pushKey).setValue(orderItem)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -949,6 +959,13 @@ public class NetworkDataHelper {
         mDatabase.child("Orders").child(userId).child(orderId).removeValue();
     }
 
+    public void startReorder(OrderItem orderItem) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.START_REORDER);
+        intent.putExtra(START_REORDER,orderItem);
+        mContext.startService(intent);
+    }
+
 
     //############################### Favorites ############################//
 
@@ -1030,4 +1047,6 @@ public class NetworkDataHelper {
     public MutableLiveData<List<BannerItem>> getBannerItems() {
         return bannerItems;
     }
+
+
 }

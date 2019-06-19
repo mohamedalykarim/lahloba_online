@@ -47,6 +47,11 @@ public class AccountFragment extends Fragment {
         mainMenuItems = new ArrayList<>();
 
         addMenuItem(
+                "android.resource://online.lahloba.www.lahloba/drawable/order",
+                getResources().getString(R.string.my_Orders)
+        );
+
+        addMenuItem(
                 "android.resource://online.lahloba.www.lahloba/drawable/address",
                 getResources().getString(R.string.my_adresses)
         );
