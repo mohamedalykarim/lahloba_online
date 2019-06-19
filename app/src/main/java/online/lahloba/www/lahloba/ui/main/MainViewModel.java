@@ -7,6 +7,7 @@ import android.arch.lifecycle.ViewModel;
 import java.util.List;
 
 import online.lahloba.www.lahloba.data.AppRepository;
+import online.lahloba.www.lahloba.data.model.BannerItem;
 import online.lahloba.www.lahloba.data.model.MainMenuItem;
 
 public class MainViewModel extends ViewModel {
@@ -22,5 +23,13 @@ public class MainViewModel extends ViewModel {
 
     public MutableLiveData<List<MainMenuItem>> getMainMenuItems(){
         return appRepository.getMainMenuItems();
+    }
+
+    public void startGetBanner() {
+        appRepository.startGetBanner();
+    }
+
+    public MutableLiveData<List<BannerItem>> getBannerItems() {
+        return appRepository.getBannerItems();
     }
 }

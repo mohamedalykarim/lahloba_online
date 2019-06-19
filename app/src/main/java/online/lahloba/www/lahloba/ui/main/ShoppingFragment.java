@@ -1,8 +1,6 @@
-package online.lahloba.www.lahloba.ui.fragments;
+package online.lahloba.www.lahloba.ui.main;
 
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -14,7 +12,6 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,21 +21,18 @@ import java.util.TimerTask;
 
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
-import online.lahloba.www.lahloba.data.model.MainMenuItem;
-import online.lahloba.www.lahloba.data.model.SliderItem;
+import online.lahloba.www.lahloba.data.model.BannerItem;
 import online.lahloba.www.lahloba.ui.adapters.ShoppingAdapter;
 import online.lahloba.www.lahloba.ui.adapters.SliderAdapter;
-import online.lahloba.www.lahloba.ui.main.MainActivity;
 import online.lahloba.www.lahloba.ui.main.MainViewModel;
 import online.lahloba.www.lahloba.utils.ExpandableHeightGridView;
 import online.lahloba.www.lahloba.utils.Injector;
 
 public class ShoppingFragment extends Fragment {
-
     MainViewModel mainViewModel;
     ViewPager viewPager;
     TabLayout indicator;
-    List<SliderItem> sliderItems;
+    List<BannerItem> bannerItems;
 
 
 
@@ -50,19 +44,44 @@ public class ShoppingFragment extends Fragment {
         viewPager= view.findViewById(R.id.viewPager);
         indicator= view.findViewById(R.id.indicator);
 
-        sliderItems = new ArrayList<>();
-        SliderItem item = new SliderItem();
-        item.setImageUri("http://www.lahloba.online/image/cache/catalog/Lahloba/Cover2-1140x380.png");
-        item.setActivityName(".ui.products.ProductsActivity");
-        item.setExtra("-LdKhIbxY8qwF5yypAOf");
 
-        sliderItems.add(item);
-        sliderItems.add(item);
-        sliderItems.add(item);
+        ViewModelProviderFactory factory = Injector.getVMFactory(this.getContext(), null);
+        mainViewModel = ViewModelProviders.of(this.getActivity(),factory).get(MainViewModel.class);
+
+
+        ExpandableHeightGridView gridView = view.findViewById(R.id.gridview);
+        ShoppingAdapter shoppingAdapter = new ShoppingAdapter();
+
+
+        gridView.setAdapter(shoppingAdapter);
+        gridView.setExpanded(true);
+
+        mainViewModel.getMainMenuItems().observe(this.getActivity(),items->{
+            shoppingAdapter.setShoppingItemList(items);
+            shoppingAdapter.notifyDataSetChanged();
+        });
+
+
+
+
+        bannerItems = new ArrayList<>();
 
 
         SliderAdapter sliderAdapter = new SliderAdapter(this.getContext());
-        sliderAdapter.setSliderItems(sliderItems);
+
+
+        mainViewModel.startGetBanner();
+        mainViewModel.getBannerItems().observe(this, bannerItemsList -> {
+            if (bannerItemsList == null) return;
+            bannerItems.clear();
+            bannerItems.addAll(bannerItemsList);
+
+            sliderAdapter.setBannerItems(bannerItems);
+            sliderAdapter.notifyDataSetChanged();
+
+
+        });
+
         viewPager.setAdapter(sliderAdapter);
         indicator.setupWithViewPager(viewPager, true);
 
@@ -81,21 +100,6 @@ public class ShoppingFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        ViewModelProviderFactory factory = Injector.getVMFactory(this.getContext(), null);
-        mainViewModel = ViewModelProviders.of(this.getActivity(),factory).get(MainViewModel.class);
-
-
-        ExpandableHeightGridView gridView = view.findViewById(R.id.gridview);
-        ShoppingAdapter shoppingAdapter = new ShoppingAdapter();
-
-
-        gridView.setAdapter(shoppingAdapter);
-        gridView.setExpanded(true);
-
-        mainViewModel.getMainMenuItems().observe(this.getActivity(),items->{
-            shoppingAdapter.setShoppingItemList(items);
-            shoppingAdapter.notifyDataSetChanged();
-        });
 
 
 
@@ -117,7 +121,7 @@ public class ShoppingFragment extends Fragment {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    if (viewPager.getCurrentItem() < sliderItems.size() - 1) {
+                    if (viewPager.getCurrentItem() < bannerItems.size() - 1) {
                         viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
                     } else {
                         viewPager.setCurrentItem(0);

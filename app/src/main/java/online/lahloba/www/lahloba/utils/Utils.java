@@ -7,6 +7,8 @@ import android.net.wifi.WifiManager;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import online.lahloba.www.lahloba.ui.products.ProductsActivity;
+
 public class Utils {
 
     public static boolean checkValidEmail(String email){
@@ -36,6 +38,17 @@ public class Utils {
 
         return 0;
 
+    }
+
+
+    public static String getBannerActivityName(String type){
+        if (type.equals(Constants.BANNER_TYPE_PRODUCTS_CATEGORY)){
+            return ".ui.products.ProductsActivity";
+        }else if (type.equals(Constants.BANNER_TYPE_NEW_NEWS)){
+            return ".ui.news.NewsActivity";
+        }else {
+            return "";
+        }
     }
 
 }

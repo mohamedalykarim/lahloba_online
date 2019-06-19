@@ -49,5 +49,11 @@ public class Constants {
 
     public static final String START_GET_FAVORITES = "start_get_favorites";
 
+    public static final String START_GET_BANNER = "start_get_banner";
+    public static final String BANNER_TYPE_PRODUCTS_CATEGORY = "products_category";
+    public static final String BANNER_TYPE_NEW_NEWS = "new_news";
+
+
+
     public static final String SLIDER_ITEM_EXTRA = "slider_item_extra";
 }

@@ -26,6 +26,7 @@ import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRES
 import static online.lahloba.www.lahloba.utils.Constants.START_DELETE_ADDRESS;
 import static online.lahloba.www.lahloba.utils.Constants.START_EDIT_ADDRESS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_ADDRESSES;
+import static online.lahloba.www.lahloba.utils.Constants.START_GET_BANNER;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_ORDERS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_USER_DETAILS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_DEFAULT_ADDRESS;
@@ -122,6 +123,12 @@ public class LahlobaMainService extends IntentService {
         else if(intent.getAction().equals(START_GET_FAVORITES)){
             networkDataHelper.getFavoritesFromFirebase();
         }
+
+
+        else if(intent.getAction().equals(START_GET_BANNER)){
+            networkDataHelper.getBannerFromFirebase();
+        }
+
 
 
     }

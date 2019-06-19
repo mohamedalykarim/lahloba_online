@@ -10,6 +10,7 @@ import java.util.List;
 
 import online.lahloba.www.lahloba.data.database.LahlobaDatabase;
 import online.lahloba.www.lahloba.data.model.AddressItem;
+import online.lahloba.www.lahloba.data.model.BannerItem;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.MainMenuItem;
 import online.lahloba.www.lahloba.data.model.MarketPlace;
@@ -298,5 +299,17 @@ public class AppRepository {
 
     public MutableLiveData<List<ProductItem>> getFavoritesItems() {
         return networkDataHelper.getFavoritesItems();
+    }
+
+
+    //############################### Banner ############################//
+
+
+    public void startGetBanner() {
+        networkDataHelper.startGetBanner();
+    }
+
+    public MutableLiveData<List<BannerItem>> getBannerItems() {
+        return networkDataHelper.getBannerItems();
     }
 }

@@ -20,7 +20,6 @@ import online.lahloba.www.lahloba.databinding.ActivityMainBinding;
 import online.lahloba.www.lahloba.ui.favorites.FavoritesFragment;
 import online.lahloba.www.lahloba.ui.fragments.AccountFragment;
 import online.lahloba.www.lahloba.ui.login.LoginFragment;
-import online.lahloba.www.lahloba.ui.fragments.ShoppingFragment;
 import online.lahloba.www.lahloba.ui.governerate.GovernerateActivity;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
 import online.lahloba.www.lahloba.utils.Injector;

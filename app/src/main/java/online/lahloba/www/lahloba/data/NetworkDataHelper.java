@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.List;
 
 import online.lahloba.www.lahloba.data.model.AddressItem;
+import online.lahloba.www.lahloba.data.model.BannerItem;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.MainMenuItem;
 import online.lahloba.www.lahloba.data.model.MarketPlace;
@@ -92,6 +93,7 @@ public class NetworkDataHelper {
 
     private MutableLiveData<List<ProductItem>> productsItems;
     private MutableLiveData<List<ProductItem>> favoritesItems;
+    private MutableLiveData<List<BannerItem>> bannerItems;
 
 
     public NetworkDataHelper(Context applicationContext) {
@@ -105,6 +107,7 @@ public class NetworkDataHelper {
         marketPlace = new MutableLiveData<>();
         orderItems = new MutableLiveData<>();
         favoritesItems = new MutableLiveData<>();
+        bannerItems = new MutableLiveData<>();
 
         defaultAddress = new MutableLiveData<>();
 
@@ -989,5 +992,42 @@ public class NetworkDataHelper {
 
     public MutableLiveData<List<ProductItem>> getFavoritesItems() {
         return favoritesItems;
+    }
+
+
+    //############################### Banner ############################//
+
+    public void startGetBanner() {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.START_GET_BANNER);
+        mContext.startService(intent);
+
+    }
+
+    public void getBannerFromFirebase() {
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        mDatabase.child("Banner").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<BannerItem> bannerItemsList = new ArrayList<>();
+                for (DataSnapshot item : dataSnapshot.getChildren()){
+                    bannerItemsList.add(item.getValue(BannerItem.class));
+                }
+
+                bannerItems.setValue(bannerItemsList);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    public MutableLiveData<List<BannerItem>> getBannerItems() {
+        return bannerItems;
     }
 }
