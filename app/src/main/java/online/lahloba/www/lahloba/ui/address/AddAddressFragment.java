@@ -66,10 +66,10 @@ public class AddAddressFragment extends Fragment implements LocationListener {
                 false
         );
 
-        ViewModelProviderFactory factory = Injector.getVMFactory(getContext(),null);
+        ViewModelProviderFactory factory = Injector.getVMFactory(getContext());
         mViewModel = ViewModelProviders.of(this,factory).get(AddAddressViewModel.class);
 
-        ViewModelProviderFactory addressFactory = Injector.getVMFactory(getContext(),null);
+        ViewModelProviderFactory addressFactory = Injector.getVMFactory(getContext());
         addressViewModel = ViewModelProviders.of(this,addressFactory).get(AddressViewModel.class);
 
 

@@ -88,10 +88,10 @@ public class SignupFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ViewModelProviderFactory factory = Injector.getVMFactory(this.getContext(),null);
+        ViewModelProviderFactory factory = Injector.getVMFactory(this.getContext());
         mViewModel = ViewModelProviders.of(this, factory).get(SignupViewModel.class);
 
-        ViewModelProviderFactory loginFactory = Injector.getVMFactory(this.getContext(),null);
+        ViewModelProviderFactory loginFactory = Injector.getVMFactory(this.getContext());
         loginViewModel = ViewModelProviders.of(this,loginFactory).get(LoginViewModel.class);
 
     }

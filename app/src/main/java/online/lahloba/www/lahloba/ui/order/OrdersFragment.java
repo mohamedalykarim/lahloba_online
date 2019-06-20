@@ -52,7 +52,7 @@ public class OrdersFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         FragmentOrdersBinding binding = FragmentOrdersBinding.inflate(inflater,container, false);
 
-        ViewModelProviderFactory factory = Injector.getVMFactory(getContext(),null);
+        ViewModelProviderFactory factory = Injector.getVMFactory(getContext());
         mViewModel = ViewModelProviders.of(this,factory).get(OrdersViewModel.class);
 
         orderRv = binding.ordersRv;

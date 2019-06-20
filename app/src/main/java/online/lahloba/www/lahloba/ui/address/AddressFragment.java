@@ -50,7 +50,7 @@ public class AddressFragment extends Fragment implements AddressAdapter.EditAddr
         FragmentAddressBinding binding = DataBindingUtil.inflate(inflater,R.layout.fragment_address, container, false);
         View view = binding.getRoot();
 
-        ViewModelProviderFactory factory = Injector.getVMFactory(getContext(),null);
+        ViewModelProviderFactory factory = Injector.getVMFactory(getContext());
         mViewModel = ViewModelProviders.of(this,factory).get(AddressViewModel.class);
 
 

@@ -40,7 +40,7 @@ public class OrderDetailsFragment extends Fragment {
 
         FragmentOrderDetailsBinding binding = FragmentOrderDetailsBinding.inflate(inflater,container,false);
 
-        ViewModelProviderFactory factory = Injector.getVMFactory(getContext(),null);
+        ViewModelProviderFactory factory = Injector.getVMFactory(getContext());
         mViewModel = ViewModelProviders.of(this,factory).get(OrderDetailsViewModel.class);
 
 

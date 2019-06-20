@@ -5,7 +5,7 @@ import android.arch.lifecycle.ViewModel;
 
 import com.google.firebase.database.DataSnapshot;
 
-import online.lahloba.www.lahloba.data.AppRepository;
+import online.lahloba.www.lahloba.data.repository.AppRepository;
 
 public class GovernerateViewModel extends ViewModel {
     AppRepository appRepository;

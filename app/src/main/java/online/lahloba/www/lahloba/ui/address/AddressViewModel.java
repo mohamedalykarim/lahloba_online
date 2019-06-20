@@ -5,7 +5,7 @@ import android.arch.lifecycle.ViewModel;
 
 import java.util.List;
 
-import online.lahloba.www.lahloba.data.AppRepository;
+import online.lahloba.www.lahloba.data.repository.AppRepository;
 import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.vm_helper.AddressVMHelper;
 

@@ -58,7 +58,7 @@ public class GovernerateFragment extends Fragment implements GovernerateAdapter.
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentGovernerateBinding.inflate(inflater,container, false);
 
-        ViewModelProviderFactory factory = Injector.getVMFactory(getContext(),null);
+        ViewModelProviderFactory factory = Injector.getVMFactory(getContext());
         mViewModel = ViewModelProviders.of(this, factory).get(GovernerateViewModel.class);
 
         mViewModel.startGetGovernorates();

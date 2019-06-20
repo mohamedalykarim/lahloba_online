@@ -2,11 +2,10 @@ package online.lahloba.www.lahloba.ui.login;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
-import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import online.lahloba.www.lahloba.data.AppRepository;
+import online.lahloba.www.lahloba.data.repository.AppRepository;
 import online.lahloba.www.lahloba.data.model.UserItem;
 import online.lahloba.www.lahloba.data.model.vm_helper.LoginVMHelper;
 import online.lahloba.www.lahloba.utils.Injector;

@@ -6,7 +6,7 @@ import android.arch.lifecycle.ViewModel;
 
 import java.util.List;
 
-import online.lahloba.www.lahloba.data.AppRepository;
+import online.lahloba.www.lahloba.data.repository.AppRepository;
 import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.MarketPlace;
@@ -17,14 +17,12 @@ import online.lahloba.www.lahloba.data.model.vm_helper.CartVMHelper;
 
 public class CartViewModel extends ViewModel {
     AppRepository appRepository;
-    VMPHelper vmpHelper;
     public CartVMHelper cartVMHelper;
 
 
 
-    public CartViewModel(AppRepository appRepository, VMPHelper vmpHelper) {
+    public CartViewModel(AppRepository appRepository) {
         this.appRepository = appRepository;
-        this.vmpHelper = vmpHelper;
         cartVMHelper = new CartVMHelper();
     }
 

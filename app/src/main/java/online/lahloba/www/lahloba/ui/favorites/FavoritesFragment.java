@@ -42,7 +42,7 @@ public class FavoritesFragment extends Fragment {
 
         FragmentFavoritesBinding binding = FragmentFavoritesBinding.inflate(inflater,container,false);
 
-        ViewModelProviderFactory factory = Injector.getVMFactory(getContext(),null);
+        ViewModelProviderFactory factory = Injector.getVMFactory(getContext());
         mViewModel = ViewModelProviders.of(this,factory).get(FavoritesViewModel.class);
 
 

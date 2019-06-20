@@ -100,7 +100,7 @@ public class LoginFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ViewModelProviderFactory loginFactory = Injector.getVMFactory(this.getContext(),null);
+        ViewModelProviderFactory loginFactory = Injector.getVMFactory(this.getContext());
         mViewModel = ViewModelProviders.of(this,loginFactory).get(LoginViewModel.class);
 
         mViewModel.getIsLogged().observe(this, isLogged->{

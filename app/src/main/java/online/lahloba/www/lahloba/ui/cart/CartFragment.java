@@ -49,7 +49,6 @@ public class CartFragment extends Fragment {
     AddressesToActivityFromCart addressesToActivityFromCart;
     List<String> marketIds;
     double nonFinalHyperLocalCost;
-    VMPHelper vmpHelper;
 
     LoginViewModel loginViewModel;
 
@@ -66,9 +65,7 @@ public class CartFragment extends Fragment {
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_cart, container, false);
         binding.setLifecycleOwner(this);
 
-        vmpHelper = new VMPHelper();
-        vmpHelper.setUserId(getArguments().getString(Constants.EXTRA_USER_ID));
-        ViewModelProviderFactory factory = Injector.getVMFactory(this.getContext(), vmpHelper);
+        ViewModelProviderFactory factory = Injector.getVMFactory(this.getContext());
         mViewModel = ViewModelProviders.of(this, factory).get(CartViewModel.class);
         binding.setCartViewModel(mViewModel);
 

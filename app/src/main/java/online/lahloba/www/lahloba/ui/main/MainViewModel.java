@@ -1,12 +1,11 @@
 package online.lahloba.www.lahloba.ui.main;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
 import java.util.List;
 
-import online.lahloba.www.lahloba.data.AppRepository;
+import online.lahloba.www.lahloba.data.repository.AppRepository;
 import online.lahloba.www.lahloba.data.model.BannerItem;
 import online.lahloba.www.lahloba.data.model.MainMenuItem;
 

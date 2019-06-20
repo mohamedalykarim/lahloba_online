@@ -6,7 +6,7 @@ import android.arch.lifecycle.ViewModel;
 
 import java.util.List;
 
-import online.lahloba.www.lahloba.data.AppRepository;
+import online.lahloba.www.lahloba.data.repository.AppRepository;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.data.model.VMPHelper;
@@ -16,15 +16,13 @@ import online.lahloba.www.lahloba.utils.Injector;
 
 public class ProductsViewModel extends ViewModel {
     AppRepository appRepository;
-    String categoryId;
     public ProductVMHelper productVMHelper = new ProductVMHelper();
 
-    public ProductsViewModel(AppRepository appRepository, VMPHelper vmpHelper) {
+    public ProductsViewModel(AppRepository appRepository) {
         this.appRepository = appRepository;
-        categoryId = vmpHelper.getCategoryId();
     }
 
-    public void startProductsForCategory() {
+    public void startProductsForCategory(String categoryId) {
         appRepository.startGetSProductItems(categoryId);
     }
 

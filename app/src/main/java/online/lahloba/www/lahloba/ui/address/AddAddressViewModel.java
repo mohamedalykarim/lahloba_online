@@ -3,7 +3,7 @@ package online.lahloba.www.lahloba.ui.address;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
-import online.lahloba.www.lahloba.data.AppRepository;
+import online.lahloba.www.lahloba.data.repository.AppRepository;
 import online.lahloba.www.lahloba.data.model.AddressItem;
 
 public class AddAddressViewModel extends ViewModel {

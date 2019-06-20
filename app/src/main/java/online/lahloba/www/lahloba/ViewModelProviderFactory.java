@@ -5,8 +5,10 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.support.annotation.NonNull;
 
 
-import online.lahloba.www.lahloba.data.AppRepository;
+import online.lahloba.www.lahloba.data.repository.AppRepository;
 import online.lahloba.www.lahloba.data.model.VMPHelper;
+import online.lahloba.www.lahloba.data.repository.SellerRepository;
+import online.lahloba.www.lahloba.data.repository.SubMenuRepository;
 import online.lahloba.www.lahloba.ui.address.AddAddressViewModel;
 import online.lahloba.www.lahloba.ui.address.AddressViewModel;
 import online.lahloba.www.lahloba.ui.cart.CartViewModel;
@@ -18,16 +20,21 @@ import online.lahloba.www.lahloba.ui.news.NewsViewModel;
 import online.lahloba.www.lahloba.ui.order.OrderDetailsViewModel;
 import online.lahloba.www.lahloba.ui.order.OrdersViewModel;
 import online.lahloba.www.lahloba.ui.products.ProductsViewModel;
+import online.lahloba.www.lahloba.ui.seller.SellerAddProductViewModel;
+import online.lahloba.www.lahloba.ui.seller.SellerMainViewModel;
 import online.lahloba.www.lahloba.ui.signup.SignupViewModel;
 import online.lahloba.www.lahloba.ui.sub_menu.SubMenuViewModel;
 
 public class ViewModelProviderFactory extends ViewModelProvider.NewInstanceFactory {
     AppRepository appRepository;
-    VMPHelper vmpHelper;
+    SubMenuRepository subMenuRepository;
+    SellerRepository sellerRepository;
 
-    public ViewModelProviderFactory(AppRepository appRepository, VMPHelper vmpHelper) {
+
+    public ViewModelProviderFactory(AppRepository appRepository, SubMenuRepository subMenuRepository, SellerRepository sellerRepository) {
         this.appRepository = appRepository;
-        this.vmpHelper = vmpHelper;
+        this.subMenuRepository = subMenuRepository;
+        this.sellerRepository = sellerRepository;
     }
 
     @NonNull
@@ -36,11 +43,11 @@ public class ViewModelProviderFactory extends ViewModelProvider.NewInstanceFacto
         if(modelClass.isAssignableFrom(MainViewModel.class)){
             return (T) new MainViewModel(appRepository);
         }else if(modelClass.isAssignableFrom(SubMenuViewModel.class)){
-            return (T) new SubMenuViewModel(appRepository, vmpHelper);
+            return (T) new SubMenuViewModel(subMenuRepository);
         }else if(modelClass.isAssignableFrom(ProductsViewModel.class)){
-            return (T) new ProductsViewModel(appRepository, vmpHelper);
+            return (T) new ProductsViewModel(appRepository);
         }else if(modelClass.isAssignableFrom(CartViewModel.class)){
-            return (T) new CartViewModel(appRepository, vmpHelper);
+            return (T) new CartViewModel(appRepository);
         }else if(modelClass.isAssignableFrom(LoginViewModel.class)){
             return (T) new LoginViewModel(appRepository);
         }else if(modelClass.isAssignableFrom(SignupViewModel.class)){
@@ -59,6 +66,10 @@ public class ViewModelProviderFactory extends ViewModelProvider.NewInstanceFacto
             return (T) new NewsViewModel(appRepository);
         }else if(modelClass.isAssignableFrom(OrderDetailsViewModel.class)){
             return (T) new OrderDetailsViewModel(appRepository);
+        }else if(modelClass.isAssignableFrom(SellerMainViewModel.class)){
+            return (T) new SellerMainViewModel(sellerRepository);
+        }else if(modelClass.isAssignableFrom(SellerAddProductViewModel.class)){
+            return (T) new SellerAddProductViewModel(sellerRepository);
         }
 
 

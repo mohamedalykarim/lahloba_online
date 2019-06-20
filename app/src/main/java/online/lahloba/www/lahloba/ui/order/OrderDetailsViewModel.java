@@ -2,7 +2,7 @@ package online.lahloba.www.lahloba.ui.order;
 
 import android.arch.lifecycle.ViewModel;
 
-import online.lahloba.www.lahloba.data.AppRepository;
+import online.lahloba.www.lahloba.data.repository.AppRepository;
 import online.lahloba.www.lahloba.data.model.OrderItem;
 
 public class OrderDetailsViewModel extends ViewModel {

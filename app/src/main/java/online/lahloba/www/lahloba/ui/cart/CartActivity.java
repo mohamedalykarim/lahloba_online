@@ -111,7 +111,7 @@ implements
          * Login View Model in cart activity
          */
 
-        ViewModelProviderFactory loginFactory = Injector.getVMFactory(this,null);
+        ViewModelProviderFactory loginFactory = Injector.getVMFactory(this);
         loginViewModel = ViewModelProviders.of(this,loginFactory).get(LoginViewModel.class);
 
 
@@ -384,9 +384,6 @@ implements
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("", "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-
-                            ((CartFragment)getSupportFragmentManager().getFragments().get(0))
-                                    .vmpHelper.setUserId(user.getUid());
 
 
                             ((CartFragment)getSupportFragmentManager().getFragments().get(0))

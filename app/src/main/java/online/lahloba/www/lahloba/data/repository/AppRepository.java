@@ -1,13 +1,13 @@
-package online.lahloba.www.lahloba.data;
+package online.lahloba.www.lahloba.data.repository;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 
 import java.util.List;
 
+import online.lahloba.www.lahloba.data.NetworkDataHelper;
 import online.lahloba.www.lahloba.data.database.LahlobaDatabase;
 import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.BannerItem;
@@ -53,18 +53,6 @@ public class AppRepository {
         return networkDataHelper.getMainMenuItems();
     }
 
-    //############################### Sub Menu Item ############################//
-    public void startGetSubMenuItems(String subMenuId) {
-        networkDataHelper.startGetSupMenuItems(subMenuId);
-    }
-
-    public MutableLiveData<List<SubMenuItem>> getSubMenuItems() {
-        return networkDataHelper.getSubMenuItems();
-    }
-
-    public void clearSupMenu() {
-        networkDataHelper.clearSupMenu();
-    }
 
     //############################### Proucts ############################//
     public void startGetSProductItems(String categoryId) {
@@ -154,7 +142,7 @@ public class AppRepository {
     }
 
     public MutableLiveData<Boolean> getIsUserCreated() {
-        return networkDataHelper.isUserCreated;
+        return networkDataHelper.getIsUserCreated();
     }
 
 

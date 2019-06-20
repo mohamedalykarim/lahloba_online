@@ -41,7 +41,7 @@ public class AccountFragment extends Fragment {
                 container,
                 false);
 
-        ViewModelProviderFactory loginFactory = Injector.getVMFactory(this.getContext(),null);
+        ViewModelProviderFactory loginFactory = Injector.getVMFactory(this.getContext());
         loginViewModel = ViewModelProviders.of(this,loginFactory).get(LoginViewModel.class);
 
 

@@ -43,6 +43,12 @@ public static void setFont(View view, String font){
     }
 }
 
+    @BindingAdapter("android:setImage")
+    public static void setImage(ImageView imageView, int image){
+            Picasso.get().load(image).into(imageView);
+    }
+
+
     @BindingAdapter("android:shippingIcon")
     public static void setShippingIcon(ImageView imageView, String shippingType){
         if (shippingType.equals(CartVMHelper.FREE_SHIPPING)){

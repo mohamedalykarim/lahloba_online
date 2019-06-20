@@ -43,6 +43,7 @@ public class ProductsFragment extends Fragment {
     String userId;
     private UserItem currentUser;
     ResetCartBottomSheet resetCartBottomSheet;
+    private String subId;
 
 
     public static ProductsFragment newInstance(Bundle args) {
@@ -75,15 +76,13 @@ public class ProductsFragment extends Fragment {
 
 
         Bundle bundle = getArguments();
-        String subId = bundle.getString(Constants.EXTRA_SUBTITLE_ID);
+        subId = bundle.getString(Constants.EXTRA_SUBTITLE_ID);
 
-        VMPHelper vmpHelper = new VMPHelper();
-        vmpHelper.setCategoryId(subId);
 
-        ViewModelProviderFactory factory = Injector.getVMFactory(this.getContext(), vmpHelper);
+        ViewModelProviderFactory factory = Injector.getVMFactory(this.getContext());
         mViewModel = ViewModelProviders.of(this, factory).get(ProductsViewModel.class);
 
-        ViewModelProviderFactory loginFactory = Injector.getVMFactory(this.getContext(),null);
+        ViewModelProviderFactory loginFactory = Injector.getVMFactory(this.getContext());
         loginViewModel = ViewModelProviders.of(this,loginFactory).get(LoginViewModel.class);
 
 
@@ -116,7 +115,8 @@ public class ProductsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mViewModel.startProductsForCategory();
+
+        mViewModel.startProductsForCategory(subId);
 
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null){

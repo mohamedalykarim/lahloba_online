@@ -53,9 +53,7 @@ public class SubMenuFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         RecyclerView recyclerView = view.findViewById(R.id.SubMenuRecycler);
 
-        VMPHelper vmpHelper = new VMPHelper();
-        vmpHelper.setSubMenuId(subMenuID);
-        ViewModelProviderFactory factory = Injector.getVMFactory(this.getContext(), vmpHelper);
+        ViewModelProviderFactory factory = Injector.getVMFactory(this.getContext());
         viewModel = ViewModelProviders.of(this, factory).get(SubMenuViewModel.class);
         binding.setSubMenuViewModel(viewModel);
 
@@ -71,7 +69,7 @@ public class SubMenuFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        viewModel.startSupMenuItems();
+        viewModel.startSupMenuItems(subMenuID);
 
         viewModel.getSupMenuItems().observe(this, itemList->{
             items.clear();

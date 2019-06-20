@@ -44,7 +44,7 @@ public class ShoppingFragment extends Fragment {
         indicator= view.findViewById(R.id.indicator);
 
 
-        ViewModelProviderFactory factory = Injector.getVMFactory(this.getContext(), null);
+        ViewModelProviderFactory factory = Injector.getVMFactory(this.getContext());
         mainViewModel = ViewModelProviders.of(this.getActivity(),factory).get(MainViewModel.class);
 
 
