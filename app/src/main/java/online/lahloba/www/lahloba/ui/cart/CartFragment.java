@@ -50,6 +50,9 @@ public class CartFragment extends Fragment {
     List<String> marketIds;
     double nonFinalHyperLocalCost;
 
+    int orderAddedCount = 0;
+    int orderInCart = 0;
+
     LoginViewModel loginViewModel;
 
     public static CartFragment newInstance(Bundle args) {
@@ -102,9 +105,15 @@ public class CartFragment extends Fragment {
             mViewModel.getIsOrderAdded().observe(this, isOrderAdded->{
                 if (null != isOrderAdded){
                     if (isOrderAdded){
-                        getActivity().finish();
-                        startActivity(new Intent(getContext(), OrdersActivity.class));
-                        Toast.makeText(getContext(), "Order added", Toast.LENGTH_SHORT).show();
+                        orderAddedCount++;
+
+                        if (orderInCart == orderAddedCount && orderInCart != 0){
+                            getActivity().finish();
+                            startActivity(new Intent(getContext(), OrdersActivity.class));
+                            Toast.makeText(getContext(), "Order added", Toast.LENGTH_SHORT).show();
+
+                        }
+
 
                     }
                 }
@@ -269,7 +278,7 @@ public class CartFragment extends Fragment {
                userLocation.setLatitude(mViewModel.cartVMHelper.getAddressSelected().getLat());
                userLocation.setLongitude(mViewModel.cartVMHelper.getAddressSelected().getLat());
 
-               mViewModel.getMarketPlaceFromInternal(marketIds)
+               mViewModel.getMarketPlacesFromInternal(marketIds)
                        .observe(this, marketPlaces -> {
 
 

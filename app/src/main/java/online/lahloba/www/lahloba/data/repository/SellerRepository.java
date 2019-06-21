@@ -34,4 +34,7 @@ public class SellerRepository {
     }
 
 
+    public void startGetSellerOrders(String uid) {
+        networkDataHelper.startGetSellerOrders(uid);
+    }
 }

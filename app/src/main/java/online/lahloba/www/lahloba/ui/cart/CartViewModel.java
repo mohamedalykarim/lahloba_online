@@ -59,9 +59,15 @@ public class CartViewModel extends ViewModel {
         appRepository.insertMarketPlaceToInternal(marketPlace);
     }
 
-    public LiveData<List<MarketPlace>> getMarketPlaceFromInternal(List<String> ids) {
-        return appRepository.getMarketPlaceFromInternal(ids);
+    public LiveData<List<MarketPlace>> getMarketPlacesFromInternal(List<String> ids) {
+        return appRepository.getMarketPlacesFromInternal(ids);
     }
+
+    public LiveData<MarketPlace> getMarketPlaceFromInternal(String id) {
+        return appRepository.getMarketPlaceFromInternal(id);
+    }
+
+
 
     public void startGetCartItems(String uid) {
         appRepository.startGetCartItems(uid);

@@ -22,7 +22,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -50,6 +49,7 @@ import static online.lahloba.www.lahloba.utils.Constants.GET_SUB_MENU_ITEMS;
 import static online.lahloba.www.lahloba.utils.Constants.ORDER_ID;
 import static online.lahloba.www.lahloba.utils.Constants.ORDER_STATUS;
 import static online.lahloba.www.lahloba.utils.Constants.RESET_CART_ITEM;
+import static online.lahloba.www.lahloba.utils.Constants.SELLER_GET_ORDERS;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_EMAIL;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_FIRSTNAME;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_PASSWORD;
@@ -861,8 +861,6 @@ public class NetworkDataHelper {
             orderItem.setOrderStatus(1);
         }
 
-
-
         String userId = FirebaseAuth.getInstance().getUid();
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
         String pushKey = mDatabase.child("Orders").child(userId).push().getKey();
@@ -875,17 +873,12 @@ public class NetworkDataHelper {
         Date now = new Date();
         orderItem.setDate(now);
 
-        mDatabase.child("Orders").child(userId).child(pushKey).setValue(orderItem)
+        mDatabase.child("Orders").child(pushKey).setValue(orderItem)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()){
-                            mDatabase.child("Cart").child(userId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    isOrderAdded.setValue(true);
-                                }
-                            });
+                            isOrderAdded.setValue(true);
                         }
                     }
                 });
@@ -913,7 +906,7 @@ public class NetworkDataHelper {
 
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        mDatabase.child("Orders").child(userId)
+        mDatabase.child("Orders").orderByChild("userId").equalTo(userId)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -1066,4 +1059,77 @@ public class NetworkDataHelper {
 
 
 
+
+    //############################### Banner ############################//
+
+    public void startGetSellerOrders(String uid) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.SELLER_GET_ORDERS);
+        intent.putExtra(SELLER_GET_ORDERS,uid);
+        mContext.startService(intent);
+
+    }
+
+    public void getSellerOrders(String uid) {
+        if (uid == null)return;
+
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.child("User").child(uid)
+                .child("isSeller")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (!dataSnapshot.exists()) return;
+                        boolean isSeller = Boolean.parseBoolean(dataSnapshot.getValue().toString());
+                        Log.v("mmm",isSeller+"");
+
+
+                        if (!isSeller) return;
+
+                        /**
+                         * get Marketplaces ids
+                         */
+                        List<String> marketIds = new ArrayList<>();
+                        mDatabase.child("MarketPlace").orderByChild("sellerId")
+                                .equalTo(uid)
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot MarketsData) {
+                                        if (!dataSnapshot.exists()) return;
+
+
+
+                                        mDatabase.child("Orders").addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot ordersData) {
+                                                Log.v("mmm", "seller orders");
+
+
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                            }
+                                        });
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+
+
+
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
 }

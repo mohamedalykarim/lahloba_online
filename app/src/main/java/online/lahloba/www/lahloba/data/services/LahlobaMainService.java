@@ -3,11 +3,9 @@ package online.lahloba.www.lahloba.data.services;
 import android.app.IntentService;
 import android.content.Intent;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import online.lahloba.www.lahloba.data.NetworkDataHelper;
 import online.lahloba.www.lahloba.data.model.AddressItem;
-import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.OrderItem;
 import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.Injector;
@@ -16,9 +14,11 @@ import static online.lahloba.www.lahloba.utils.Constants.CHANGE_ORDER_STATUS;
 import static online.lahloba.www.lahloba.utils.Constants.GET_CART_ITEM;
 import static online.lahloba.www.lahloba.utils.Constants.GET_PRODUCTS_FOR_CATEGORY;
 import static online.lahloba.www.lahloba.utils.Constants.GET_SUB_MENU_ITEMS;
+import static online.lahloba.www.lahloba.utils.Constants.MARKETPLACE_ID;
 import static online.lahloba.www.lahloba.utils.Constants.ORDER_ID;
 import static online.lahloba.www.lahloba.utils.Constants.ORDER_STATUS;
 import static online.lahloba.www.lahloba.utils.Constants.RESET_CART_ITEM;
+import static online.lahloba.www.lahloba.utils.Constants.SELLER_GET_ORDERS;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_EMAIL;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_FIRSTNAME;
@@ -146,6 +146,7 @@ public class LahlobaMainService extends IntentService {
 
         else if(intent.getAction().equals(START_NEW_ORDER)){
             OrderItem orderItem = intent.getParcelableExtra(START_NEW_ORDER);
+            String marketId = intent.getStringExtra(MARKETPLACE_ID);
             networkDataHelper.startAddNewOrderToFirebase(orderItem, START_NEW_ORDER);
         }else if(intent.getAction().equals(START_GET_CURRENT_ORDERS)){
             networkDataHelper.startGetCurrentOrdersFromFirebase();
@@ -171,6 +172,14 @@ public class LahlobaMainService extends IntentService {
             networkDataHelper.getBannerFromFirebase();
         }
 
+        /**
+         * Seller
+         */
+
+        else if(intent.getAction().equals(SELLER_GET_ORDERS)){
+            String uid = intent.getStringExtra(SELLER_GET_ORDERS);
+            networkDataHelper.getSellerOrders(uid);
+        }
 
 
     }

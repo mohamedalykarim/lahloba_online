@@ -237,9 +237,14 @@ public class AppRepository {
         });
     }
 
-    public LiveData<List<MarketPlace>> getMarketPlaceFromInternal(List<String> ids) {
+    public LiveData<List<MarketPlace>> getMarketPlacesFromInternal(List<String> ids) {
 
         return database.marketPlaceDao().getSpecificMarketPlaces(ids);
+    }
+
+    public LiveData<MarketPlace> getMarketPlaceFromInternal(String id) {
+
+        return database.marketPlaceDao().getSpecificMarketPlace(id);
     }
 
 

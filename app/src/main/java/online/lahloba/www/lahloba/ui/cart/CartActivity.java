@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -30,7 +32,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -50,6 +52,7 @@ import online.lahloba.www.lahloba.ui.login.LoginActivity;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
 import online.lahloba.www.lahloba.utils.Injector;
 import online.lahloba.www.lahloba.utils.OrderStatusUtils;
+import online.lahloba.www.lahloba.utils.Utils;
 
 import static online.lahloba.www.lahloba.utils.Constants.EXTRA_USER_ID;
 
@@ -298,6 +301,7 @@ implements
              * Confirm adding order
              */
 
+            ((CartFragment)getSupportFragmentManager().getFragments().get(0)).orderAddedCount = 0;
 
             if (!isStartAddingNewOrder){
                 if (((CartFragment)getSupportFragmentManager().getFragments().get(0)).getCartItemList().size() < 1){
@@ -306,31 +310,88 @@ implements
                 }
 
 
-                OrderItem orderItem = new OrderItem();
-                HashMap<String, CartItem> products = new HashMap<>();
-                for (CartItem item : ((CartFragment)getSupportFragmentManager().getFragments().get(0)).getCartItemList()){
-                    products.put(item.getId(), item);
+                List<String> marketIds = new ArrayList<>();
+
+                for (int i=0; i<((CartFragment)getSupportFragmentManager().getFragments().get(0)).getCartItemList().size();i++){
+                    if(marketIds.indexOf(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getCartItemList().get(i).getMarketId()) > -1){
+                    }else{
+                        marketIds.add(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getCartItemList().get(i).getMarketId());
+                    }
+
                 }
 
+                ((CartFragment)getSupportFragmentManager().getFragments().get(0)).orderInCart = marketIds.size();
 
-                orderItem.setProducts(products);
-                orderItem.setAddressSelected(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getAddressSelected());
-                orderItem.setHyperlocalCost(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getHyperlocalCost());
-                orderItem.setTotal(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getTotal());
-                orderItem.setPay_method(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getPay_method());
-                orderItem.setShippingMethodSelected(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getShippingMethodSelected());
-                orderItem.setOrderTotal(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getTotal()
-                        +((CartFragment)getSupportFragmentManager().getFragments().get(0))
-                        .getmViewModel().cartVMHelper.getHyperlocalCost()
-                );
 
-                orderItem.setOrderStatus(OrderStatusUtils.ORDER_STATUS_PENDING);
+                for (String marketId : marketIds){
 
-                ((CartFragment)getSupportFragmentManager().getFragments().get(0))
-                        .getmViewModel()
-                        .startNewOrder(orderItem);
+                    OrderItem orderItem = new OrderItem();
+                    HashMap<String, CartItem> products = new HashMap<>();
+                    for (CartItem item : ((CartFragment)getSupportFragmentManager().getFragments().get(0)).getCartItemList()){
+                        if (item.getMarketId().equals(marketId)){
+                            products.put(item.getId(), item);
+                        }
+                    }
+
+                    orderItem.setProducts(products);
+                    orderItem.setAddressSelected(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getAddressSelected());
+                    orderItem.setPay_method(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getPay_method());
+                    orderItem.setShippingMethodSelected(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getShippingMethodSelected());
+
+
+                    ((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel()
+                            .getMarketPlaceFromInternal(marketId).observe(this, marketPlace->{
+                                if (marketPlace == null)return;
+
+                        Location userLocation = new Location("");
+                        userLocation.setLatitude(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel()
+                                .cartVMHelper.getAddressSelected().getLat());
+                        userLocation.setLongitude(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel()
+                                .cartVMHelper.getAddressSelected().getLat());
+
+                        Location marketplaceLocation = new Location("");
+                        marketplaceLocation.setLatitude(marketPlace.getLat());
+                        marketplaceLocation.setLongitude(marketPlace.getLan());
+                        double distance = marketplaceLocation.distanceTo(userLocation)/1000;
+                        double hyperlocalCost = Utils.getCostByDistance(distance);
+                        orderItem.setHyperlocalCost(hyperlocalCost);
+
+                        double total  = 0;
+
+                        for(CartItem product: products.values()){
+                            if (product!=null){
+                                total+= Double.parseDouble(product.getPrice());
+                            }
+                        }
+
+                        orderItem.setTotal(total);
+                        orderItem.setOrderTotal(
+                                orderItem.getHyperlocalCost()
+                                        +orderItem.getTotal()
+                        );
+
+                        orderItem.setMarketplaceId(marketId);
+                        orderItem.setUserId(FirebaseAuth.getInstance().getUid());
+
+                        orderItem.setOrderStatus(OrderStatusUtils.ORDER_STATUS_PENDING);
+
+                        ((CartFragment)getSupportFragmentManager().getFragments().get(0))
+                                .getmViewModel()
+                                .startNewOrder(orderItem);
+
+
+                    });
+
+
+
+
+                }
 
                 isStartAddingNewOrder = true;
+
+
+
+
 
 
             }

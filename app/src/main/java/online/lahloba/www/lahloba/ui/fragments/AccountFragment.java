@@ -51,6 +51,8 @@ public class AccountFragment extends Fragment {
 
 
         loginViewModel.getCurrentUserDetails().observe(this, userItem -> {
+            if (userItem == null)return;
+
             mainMenuItems.clear();
             accountAdapter.notifyDataSetChanged();
 

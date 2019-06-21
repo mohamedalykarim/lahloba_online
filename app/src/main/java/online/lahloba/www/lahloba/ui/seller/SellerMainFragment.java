@@ -61,6 +61,10 @@ public class SellerMainFragment extends Fragment {
     }
 
 
+    /**
+     * Add items of menu
+     */
+
     private void addMenuItems() {
         addMenuItem("Orders",
                 ".ui.seller.SellerOrdersActivity",
@@ -76,6 +80,13 @@ public class SellerMainFragment extends Fragment {
 
     }
 
+
+    /**
+     * Add item to seller menu
+     * @param title of menu
+     * @param activity that will start when click
+     * @param image image of item
+     */
     private void addMenuItem(String title, String activity, int image) {
         SellerMainMenuItem item = new SellerMainMenuItem();
         item.setTitle(title);

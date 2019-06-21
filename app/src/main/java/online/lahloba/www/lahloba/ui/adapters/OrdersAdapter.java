@@ -46,7 +46,10 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         holder.binding.reorderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mViewModel.startReorder(orderItem);
+                if (mViewModel != null){
+                    mViewModel.startReorder(orderItem);
+                }
+
             }
         });
 

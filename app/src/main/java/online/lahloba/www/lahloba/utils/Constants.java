@@ -69,4 +69,8 @@ public class Constants {
     public static final String SLIDER_ITEM_EXTRA = "slider_item_extra";
 
 
+    public static final String SELLER_GET_ORDERS = "seller_get_orders";
+
+
+    public static final String MARKETPLACE_ID = "marketplace_id";
 }

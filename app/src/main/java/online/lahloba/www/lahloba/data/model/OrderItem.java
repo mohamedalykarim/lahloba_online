@@ -11,7 +11,7 @@ import java.util.HashMap;
 import online.lahloba.www.lahloba.BR;
 
 public class OrderItem extends BaseObservable implements Parcelable {
-    String id;
+    private String id;
     private double total;
     private AddressItem addressSelected;
     private String shippingMethodSelected;
@@ -22,6 +22,8 @@ public class OrderItem extends BaseObservable implements Parcelable {
     private int orderStatus;
     private long orderNumber;
     private Date date;
+    private String marketplaceId;
+    private String userId;
 
     public OrderItem() {
     }
@@ -39,6 +41,8 @@ public class OrderItem extends BaseObservable implements Parcelable {
         orderStatus = in.readInt();
         orderNumber = in.readLong();
         date = (Date) in.readSerializable();
+        marketplaceId = in.readString();
+        userId = in.readString();
     }
 
     @Override
@@ -54,6 +58,8 @@ public class OrderItem extends BaseObservable implements Parcelable {
         dest.writeInt(orderStatus);
         dest.writeLong(orderNumber);
         dest.writeSerializable(date);
+        dest.writeString(marketplaceId);
+        dest.writeString(userId);
     }
 
     @Override
@@ -118,6 +124,14 @@ public class OrderItem extends BaseObservable implements Parcelable {
         return date;
     }
 
+    public String getMarketplaceId() {
+        return marketplaceId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -161,5 +175,13 @@ public class OrderItem extends BaseObservable implements Parcelable {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public void setMarketplaceId(String marketplaceId) {
+        this.marketplaceId = marketplaceId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }
