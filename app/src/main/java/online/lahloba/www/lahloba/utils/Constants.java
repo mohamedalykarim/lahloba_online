@@ -73,4 +73,5 @@ public class Constants {
 
 
     public static final String MARKETPLACE_ID = "marketplace_id";
+    public static final String START_GET_SELLER_MARKETPLACE = "start_get_seller_marketplaces";
 }

@@ -3,8 +3,12 @@ package online.lahloba.www.lahloba.data.repository;
 
 import android.arch.lifecycle.MutableLiveData;
 
+import java.util.List;
+
 import online.lahloba.www.lahloba.data.NetworkDataHelper;
 import online.lahloba.www.lahloba.data.database.LahlobaDatabase;
+import online.lahloba.www.lahloba.data.model.MarketPlace;
+import online.lahloba.www.lahloba.data.model.OrderItem;
 import online.lahloba.www.lahloba.data.model.UserItem;
 
 public class SellerRepository {
@@ -34,7 +38,19 @@ public class SellerRepository {
     }
 
 
-    public void startGetSellerOrders(String uid) {
-        networkDataHelper.startGetSellerOrders(uid);
+    public void startGetSellerOrders(String uid, String marketId) {
+        networkDataHelper.startGetSellerOrders(uid, marketId);
+    }
+
+    public void startGetMarketPlacesBySeller(String uid) {
+        networkDataHelper.startGetMarketPlacesBySeller(uid);
+    }
+
+    public MutableLiveData<List<MarketPlace>> getMarketPlaces() {
+        return networkDataHelper.getMarketPlaces();
+    }
+
+    public MutableLiveData<List<OrderItem>> getSellerOrder() {
+        return networkDataHelper.getCurrentOrders();
     }
 }

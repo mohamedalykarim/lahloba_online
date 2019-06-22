@@ -42,10 +42,12 @@ import online.lahloba.www.lahloba.utils.LocalUtils;
 import online.lahloba.www.lahloba.utils.SharedPreferencesManager;
 
 import static online.lahloba.www.lahloba.utils.Constants.CHANGE_ORDER_STATUS;
+import static online.lahloba.www.lahloba.utils.Constants.EXTRA_USER_ID;
 import static online.lahloba.www.lahloba.utils.Constants.GET_CART_ITEM;
 import static online.lahloba.www.lahloba.utils.Constants.GET_MAIN_MENU_ITEMS;
 import static online.lahloba.www.lahloba.utils.Constants.GET_PRODUCTS_FOR_CATEGORY;
 import static online.lahloba.www.lahloba.utils.Constants.GET_SUB_MENU_ITEMS;
+import static online.lahloba.www.lahloba.utils.Constants.MARKETPLACE_ID;
 import static online.lahloba.www.lahloba.utils.Constants.ORDER_ID;
 import static online.lahloba.www.lahloba.utils.Constants.ORDER_STATUS;
 import static online.lahloba.www.lahloba.utils.Constants.RESET_CART_ITEM;
@@ -88,6 +90,7 @@ public class NetworkDataHelper {
     MutableLiveData<UserItem> userDetails;
     MutableLiveData<AddressItem> defaultAddress;
     MutableLiveData<DataSnapshot> governorates;
+    MutableLiveData<List<MarketPlace>> marketPlaces;
     MutableLiveData<MarketPlace> marketPlace;
     MutableLiveData<Boolean> isOrderAdded;
     private MutableLiveData<Boolean> isAddressEdited;
@@ -108,6 +111,7 @@ public class NetworkDataHelper {
         addressItems = new MutableLiveData<>();
         cartItems = new MutableLiveData<>();
         governorates = new MutableLiveData<>();
+        marketPlaces = new MutableLiveData<>();
         marketPlace = new MutableLiveData<>();
         orderItems = new MutableLiveData<>();
         favoritesItems = new MutableLiveData<>();
@@ -1062,16 +1066,18 @@ public class NetworkDataHelper {
 
     //############################### Banner ############################//
 
-    public void startGetSellerOrders(String uid) {
+    public void startGetSellerOrders(String uid, String marketId) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
         intent.setAction(Constants.SELLER_GET_ORDERS);
         intent.putExtra(SELLER_GET_ORDERS,uid);
+        intent.putExtra(MARKETPLACE_ID, marketId);
         mContext.startService(intent);
 
     }
 
-    public void getSellerOrders(String uid) {
+    public void getSellerOrders(String uid, String marketId) {
         if (uid == null)return;
+        orderItems.postValue(null);
 
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.child("User").child(uid)
@@ -1081,7 +1087,6 @@ public class NetworkDataHelper {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (!dataSnapshot.exists()) return;
                         boolean isSeller = Boolean.parseBoolean(dataSnapshot.getValue().toString());
-                        Log.v("mmm",isSeller+"");
 
 
                         if (!isSeller) return;
@@ -1089,29 +1094,40 @@ public class NetworkDataHelper {
                         /**
                          * get Marketplaces ids
                          */
-                        List<String> marketIds = new ArrayList<>();
                         mDatabase.child("MarketPlace").orderByChild("sellerId")
                                 .equalTo(uid)
                                 .addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
-                                    public void onDataChange(@NonNull DataSnapshot MarketsData) {
+                                    public void onDataChange(@NonNull DataSnapshot marketsData) {
                                         if (!dataSnapshot.exists()) return;
 
 
+                                        /**
+                                         * for every market place get orders
+                                         */
 
-                                        mDatabase.child("Orders").addValueEventListener(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(@NonNull DataSnapshot ordersData) {
-                                                Log.v("mmm", "seller orders");
+                                        mDatabase.child("Orders")
+                                                .orderByChild("marketplaceId")
+                                                .equalTo(marketId)
+                                                .addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot ordersData) {
+                                                        Log.v("mmm", "seller orders");
+                                                        if (!ordersData.exists()) return;
+                                                        List<OrderItem> orderItemList = new ArrayList<>();
+                                                        for (DataSnapshot orderData: ordersData.getChildren()){
+                                                            orderItemList.add(orderData.getValue(OrderItem.class));
+                                                        }
 
+                                                        orderItems.setValue(orderItemList);
+                                                    }
 
-                                            }
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                                            @Override
-                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                    }
+                                                });
 
-                                            }
-                                        });
 
                                     }
 
@@ -1132,4 +1148,40 @@ public class NetworkDataHelper {
                     }
                 });
     }
+
+    public void startGetMarketPlacesBySeller(String uid) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.START_GET_SELLER_MARKETPLACE);
+        intent.putExtra(EXTRA_USER_ID, uid);
+        mContext.startService(intent);
+    }
+
+    public void getMarketPlacesForSeller(String uid) {
+        marketPlaces.postValue(null);
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.child("MarketPlace").orderByChild("sellerId").equalTo(uid)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (!dataSnapshot.exists()) return;
+                        List<MarketPlace> marketPlaceList = new ArrayList<>();
+                        for (DataSnapshot marketData : dataSnapshot.getChildren()){
+                            marketPlaceList.add(marketData.getValue(MarketPlace.class));
+                        }
+
+                        marketPlaces.setValue(marketPlaceList);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    public MutableLiveData<List<MarketPlace>> getMarketPlaces() {
+        return marketPlaces;
+    }
+
+
 }

@@ -11,6 +11,7 @@ import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.Injector;
 
 import static online.lahloba.www.lahloba.utils.Constants.CHANGE_ORDER_STATUS;
+import static online.lahloba.www.lahloba.utils.Constants.EXTRA_USER_ID;
 import static online.lahloba.www.lahloba.utils.Constants.GET_CART_ITEM;
 import static online.lahloba.www.lahloba.utils.Constants.GET_PRODUCTS_FOR_CATEGORY;
 import static online.lahloba.www.lahloba.utils.Constants.GET_SUB_MENU_ITEMS;
@@ -37,6 +38,7 @@ import static online.lahloba.www.lahloba.utils.Constants.START_GET_DEFAULT_ADDRE
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_FAVORITES;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_GOVERNORATES;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_MARKETPLACE;
+import static online.lahloba.www.lahloba.utils.Constants.START_GET_SELLER_MARKETPLACE;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_EMAIL;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_PASSWORD;
@@ -178,7 +180,11 @@ public class LahlobaMainService extends IntentService {
 
         else if(intent.getAction().equals(SELLER_GET_ORDERS)){
             String uid = intent.getStringExtra(SELLER_GET_ORDERS);
-            networkDataHelper.getSellerOrders(uid);
+            String marketId = intent.getStringExtra(MARKETPLACE_ID);
+            networkDataHelper.getSellerOrders(uid, marketId);
+        }else if(intent.getAction().equals(START_GET_SELLER_MARKETPLACE)){
+            String uid = intent.getStringExtra(EXTRA_USER_ID);
+            networkDataHelper.getMarketPlacesForSeller(uid);
         }
 
 

@@ -14,8 +14,8 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
+import online.lahloba.www.lahloba.data.model.MarketPlace;
 import online.lahloba.www.lahloba.data.model.OrderItem;
 import online.lahloba.www.lahloba.databinding.SellerOrderFragmentBinding;
 import online.lahloba.www.lahloba.ui.adapters.OrdersAdapter;
@@ -32,6 +32,7 @@ public class SellerOrdersFragment extends Fragment {
     RecyclerView orderRv;
     OrdersAdapter adapter;
     List<OrderItem> orderItems;
+    MarketPlace marketPlace;
 
     @Nullable
     @Override
@@ -53,11 +54,34 @@ public class SellerOrdersFragment extends Fragment {
         orderRv.setLayoutManager(new LinearLayoutManager(getContext()));
         orderRv.setHasFixedSize(true);
 
-        mViewModel.startGetSellerOrders();
+        mViewModel.startGetSellerOrders(marketPlace.getId());
+
+        mViewModel.getSellerOrder().observe(this, orderItemsList ->{
+            if (orderItemsList== null)return;
+
+            orderItems.clear();
+
+            for (OrderItem orderItem: orderItemsList){
+                if (orderItem.getMarketplaceId().equals(marketPlace.getId())){
+                    orderItems.add(orderItem);
+                }
+            }
+
+            adapter.notifyDataSetChanged();
+        } );
+
 
 
         return binding.getRoot();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
 
+
+    public void setMarketPlace(MarketPlace marketPlace) {
+        this.marketPlace = marketPlace;
+    }
 }
