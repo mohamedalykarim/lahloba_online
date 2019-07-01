@@ -6,7 +6,7 @@ public class UserItem {
     String lastName;
     String mobile;
     String email;
-    boolean isSeller;
+    boolean seller;
     boolean status;
     String sellerId;
     double lat;
@@ -39,7 +39,7 @@ public class UserItem {
 
 
     public boolean isSeller() {
-        return isSeller;
+        return seller;
     }
 
     public String getSellerId() {
@@ -79,7 +79,7 @@ public class UserItem {
     }
 
     public void setSeller(boolean seller) {
-        isSeller = seller;
+        this.seller = seller;
     }
 
     public void setSellerId(String sellerId) {

@@ -1,6 +1,5 @@
 package online.lahloba.www.lahloba.ui.order;
 
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,7 +19,6 @@ import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.OrderItem;
 import online.lahloba.www.lahloba.databinding.FragmentOrderDetailsBinding;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
-import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.Injector;
 
 import static online.lahloba.www.lahloba.utils.Constants.ORDER_ITEM;
@@ -59,16 +57,18 @@ public class OrderDetailsFragment extends Fragment {
          * If seller
          */
 
-//        LoginViewModel loginViewModel = ViewModelProviders.of(this, factory).get(LoginViewModel.class);
-//        loginViewModel.getCurrentUserDetails().observe(this, userItem -> {
-//            if (userItem == null) return;
-//            if (userItem.isSeller()){
-//                if (orderItem.getOrderStatus() == 1){
-//                    mViewModel.startChangeOrderStatus(orderItem.getId(),6);
-//                }
-//            }
-//
-//        });
+        LoginViewModel loginViewModel = ViewModelProviders.of(this, factory).get(LoginViewModel.class);
+        loginViewModel.getCurrentUserDetails().observe(this, userItem -> {
+            if (userItem == null) return;
+            if (userItem.isSeller()){
+                if (orderItem.getOrderStatus() == 1){
+                    mViewModel.startChangeOrderStatus(orderItem.getId(),6);
+                }
+            }
+
+            loginViewModel.loginVMHelper.setCurrentUser(userItem);
+
+        });
 
 
         binding.setOrder(orderItem);

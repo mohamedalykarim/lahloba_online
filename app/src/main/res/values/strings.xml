@@ -32,5 +32,8 @@
     <string name="my_favorite">My favorite</string>
     <string name="order_recieved">Order recieved</string>
     <string name="seller">Seller</string>
+    <string name="cart">Cart</string>
+    <string name="seller_orders">Seller Orders</string>
+    <string name="seller_Products">Products</string>
 
 </resources>

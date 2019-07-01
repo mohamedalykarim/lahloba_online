@@ -18,6 +18,7 @@ public class ProductItem extends BaseObservable {
     private String parentId;
     private String marketPlaceId;
     private boolean status;
+    private String sellerId;
 
     @Exclude
     private int count;
@@ -87,6 +88,10 @@ public class ProductItem extends BaseObservable {
         return marketPlaceId;
     }
 
+    public String getSellerId() {
+        return sellerId;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -143,5 +148,9 @@ public class ProductItem extends BaseObservable {
 
     public void setMarketPlaceId(String marketPlaceId) {
         this.marketPlaceId = marketPlaceId;
+    }
+
+    public void setSellerId(String sellerId) {
+        this.sellerId = sellerId;
     }
 }

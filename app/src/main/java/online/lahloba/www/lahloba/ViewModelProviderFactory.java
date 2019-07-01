@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 
 
 import online.lahloba.www.lahloba.data.repository.AppRepository;
-import online.lahloba.www.lahloba.data.model.VMPHelper;
 import online.lahloba.www.lahloba.data.repository.SellerRepository;
 import online.lahloba.www.lahloba.data.repository.SubMenuRepository;
 import online.lahloba.www.lahloba.ui.address.AddAddressViewModel;
@@ -20,8 +19,7 @@ import online.lahloba.www.lahloba.ui.news.NewsViewModel;
 import online.lahloba.www.lahloba.ui.order.OrderDetailsViewModel;
 import online.lahloba.www.lahloba.ui.order.OrdersViewModel;
 import online.lahloba.www.lahloba.ui.products.ProductsViewModel;
-import online.lahloba.www.lahloba.ui.seller.SellerAddProductViewModel;
-import online.lahloba.www.lahloba.ui.seller.SellerMainViewModel;
+import online.lahloba.www.lahloba.ui.seller.SellerProductsViewModel;
 import online.lahloba.www.lahloba.ui.seller.SellerOrdersViewModel;
 import online.lahloba.www.lahloba.ui.signup.SignupViewModel;
 import online.lahloba.www.lahloba.ui.sub_menu.SubMenuViewModel;
@@ -67,12 +65,10 @@ public class ViewModelProviderFactory extends ViewModelProvider.NewInstanceFacto
             return (T) new NewsViewModel(appRepository);
         }else if(modelClass.isAssignableFrom(OrderDetailsViewModel.class)){
             return (T) new OrderDetailsViewModel(appRepository);
-        }else if(modelClass.isAssignableFrom(SellerMainViewModel.class)){
-            return (T) new SellerMainViewModel(sellerRepository);
+        }else if(modelClass.isAssignableFrom(SellerProductsViewModel.class)){
+            return (T) new SellerProductsViewModel(sellerRepository);
         }else if(modelClass.isAssignableFrom(SellerOrdersViewModel.class)){
             return (T) new SellerOrdersViewModel(sellerRepository);
-        }else if(modelClass.isAssignableFrom(SellerAddProductViewModel.class)){
-            return (T) new SellerAddProductViewModel(sellerRepository);
         }
 
 

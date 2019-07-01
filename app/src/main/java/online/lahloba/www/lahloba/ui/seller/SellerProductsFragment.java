@@ -22,15 +22,15 @@ import online.lahloba.www.lahloba.ui.adapters.SellerMainMenuAdapter;
 import online.lahloba.www.lahloba.utils.Injector;
 
 
-public class SellerMainFragment extends Fragment {
-    private SellerMainViewModel mViewModel;
+public class SellerProductsFragment extends Fragment {
+    private SellerProductsViewModel mViewModel;
 
     RecyclerView menuRv;
     SellerMainMenuAdapter adapter;
     List<SellerMainMenuItem> menuItems;
 
-    public static SellerMainFragment newInstance() {
-        return new SellerMainFragment();
+    public static SellerProductsFragment newInstance() {
+        return new SellerProductsFragment();
     }
 
     @Nullable
@@ -55,7 +55,7 @@ public class SellerMainFragment extends Fragment {
 
 
         ViewModelProviderFactory factory = Injector.getVMFactory(getContext());
-        mViewModel = ViewModelProviders.of(this, factory).get(SellerMainViewModel.class);
+        mViewModel = ViewModelProviders.of(this, factory).get(SellerProductsViewModel.class);
 
         return binding.getRoot();
     }

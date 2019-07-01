@@ -19,6 +19,8 @@ public class LoginViewModel extends ViewModel {
         loginVMHelper = new LoginVMHelper();
 
         getIsLogged().observeForever(isLogged->{
+            if(isLogged == null)return;
+
             if (isLogged){
                 startGetUserDetails(FirebaseAuth.getInstance().getCurrentUser().getUid());
             }

@@ -7,10 +7,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
 import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +31,7 @@ import online.lahloba.www.lahloba.utils.Injector;
 public class AccountFragment extends Fragment {
     private LoginViewModel loginViewModel;
 
-    ExpandableHeightGridView accountGridView;
+    GridView gridView;
     List<MainMenuItem> mainMenuItems;
     AccountAdapter accountAdapter;
 
@@ -45,91 +49,111 @@ public class AccountFragment extends Fragment {
         loginViewModel = ViewModelProviders.of(this,loginFactory).get(LoginViewModel.class);
 
 
+        gridView = binding.gridview;
 
         mainMenuItems = new ArrayList<>();
-
-
-
-        loginViewModel.getCurrentUserDetails().observe(this, userItem -> {
-            if (userItem == null)return;
-
-            mainMenuItems.clear();
-            accountAdapter.notifyDataSetChanged();
-
-
-            if (userItem.isSeller()){
-                addDefaultItems();
-
-                MainMenuItem menuItem = new MainMenuItem();
-                Uri uri = Uri.parse("android.resource://online.lahloba.www.lahloba/drawable/seller_order");
-                menuItem.setImage(uri.toString());
-                menuItem.setTitle(getResources().getString(R.string.seller));
-
-                mainMenuItems.add(menuItem);
-
-            }else {
-                addDefaultItems();
-            }
-
-
-
-
-
-
-
-        });
 
 
         accountAdapter = new AccountAdapter(getContext(), loginViewModel);
         accountAdapter.setAccountItemList(mainMenuItems);
         accountAdapter.notifyDataSetChanged();
-        accountGridView = binding.gridview;
-        accountGridView.setExpanded(true);
-        accountGridView.setAdapter(accountAdapter);
+
+
+        gridView.setAdapter(accountAdapter);
 
 
         View view = binding.getRoot();
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        loginViewModel.getCurrentUserDetails().observe(this, userItem -> {
+            if (userItem == null){
+                return;
+            }
+
+            mainMenuItems.clear();
 
 
-    public void addMenuItem(String imageUri, String title){
+            if (userItem.isSeller()){
+                MainMenuItem ordersItem = new MainMenuItem();
+                Uri ordersUri = Uri.parse("android.resource://online.lahloba.www.lahloba/drawable/seller_order");
+                ordersItem.setImage(ordersUri.toString());
+                ordersItem.setTitle(getResources().getString(R.string.seller_orders));
+
+                mainMenuItems.add(ordersItem);
+
+                MainMenuItem productItem = new MainMenuItem();
+                Uri productsUri = Uri.parse("android.resource://online.lahloba.www.lahloba/drawable/seller_products");
+                productItem.setImage(productsUri.toString());
+                productItem.setTitle(getResources().getString(R.string.seller_Products));
+
+                mainMenuItems.add(productItem);
+
+            }
+
+            mainMenuItems.addAll(getDefaultItems());
+            accountAdapter.notifyDataSetChanged();
+
+        });
+
+    }
+
+    public MainMenuItem getMenuItem(String imageUri, String title){
         MainMenuItem menuItem = new MainMenuItem();
         Uri uri = Uri.parse(imageUri);
         menuItem.setImage(uri.toString());
         menuItem.setTitle(title);
 
-        mainMenuItems.add(menuItem);
-        if (accountAdapter != null){
-            accountAdapter.notifyDataSetChanged();
-        }
-
+        return menuItem;
     }
 
 
-    private void addDefaultItems(){
-        addMenuItem(
-                "android.resource://online.lahloba.www.lahloba/drawable/favorite",
-                getResources().getString(R.string.my_favorite)
-        );
-
-        addMenuItem(
-                "android.resource://online.lahloba.www.lahloba/drawable/order",
-                getResources().getString(R.string.my_Orders)
-        );
-
-        addMenuItem(
-                "android.resource://online.lahloba.www.lahloba/drawable/address",
-                getResources().getString(R.string.my_adresses)
-        );
+    private List<MainMenuItem> getDefaultItems(){
+        List<MainMenuItem> defaultItems = new ArrayList<>();
 
 
-        addMenuItem(
-                "android.resource://online.lahloba.www.lahloba/drawable/signout",
-                getResources().getString(R.string.sign_out)
+        defaultItems.add(
+                getMenuItem(
+                        "android.resource://online.lahloba.www.lahloba/drawable/cart",
+                        getResources().getString(R.string.cart)
+                )
         );
+
+        defaultItems.add(
+                getMenuItem(
+                        "android.resource://online.lahloba.www.lahloba/drawable/favorite",
+                        getResources().getString(R.string.my_favorite)
+                )
+        );
+
+        defaultItems.add(
+                getMenuItem(
+                        "android.resource://online.lahloba.www.lahloba/drawable/order",
+                        getResources().getString(R.string.my_Orders)
+                )
+        );
+
+        defaultItems.add(
+                getMenuItem(
+                        "android.resource://online.lahloba.www.lahloba/drawable/address",
+                        getResources().getString(R.string.my_adresses)
+                )
+        );
+
+        defaultItems.add(
+                getMenuItem(
+                        "android.resource://online.lahloba.www.lahloba/drawable/signout",
+                        getResources().getString(R.string.sign_out)
+                )
+        );
+
+        return defaultItems;
     }
+
 
 
 }

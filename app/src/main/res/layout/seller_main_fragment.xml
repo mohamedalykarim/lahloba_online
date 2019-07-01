@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#fff"
-        tools:context=".ui.seller.SellerMainFragment">
+        tools:context=".ui.seller.SellerProductsFragment">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/menuRv"

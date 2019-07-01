@@ -17,10 +17,12 @@ import java.util.List;
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.data.model.MainMenuItem;
 import online.lahloba.www.lahloba.ui.address.AddressActivity;
+import online.lahloba.www.lahloba.ui.cart.CartActivity;
 import online.lahloba.www.lahloba.ui.favorites.FavoritesActivity;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
 import online.lahloba.www.lahloba.ui.order.OrdersActivity;
-import online.lahloba.www.lahloba.ui.seller.SellerMainActivity;
+import online.lahloba.www.lahloba.ui.seller.SellerProductsActivity;
+import online.lahloba.www.lahloba.ui.seller.SellerOrdersActivity;
 
 public class AccountAdapter extends BaseAdapter {
     LoginViewModel loginViewModel;
@@ -74,8 +76,14 @@ public class AccountAdapter extends BaseAdapter {
                 }else if (accountItemList.get(position).getTitle().equals(context.getResources().getString(R.string.my_favorite))){
                     Intent intent = new Intent(context, FavoritesActivity.class);
                     context.startActivity(intent);
-                }else if (accountItemList.get(position).getTitle().equals(context.getResources().getString(R.string.seller))){
-                    Intent intent = new Intent(context, SellerMainActivity.class);
+                }else if (accountItemList.get(position).getTitle().equals(context.getResources().getString(R.string.cart))){
+                    Intent intent = new Intent(context, CartActivity.class);
+                    context.startActivity(intent);
+                }else if (accountItemList.get(position).getTitle().equals(context.getResources().getString(R.string.seller_orders))){
+                    Intent intent = new Intent(context, SellerOrdersActivity.class);
+                    context.startActivity(intent);
+                }else if (accountItemList.get(position).getTitle().equals(context.getResources().getString(R.string.seller_Products))){
+                    Intent intent = new Intent(context, SellerProductsActivity.class);
                     context.startActivity(intent);
                 }
             }
@@ -92,5 +100,6 @@ public class AccountAdapter extends BaseAdapter {
 
     public void setAccountItemList(List<MainMenuItem> accountItemList) {
         this.accountItemList = accountItemList;
+        this.notifyDataSetChanged();
     }
 }
