@@ -9,6 +9,7 @@ import online.lahloba.www.lahloba.data.NetworkDataHelper;
 import online.lahloba.www.lahloba.data.database.LahlobaDatabase;
 import online.lahloba.www.lahloba.data.model.MarketPlace;
 import online.lahloba.www.lahloba.data.model.OrderItem;
+import online.lahloba.www.lahloba.data.model.SubMenuItem;
 import online.lahloba.www.lahloba.data.model.UserItem;
 
 public class SellerRepository {
@@ -53,4 +54,13 @@ public class SellerRepository {
     public MutableLiveData<List<OrderItem>> getSellerOrder() {
         return networkDataHelper.getCurrentOrders();
     }
+
+    public void startGetSubMenusWithNoChild() {
+        networkDataHelper.startGetSubMenusWithNoChild();
+    }
+
+    public MutableLiveData<List<SubMenuItem>> getSubMenuItems() {
+        return networkDataHelper.getSubMenuItems();
+    }
+
 }

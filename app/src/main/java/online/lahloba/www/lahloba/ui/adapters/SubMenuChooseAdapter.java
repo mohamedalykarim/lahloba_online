@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -28,11 +27,11 @@ import online.lahloba.www.lahloba.ui.products.ProductsActivity;
 import online.lahloba.www.lahloba.ui.sub_menu.SubMenuActivity;
 import online.lahloba.www.lahloba.utils.Constants;
 
-public class SubMenuAdapter extends RecyclerView.Adapter<SubMenuAdapter.SubMenuViewHolder> {
+public class SubMenuChooseAdapter extends RecyclerView.Adapter<SubMenuChooseAdapter.SubMenuViewHolder> {
     List<SubMenuItem> subMenuItems;
     Context context;
 
-    public SubMenuAdapter(Context context) {
+    public SubMenuChooseAdapter(Context context) {
         this.context = context;
     }
 
@@ -76,18 +75,11 @@ public class SubMenuAdapter extends RecyclerView.Adapter<SubMenuAdapter.SubMenuV
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                subMenuItems.clear();
-                notifyDataSetChanged();
 
-                if(subMenuItem.isHasChild()){
-                    Intent intent = new Intent(context, SubMenuActivity.class);
-                    intent.putExtra(Constants.EXTRA_SUBTITLE_ID, subMenuItem.getId());
-                    context.startActivity(intent);
-                }else{
-                    Intent intent = new Intent(context, ProductsActivity.class);
-                    intent.putExtra(Constants.EXTRA_SUBTITLE_ID, subMenuItem.getId());
-                    context.startActivity(intent);
-                }
+                Intent intent = new Intent(context, ProductsActivity.class);
+                intent.putExtra(Constants.EXTRA_SUBTITLE_ID, subMenuItem.getId());
+                context.startActivity(intent);
+
             }
         });
 

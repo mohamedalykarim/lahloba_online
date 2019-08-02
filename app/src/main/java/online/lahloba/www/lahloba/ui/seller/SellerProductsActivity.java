@@ -11,7 +11,7 @@ public class SellerProductsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.seller_main_activity);
+        setContentView(R.layout.seller_product_activity);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container, SellerProductsFragment.newInstance())

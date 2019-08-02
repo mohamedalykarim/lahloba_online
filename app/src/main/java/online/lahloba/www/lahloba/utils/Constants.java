@@ -6,6 +6,8 @@ public class Constants {
 
     public static final String GET_MAIN_MENU_ITEMS = "get_main_menu_items";
     public static final String GET_SUB_MENU_ITEMS = "get_sub_menu_items";
+    public static final String GET_SUB_MENU_ITEMS_NO_CHILD = "get_sub_menu_items_no_child";
+
     public static final String BASE_URI = "https://lahloba-dd68e.firebaseio.com/";
     public static final String EXTRA_SUBTITLE_ID = "extra_subtitle_id";
     public static final String GET_PRODUCTS_FOR_CATEGORY = "create_product_for_category";

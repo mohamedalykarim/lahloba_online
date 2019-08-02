@@ -200,12 +200,44 @@ public class NetworkDataHelper {
         mContext.startService(intent);
     }
 
+    public void startGetSubMenusWithNoChild() {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.GET_SUB_MENU_ITEMS_NO_CHILD);
+        mContext.startService(intent);
+
+    }
+
     public void startFetchSubMenuItems(String subMenuId) {
         String language = LocalUtils.getLangauge();
         Query database = FirebaseDatabase
                 .getInstance()
                 .getReference("SubMenu")
                 .child(language).orderByChild("parentId").equalTo(subMenuId);
+        database.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<SubMenuItem> subMenuItemList = new ArrayList<>();
+                for(DataSnapshot child : dataSnapshot.getChildren()){
+                    SubMenuItem item = child.getValue(SubMenuItem.class);
+                    subMenuItemList.add(item);
+                }
+                subMenuItems.setValue(subMenuItemList);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void startFetchSubMenuNoChildItems() {
+        String language = LocalUtils.getLangauge();
+        Query database = FirebaseDatabase
+                .getInstance()
+                .getReference("SubMenu")
+                .child(language).orderByChild("hasChild").equalTo(false);
         database.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -322,6 +354,8 @@ public class NetworkDataHelper {
     public MutableLiveData<List<ProductItem>> getProductsOfCategory() {
         return productsItems;
     }
+
+
 
 
     //############################### Cart ############################//
@@ -1182,6 +1216,7 @@ public class NetworkDataHelper {
     public MutableLiveData<List<MarketPlace>> getMarketPlaces() {
         return marketPlaces;
     }
+
 
 
 }

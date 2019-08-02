@@ -1,7 +1,11 @@
 package online.lahloba.www.lahloba.ui.seller;
 
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
+import java.util.List;
+
+import online.lahloba.www.lahloba.data.model.SubMenuItem;
 import online.lahloba.www.lahloba.data.repository.SellerRepository;
 
 public class SellerProductsViewModel extends ViewModel {
@@ -9,5 +13,13 @@ public class SellerProductsViewModel extends ViewModel {
 
     public SellerProductsViewModel(SellerRepository repository) {
         this.repository = repository;
+    }
+
+    public void startGetSubMenusWithNoChild() {
+        repository.startGetSubMenusWithNoChild();
+    }
+
+    public MutableLiveData<List<SubMenuItem>> getSubMenuItems() {
+        return repository.getSubMenuItems();
     }
 }
