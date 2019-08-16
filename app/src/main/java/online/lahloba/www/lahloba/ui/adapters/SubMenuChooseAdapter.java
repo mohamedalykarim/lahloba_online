@@ -24,6 +24,7 @@ import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.data.model.SubMenuItem;
 import online.lahloba.www.lahloba.databinding.RowSubMenuBinding;
 import online.lahloba.www.lahloba.ui.products.ProductsActivity;
+import online.lahloba.www.lahloba.ui.seller.SellerProductsActivity;
 import online.lahloba.www.lahloba.ui.sub_menu.SubMenuActivity;
 import online.lahloba.www.lahloba.utils.Constants;
 
@@ -76,7 +77,7 @@ public class SubMenuChooseAdapter extends RecyclerView.Adapter<SubMenuChooseAdap
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(context, ProductsActivity.class);
+                Intent intent = new Intent(context, SellerProductsActivity.class);
                 intent.putExtra(Constants.EXTRA_SUBTITLE_ID, subMenuItem.getId());
                 context.startActivity(intent);
 

@@ -118,9 +118,9 @@ public static void setFont(View view, String font){
     @BindingAdapter("android:orderTime")
     public static void setOrderTime(TextView textView, Date date){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HHmms");
-//        textView.setText(simpleDateFormat.format(date));
         textView.setText(Utils.getRelationTime(date));
     }
+
 
 
     public static String getSelectedFont(){
@@ -131,6 +131,9 @@ public static void setFont(View view, String font){
         }
         return FONT_EXO2_BOLD;
     }
+
+
+
 
 
 }

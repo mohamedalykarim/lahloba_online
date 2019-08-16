@@ -19,7 +19,7 @@ public class SellerOrdersViewModel extends ViewModel {
     }
 
     public void startGetSellerOrders(String marketId) {
-        repository.startGetSellerOrders(FirebaseAuth.getInstance().getUid(), marketId);
+        repository.startGetSellerOrders(marketId);
     }
 
     public void startGetMarketPlacesBySeller() {

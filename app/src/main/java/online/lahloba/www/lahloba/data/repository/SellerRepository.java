@@ -9,6 +9,7 @@ import online.lahloba.www.lahloba.data.NetworkDataHelper;
 import online.lahloba.www.lahloba.data.database.LahlobaDatabase;
 import online.lahloba.www.lahloba.data.model.MarketPlace;
 import online.lahloba.www.lahloba.data.model.OrderItem;
+import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.data.model.SubMenuItem;
 import online.lahloba.www.lahloba.data.model.UserItem;
 
@@ -39,8 +40,8 @@ public class SellerRepository {
     }
 
 
-    public void startGetSellerOrders(String uid, String marketId) {
-        networkDataHelper.startGetSellerOrders(uid, marketId);
+    public void startGetSellerOrders(String marketId) {
+        networkDataHelper.startGetSellerOrders(marketId);
     }
 
     public void startGetMarketPlacesBySeller(String uid) {
@@ -63,4 +64,19 @@ public class SellerRepository {
         return networkDataHelper.getSubMenuItems();
     }
 
+    public void startGetProductForCategoryAndUser(String category) {
+        networkDataHelper.startGetProductForCategoryAndUser(category);
+    }
+
+    public MutableLiveData<List<ProductItem>> getProducts() {
+        return networkDataHelper.getProducts();
+    }
+
+    public void startChangeProductStatus(String productId, boolean isEnable) {
+        networkDataHelper.startChangeProductStatus(productId, isEnable);
+    }
+
+    public void startChangeProductPrice(String productId,String price) {
+        networkDataHelper.startChangeProductPrice(productId, price);
+    }
 }

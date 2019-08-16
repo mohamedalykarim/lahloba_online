@@ -153,4 +153,6 @@ public class ProductItem extends BaseObservable {
     public void setSellerId(String sellerId) {
         this.sellerId = sellerId;
     }
+
+
 }

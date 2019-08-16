@@ -60,7 +60,7 @@ public class AppRepository {
     }
 
     public MutableLiveData<List<ProductItem>> getProductsForCategory() {
-        return networkDataHelper.getProductsOfCategory();
+        return networkDataHelper.getProducts();
     }
 
     //############################### Cart ############################//

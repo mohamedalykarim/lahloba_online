@@ -4,6 +4,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.firebase.geofire.GeoFire;
@@ -19,7 +20,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -351,12 +354,145 @@ public class NetworkDataHelper {
 
     }
 
-    public MutableLiveData<List<ProductItem>> getProductsOfCategory() {
+    public MutableLiveData<List<ProductItem>> getProducts() {
         return productsItems;
     }
 
 
+    public void startGetProductForCategoryAndUser(String category) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.GET_PRODUCTS_FOR_CATEGORY_AND_USER);
+        intent.putExtra(Constants.CATEGORY_ID, category);
+        mContext.startService(intent);
+    }
 
+
+    public void startFetchProductsForCategoryAndUser(String categoyId) {
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (null == uid) return;
+        if (null == categoyId) return;
+
+        productsItems.postValue(null);
+
+        String language = LocalUtils.getLangauge();
+
+        Query database = FirebaseDatabase
+                .getInstance()
+                .getReference("Product")
+                .child(language)
+                .orderByChild("parentId-userId")
+                .equalTo(categoyId+"-"+uid);
+
+        database.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<ProductItem> products = new ArrayList<>();
+                for(DataSnapshot child : dataSnapshot.getChildren()){
+                    ProductItem item = child.getValue(ProductItem.class);
+                    products.add(item);
+                }
+
+                productsItems.setValue(products);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+    }
+
+    public void startChangeProductStatus(String productId, boolean isEnable) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.CHANGE_PRODUCT_STATUS);
+        intent.putExtra(Constants.PRODUCT_ID, productId);
+        intent.putExtra(Constants.IS_ENABLE, isEnable);
+        mContext.startService(intent);
+    }
+
+    public void changeProductStatus(String productId, boolean isEnable){
+        FirebaseDatabase.getInstance().getReference()
+                .child("Product")
+                .child("en")
+                .child(productId)
+                .child("status").setValue(isEnable);
+
+        FirebaseDatabase.getInstance().getReference()
+                .child("Product")
+                .child("ar")
+                .child(productId)
+                .child("status").setValue(isEnable);
+    }
+
+
+    public void startChangeProductPrice(String productId, String price) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.CHANGE_PRODUCT_PRICE);
+        intent.putExtra(Constants.PRODUCT_ID, productId);
+        intent.putExtra(Constants.CHANGE_PRODUCT_PRICE, price);
+        mContext.startService(intent);
+
+    }
+
+    public void changeProductPrice(String productId, String price){
+
+        FirebaseDatabase.getInstance().getReference()
+                .child("Product")
+                .child("en")
+                .child(productId)
+                .child("price").runTransaction(new Transaction.Handler() {
+            @NonNull
+            @Override
+            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                if (null == mutableData.getValue()) return Transaction.abort();
+
+                String mPrice = mutableData.getValue().toString();
+                if (mPrice == null){
+                    return Transaction.success(mutableData);
+                }
+
+                mutableData.setValue(price);
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+
+            }
+        });
+
+        FirebaseDatabase.getInstance().getReference()
+                .child("Product")
+                .child("ar")
+                .child(productId)
+                .child("price").runTransaction(new Transaction.Handler() {
+            @NonNull
+            @Override
+            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                if (null == mutableData.getValue()) return Transaction.abort();
+
+                String mPrice = mutableData.getValue().toString();
+                if (mPrice == null){
+                    return Transaction.success(mutableData);
+                }
+
+                mutableData.setValue(price);
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+
+            }
+        });
+
+
+
+
+    }
 
     //############################### Cart ############################//
 
@@ -1100,69 +1236,60 @@ public class NetworkDataHelper {
 
     //############################### Banner ############################//
 
-    public void startGetSellerOrders(String uid, String marketId) {
+    public void startGetSellerOrders(String marketId) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
         intent.setAction(Constants.SELLER_GET_ORDERS);
-        intent.putExtra(SELLER_GET_ORDERS,uid);
         intent.putExtra(MARKETPLACE_ID, marketId);
         mContext.startService(intent);
 
     }
 
-    public void getSellerOrders(String uid, String marketId) {
+    public void getSellerOrders(String marketId) {
+        String uid = FirebaseAuth.getInstance().getUid();
+
         if (uid == null)return;
         orderItems.postValue(null);
 
+
+
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.child("User").child(uid)
-                .child("isSeller")
+                .child("seller")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+
                         if (!dataSnapshot.exists()) return;
+
                         boolean isSeller = Boolean.parseBoolean(dataSnapshot.getValue().toString());
+
+
+
 
 
                         if (!isSeller) return;
 
+
+
                         /**
-                         * get Marketplaces ids
+                         * for every market place get orders
                          */
-                        mDatabase.child("MarketPlace").orderByChild("sellerId")
-                                .equalTo(uid)
-                                .addListenerForSingleValueEvent(new ValueEventListener() {
+
+                        mDatabase.child("Orders")
+                                .orderByChild("marketplaceId")
+                                .equalTo(marketId)
+                                .addValueEventListener(new ValueEventListener() {
                                     @Override
-                                    public void onDataChange(@NonNull DataSnapshot marketsData) {
-                                        if (!dataSnapshot.exists()) return;
+                                    public void onDataChange(@NonNull DataSnapshot ordersData) {
+                                        if (!ordersData.exists()) return;
+                                        List<OrderItem> orderItemList = new ArrayList<>();
+                                        for (DataSnapshot orderData: ordersData.getChildren()){
+                                            orderItemList.add(orderData.getValue(OrderItem.class));
+                                        }
 
-
-                                        /**
-                                         * for every market place get orders
-                                         */
-
-                                        mDatabase.child("Orders")
-                                                .orderByChild("marketplaceId")
-                                                .equalTo(marketId)
-                                                .addValueEventListener(new ValueEventListener() {
-                                                    @Override
-                                                    public void onDataChange(@NonNull DataSnapshot ordersData) {
-                                                        Log.v("mmm", "seller orders");
-                                                        if (!ordersData.exists()) return;
-                                                        List<OrderItem> orderItemList = new ArrayList<>();
-                                                        for (DataSnapshot orderData: ordersData.getChildren()){
-                                                            orderItemList.add(orderData.getValue(OrderItem.class));
-                                                        }
-
-                                                        orderItems.setValue(orderItemList);
-                                                    }
-
-                                                    @Override
-                                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                                    }
-                                                });
-
-
+                                        orderItems.setValue(orderItemList);
                                     }
 
                                     @Override
@@ -1216,7 +1343,6 @@ public class NetworkDataHelper {
     public MutableLiveData<List<MarketPlace>> getMarketPlaces() {
         return marketPlaces;
     }
-
 
 
 }

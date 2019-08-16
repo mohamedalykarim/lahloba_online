@@ -10,15 +10,21 @@ import online.lahloba.www.lahloba.data.model.OrderItem;
 import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.Injector;
 
+import static online.lahloba.www.lahloba.utils.Constants.CATEGORY_ID;
 import static online.lahloba.www.lahloba.utils.Constants.CHANGE_ORDER_STATUS;
+import static online.lahloba.www.lahloba.utils.Constants.CHANGE_PRODUCT_PRICE;
+import static online.lahloba.www.lahloba.utils.Constants.CHANGE_PRODUCT_STATUS;
 import static online.lahloba.www.lahloba.utils.Constants.EXTRA_USER_ID;
 import static online.lahloba.www.lahloba.utils.Constants.GET_CART_ITEM;
 import static online.lahloba.www.lahloba.utils.Constants.GET_PRODUCTS_FOR_CATEGORY;
+import static online.lahloba.www.lahloba.utils.Constants.GET_PRODUCTS_FOR_CATEGORY_AND_USER;
 import static online.lahloba.www.lahloba.utils.Constants.GET_SUB_MENU_ITEMS;
 import static online.lahloba.www.lahloba.utils.Constants.GET_SUB_MENU_ITEMS_NO_CHILD;
+import static online.lahloba.www.lahloba.utils.Constants.IS_ENABLE;
 import static online.lahloba.www.lahloba.utils.Constants.MARKETPLACE_ID;
 import static online.lahloba.www.lahloba.utils.Constants.ORDER_ID;
 import static online.lahloba.www.lahloba.utils.Constants.ORDER_STATUS;
+import static online.lahloba.www.lahloba.utils.Constants.PRODUCT_ID;
 import static online.lahloba.www.lahloba.utils.Constants.RESET_CART_ITEM;
 import static online.lahloba.www.lahloba.utils.Constants.SELLER_GET_ORDERS;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT;
@@ -72,10 +78,23 @@ public class LahlobaMainService extends IntentService {
         }
 
 
-
+        /**
+         * Product
+         */
         else if(intent.getAction().equals(GET_PRODUCTS_FOR_CATEGORY)){
             String categoyId = intent.getStringExtra(GET_PRODUCTS_FOR_CATEGORY);
             networkDataHelper.startFetchProductsForCategory(categoyId);
+        }else if(intent.getAction().equals(GET_PRODUCTS_FOR_CATEGORY_AND_USER)){
+            String categoyId = intent.getStringExtra(CATEGORY_ID);
+            networkDataHelper.startFetchProductsForCategoryAndUser(categoyId);
+        }else if(intent.getAction().equals(CHANGE_PRODUCT_STATUS)){
+            String productId = intent.getStringExtra(PRODUCT_ID);
+            boolean isEnable = intent.getBooleanExtra(IS_ENABLE, false);
+            networkDataHelper.changeProductStatus(productId, isEnable);
+        }else if(intent.getAction().equals(CHANGE_PRODUCT_PRICE)){
+            String productId = intent.getStringExtra(PRODUCT_ID);
+            String price = intent.getStringExtra(CHANGE_PRODUCT_PRICE);
+            networkDataHelper.changeProductPrice(productId, price);
         }
 
         /**
@@ -186,9 +205,8 @@ public class LahlobaMainService extends IntentService {
          */
 
         else if(intent.getAction().equals(SELLER_GET_ORDERS)){
-            String uid = intent.getStringExtra(SELLER_GET_ORDERS);
             String marketId = intent.getStringExtra(MARKETPLACE_ID);
-            networkDataHelper.getSellerOrders(uid, marketId);
+            networkDataHelper.getSellerOrders(marketId);
         }else if(intent.getAction().equals(START_GET_SELLER_MARKETPLACE)){
             String uid = intent.getStringExtra(EXTRA_USER_ID);
             networkDataHelper.getMarketPlacesForSeller(uid);

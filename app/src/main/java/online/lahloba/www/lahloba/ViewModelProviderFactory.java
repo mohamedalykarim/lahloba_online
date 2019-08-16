@@ -19,8 +19,9 @@ import online.lahloba.www.lahloba.ui.news.NewsViewModel;
 import online.lahloba.www.lahloba.ui.order.OrderDetailsViewModel;
 import online.lahloba.www.lahloba.ui.order.OrdersViewModel;
 import online.lahloba.www.lahloba.ui.products.ProductsViewModel;
-import online.lahloba.www.lahloba.ui.seller.SellerProductsViewModel;
+import online.lahloba.www.lahloba.ui.seller.SellerProductsCategoryViewModel;
 import online.lahloba.www.lahloba.ui.seller.SellerOrdersViewModel;
+import online.lahloba.www.lahloba.ui.seller.SellerProductsViewModel;
 import online.lahloba.www.lahloba.ui.signup.SignupViewModel;
 import online.lahloba.www.lahloba.ui.sub_menu.SubMenuViewModel;
 
@@ -65,6 +66,8 @@ public class ViewModelProviderFactory extends ViewModelProvider.NewInstanceFacto
             return (T) new NewsViewModel(appRepository);
         }else if(modelClass.isAssignableFrom(OrderDetailsViewModel.class)){
             return (T) new OrderDetailsViewModel(appRepository);
+        }else if(modelClass.isAssignableFrom(SellerProductsCategoryViewModel.class)){
+            return (T) new SellerProductsCategoryViewModel(sellerRepository);
         }else if(modelClass.isAssignableFrom(SellerProductsViewModel.class)){
             return (T) new SellerProductsViewModel(sellerRepository);
         }else if(modelClass.isAssignableFrom(SellerOrdersViewModel.class)){

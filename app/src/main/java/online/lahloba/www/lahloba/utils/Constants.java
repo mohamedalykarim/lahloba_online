@@ -76,4 +76,12 @@ public class Constants {
 
     public static final String MARKETPLACE_ID = "marketplace_id";
     public static final String START_GET_SELLER_MARKETPLACE = "start_get_seller_marketplaces";
+
+
+    public static final String GET_PRODUCTS_FOR_CATEGORY_AND_USER = "start_get_product_for_category_and_user";
+    public static final String CATEGORY_ID = "category_id";
+    public static final String CHANGE_PRODUCT_STATUS = "change_product_status";
+    public static final String PRODUCT_ID = "product_id";
+    public static final String IS_ENABLE = "is_enable";
+    public static final String CHANGE_PRODUCT_PRICE = "change_product_price";
 }

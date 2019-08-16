@@ -21,7 +21,7 @@ import online.lahloba.www.lahloba.ui.cart.CartActivity;
 import online.lahloba.www.lahloba.ui.favorites.FavoritesActivity;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
 import online.lahloba.www.lahloba.ui.order.OrdersActivity;
-import online.lahloba.www.lahloba.ui.seller.SellerProductsActivity;
+import online.lahloba.www.lahloba.ui.seller.SellerProductsCategoryActivity;
 import online.lahloba.www.lahloba.ui.seller.SellerOrdersActivity;
 
 public class AccountAdapter extends BaseAdapter {
@@ -83,7 +83,7 @@ public class AccountAdapter extends BaseAdapter {
                     Intent intent = new Intent(context, SellerOrdersActivity.class);
                     context.startActivity(intent);
                 }else if (accountItemList.get(position).getTitle().equals(context.getResources().getString(R.string.seller_Products))){
-                    Intent intent = new Intent(context, SellerProductsActivity.class);
+                    Intent intent = new Intent(context, SellerProductsCategoryActivity.class);
                     context.startActivity(intent);
                 }
             }
