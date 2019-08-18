@@ -494,6 +494,24 @@ public class NetworkDataHelper {
 
     }
 
+
+    public void startEditProduct(ProductItem productItem, String language) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.START_EDIT_PRODUCT);
+        intent.putExtra(Constants.START_EDIT_PRODUCT, productItem);
+        intent.putExtra(Constants.LANGUAGE, language);
+        mContext.startService(intent);
+    }
+
+    public void editProduct(ProductItem productItem, String language){
+        FirebaseDatabase.getInstance().getReference()
+                .child("Product")
+                .child(language)
+                .child(productItem.getId())
+                .setValue(productItem);
+
+    }
+
     //############################### Cart ############################//
 
     public void startGetCartItems(String userId) {
@@ -1343,6 +1361,7 @@ public class NetworkDataHelper {
     public MutableLiveData<List<MarketPlace>> getMarketPlaces() {
         return marketPlaces;
     }
+
 
 
 }

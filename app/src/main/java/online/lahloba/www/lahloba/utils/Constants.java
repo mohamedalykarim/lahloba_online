@@ -84,4 +84,6 @@ public class Constants {
     public static final String PRODUCT_ID = "product_id";
     public static final String IS_ENABLE = "is_enable";
     public static final String CHANGE_PRODUCT_PRICE = "change_product_price";
+    public static final String START_EDIT_PRODUCT = "start_edit_product";
+    public static final String LANGUAGE = "language";
 }

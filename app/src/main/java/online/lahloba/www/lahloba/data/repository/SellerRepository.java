@@ -79,4 +79,8 @@ public class SellerRepository {
     public void startChangeProductPrice(String productId,String price) {
         networkDataHelper.startChangeProductPrice(productId, price);
     }
+
+    public void startEditProduct(ProductItem productItem, String language) {
+        networkDataHelper.startEditProduct(productItem, language);
+    }
 }

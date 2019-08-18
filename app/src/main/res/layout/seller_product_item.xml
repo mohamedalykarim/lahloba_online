@@ -23,11 +23,13 @@
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/linearLayout2"
             android:layout_width="match_parent"
             android:layout_height="180dp"
             android:orientation="horizontal"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
+            android:focusableInTouchMode="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -62,13 +64,13 @@
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="8dp"
                     android:ems="10"
-                    android:text="@={item.price}"
                     android:hint="Price"
                     android:inputType="numberDecimal"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    android:text="@{item.price}"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView" />
 
                 <TextView
                     android:id="@+id/textView"
@@ -86,33 +88,30 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/textView21"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:maxLength="80"
-                    android:text="@{item.description}"
-                    android:textAlignment="viewStart"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView" />
-
                 <Switch
                     android:id="@+id/enableSwitch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
+                    android:checked="@{item.status}"
                     android:text="Enable"
-                    android:checked="@={item.status}"
-                    android:onCheckedChanged="@{(switch, checked) -> viewModel.onSwitchCheckedChanged(item.id, checked)}"
                     app:layout_constraintBottom_toBottomOf="@+id/editText"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/editText"
                     app:layout_constraintTop_toTopOf="@+id/editText" />
+
+                <Button
+                    android:id="@+id/updateBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/btn_bg_3"
+                    android:text="update"
+                    android:visibility="@{item.wantSaveEdit ? View.VISIBLE : View.INVISIBLE}"
+                    android:textColor="#FFF"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
 
             </android.support.constraint.ConstraintLayout>
 

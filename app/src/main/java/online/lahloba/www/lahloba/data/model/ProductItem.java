@@ -2,13 +2,15 @@ package online.lahloba.www.lahloba.data.model;
 
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.google.firebase.database.Exclude;
 
 import online.lahloba.www.lahloba.BR;
 
 
-public class ProductItem extends BaseObservable {
+public class ProductItem extends BaseObservable implements Parcelable {
     private String id;
     private String image;
     private String title;
@@ -18,7 +20,9 @@ public class ProductItem extends BaseObservable {
     private String parentId;
     private String marketPlaceId;
     private boolean status;
+    private boolean wantSaveEdit = false;
     private String sellerId;
+
 
     @Exclude
     private int count;
@@ -28,6 +32,60 @@ public class ProductItem extends BaseObservable {
     private String currency;
     @Exclude
     private boolean isFavorite;
+
+
+    public ProductItem() {
+    }
+
+    protected ProductItem(Parcel in) {
+        id = in.readString();
+        image = in.readString();
+        title = in.readString();
+        description = in.readString();
+        price = in.readString();
+        parentId = in.readString();
+        marketPlaceId = in.readString();
+        status = in.readByte() != 0;
+        wantSaveEdit = in.readByte() != 0;
+        sellerId = in.readString();
+        count = in.readInt();
+        currency = in.readString();
+        isFavorite = in.readByte() != 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(image);
+        dest.writeString(title);
+        dest.writeString(description);
+        dest.writeString(price);
+        dest.writeString(parentId);
+        dest.writeString(marketPlaceId);
+        dest.writeByte((byte) (status ? 1 : 0));
+        dest.writeByte((byte) (wantSaveEdit ? 1 : 0));
+        dest.writeString(sellerId);
+        dest.writeInt(count);
+        dest.writeString(currency);
+        dest.writeByte((byte) (isFavorite ? 1 : 0));
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<ProductItem> CREATOR = new Creator<ProductItem>() {
+        @Override
+        public ProductItem createFromParcel(Parcel in) {
+            return new ProductItem(in);
+        }
+
+        @Override
+        public ProductItem[] newArray(int size) {
+            return new ProductItem[size];
+        }
+    };
 
     public String getId() {
         return id;
@@ -141,6 +199,7 @@ public class ProductItem extends BaseObservable {
         notifyPropertyChanged(BR.favorite);
     }
 
+
     public void setStatus(boolean status) {
         this.status = status;
         notifyPropertyChanged(BR.status);
@@ -155,4 +214,17 @@ public class ProductItem extends BaseObservable {
     }
 
 
+    @Exclude
+    @Bindable
+    public boolean isWantSaveEdit() {
+        return wantSaveEdit;
+    }
+
+    @Exclude
+    @Bindable
+    public void setWantSaveEdit(boolean wantSaveEdit) {
+        this.wantSaveEdit = wantSaveEdit;
+        notifyPropertyChanged(BR.wantSaveEdit);
+
+    }
 }

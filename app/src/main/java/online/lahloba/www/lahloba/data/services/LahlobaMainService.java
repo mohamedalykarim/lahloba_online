@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import online.lahloba.www.lahloba.data.NetworkDataHelper;
 import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.OrderItem;
+import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.Injector;
 
@@ -37,6 +38,7 @@ import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRES
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_ADDRESS_ITEM;
 import static online.lahloba.www.lahloba.utils.Constants.START_DELETE_ADDRESS;
 import static online.lahloba.www.lahloba.utils.Constants.START_EDIT_ADDRESS;
+import static online.lahloba.www.lahloba.utils.Constants.START_EDIT_PRODUCT;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_ADDRESSES;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_BANNER;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_ORDERS;
@@ -95,6 +97,10 @@ public class LahlobaMainService extends IntentService {
             String productId = intent.getStringExtra(PRODUCT_ID);
             String price = intent.getStringExtra(CHANGE_PRODUCT_PRICE);
             networkDataHelper.changeProductPrice(productId, price);
+        }else if(intent.getAction().equals(START_EDIT_PRODUCT)){
+            ProductItem productItem = intent.getParcelableExtra(START_EDIT_PRODUCT);
+            String language = intent.getStringExtra(Constants.LANGUAGE);
+            networkDataHelper.editProduct(productItem, language);
         }
 
         /**

@@ -36,4 +36,8 @@ public class SellerProductsViewModel extends ViewModel {
     public void onSwitchCheckedChanged(String productId, boolean isWork){
         startChangeProductStatus(productId, isWork);
     }
+
+    public void startEditProduct(ProductItem productItem, String language) {
+        sellerRepository.startEditProduct(productItem, language);
+    }
 }

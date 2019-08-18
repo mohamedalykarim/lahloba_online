@@ -25,6 +25,7 @@ import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.databinding.SellerProductItemBinding;
 import online.lahloba.www.lahloba.ui.seller.SellerProductsViewModel;
+import online.lahloba.www.lahloba.utils.LocalUtils;
 
 public class SellerProductAdapter extends RecyclerView.Adapter<SellerProductAdapter.SellerProductViewHolder> {
     List<ProductItem> productItems;
@@ -40,10 +41,10 @@ public class SellerProductAdapter extends RecyclerView.Adapter<SellerProductAdap
     }
 
     @Override
-    public void onBindViewHolder(@NonNull SellerProductViewHolder holder, int i) {
-        ProductItem item = productItems.get(i);
+    public void onBindViewHolder(@NonNull SellerProductViewHolder holder, int position) {
 
-        holder.binding.setItem(item);
+
+        holder.binding.setItem(productItems.get(position));
         holder.binding.setViewModel(viewModel);
 
 
@@ -53,7 +54,7 @@ public class SellerProductAdapter extends RecyclerView.Adapter<SellerProductAdap
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
-        storageRef.child(item.getImage())
+        storageRef.child(productItems.get(position).getImage())
                 .getDownloadUrl()
                 .addOnCompleteListener(new OnCompleteListener<Uri>() {
                     @Override
@@ -74,19 +75,13 @@ public class SellerProductAdapter extends RecyclerView.Adapter<SellerProductAdap
          */
 
 
-        long delay = 1000; // 1 seconds after user stops typing
-        final long[] last_text_edit = {0};
-        Handler handler = new Handler();
 
-        final String[] price = new String[1];
+        String[] oldPrice = {productItems.get(position).getPrice()};
+        boolean[] oldStatus = {productItems.get(position).isStatus()};
 
-        Runnable input_finish_checker = new Runnable() {
-            public void run() {
-                if (System.currentTimeMillis() > (last_text_edit[0] + delay - 500)) {
-                    viewModel.startChangeProductPrice(item.getId(), price[0]);
-                }
-            }
-        };
+
+        holder.binding.editText.setTag(position);
+
 
         holder.binding.editText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -97,27 +92,89 @@ public class SellerProductAdapter extends RecyclerView.Adapter<SellerProductAdap
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
+
+
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                price[0] = s.toString();
+
+                int positionTag = (int) holder.binding.editText.getTag();
+
 
                 if (s.length() > 0) {
-                    last_text_edit[0] = System.currentTimeMillis();
-                    handler.postDelayed(input_finish_checker, delay);
+
+                    if (oldStatus[0] == holder.binding.enableSwitch.isChecked()
+                            && holder.binding.editText.getText().toString().equals(oldPrice[0])){
+
+                        productItems.get(positionTag).setWantSaveEdit(false);
+
+
+                    }else if (oldStatus[0] == holder.binding.enableSwitch.isChecked()
+                            && !holder.binding.editText.getText().toString().equals(oldPrice[0])){
+                        productItems.get(positionTag).setWantSaveEdit(true);
+
+
+
+                    }else if (oldStatus[0] != holder.binding.enableSwitch.isChecked()){
+                        productItems.get(positionTag).setWantSaveEdit(true);
+
+                    }
+
+
+
                 } else {
 
                 }
+
 
             }
         });
 
 
-        /**
-         * End of Handling Price Change
-         */
+       holder.binding.enableSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
+                if (oldStatus[0] == holder.binding.enableSwitch.isChecked()
+                        && holder.binding.editText.getText().toString().equals(oldPrice[0])){
+                    productItems.get(position).setWantSaveEdit(false);
+                    productItems.get(position).setStatus(isChecked);
+
+
+                }else if (oldStatus[0] != holder.binding.enableSwitch.isChecked()
+                        && holder.binding.editText.getText().toString().equals(oldPrice[0])){
+                    productItems.get(position).setWantSaveEdit(true);
+                    productItems.get(position).setStatus(isChecked);
+
+                }else if (!holder.binding.editText.getText().toString().equals(oldPrice[0])){
+                    productItems.get(position).setWantSaveEdit(true);
+                    productItems.get(position).setStatus(isChecked);
+                }
+
+
+
+
+            }
+        });
+
+
+
+       holder.binding.updateBtn.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+
+               viewModel.startChangeProductPrice(productItems.get(position).getId(), holder.binding.editText.getText().toString());
+               viewModel.startChangeProductStatus(productItems.get(position).getId(), holder.binding.enableSwitch.isChecked());
+               oldPrice[0] = productItems.get(position).getPrice();
+               oldStatus[0] = productItems.get(position).isStatus();
+               productItems.get(position).setWantSaveEdit(false);
+
+
+               notifyDataSetChanged();
+
+           }
+       });
 
 
     }

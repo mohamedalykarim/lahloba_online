@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +47,7 @@ public class SellerProductsFragment extends Fragment {
 
         SellerProductsFragmentBinding binding = SellerProductsFragmentBinding.inflate(inflater,container,false);
 
+
         productItemList = new ArrayList<>();
         adapter = new SellerProductAdapter();
         adapter.setProductItems(productItemList);
@@ -63,6 +65,8 @@ public class SellerProductsFragment extends Fragment {
             if (null == productItems) return;
 
             productItemList.clear();
+            adapter.notifyDataSetChanged();
+
             productItemList.addAll(productItems);
             adapter.notifyDataSetChanged();
 
