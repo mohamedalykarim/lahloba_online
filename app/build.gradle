@@ -10,6 +10,8 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
+
     }
     buildTypes {
         release {
@@ -63,6 +65,10 @@ dependencies {
 
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'de.hdodenhof:circleimageview:3.0.0'
+    implementation 'com.github.esafirm.android-image-picker:imagepicker:2.1.0'
+    implementation 'com.github.esafirm.android-image-picker:rximagepicker:2.1.0'
+
+
 
 
     implementation 'com.google.firebase:firebase-core:16.0.9'

@@ -1,6 +1,7 @@
 package online.lahloba.www.lahloba.ui.seller;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,12 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.databinding.SellerAddProductFragmentBinding;
 import online.lahloba.www.lahloba.utils.Injector;
 
+
 public class SellerAddProductFragment extends Fragment {
+    SellerAddProductFragmentBinding binding;
 
     private SellerAddProductViewModel mViewModel;
 
@@ -27,11 +29,19 @@ public class SellerAddProductFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        SellerAddProductFragmentBinding binding = SellerAddProductFragmentBinding.inflate(inflater,container,false);
+        binding = SellerAddProductFragmentBinding.inflate(inflater,container,false);
 
 
         ViewModelProviderFactory factory = Injector.getVMFactory(getContext());
         mViewModel = ViewModelProviders.of(this, factory).get(SellerAddProductViewModel.class);
+
+        binding.imageView19.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+            }
+        });
 
         return binding.getRoot();
     }
