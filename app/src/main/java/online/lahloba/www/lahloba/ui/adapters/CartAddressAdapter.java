@@ -1,21 +1,16 @@
 package online.lahloba.www.lahloba.ui.adapters;
 
-import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ExpandableListView;
-import android.widget.ListView;
 
 import java.util.List;
 
 import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.databinding.RowCartAddressBinding;
-import online.lahloba.www.lahloba.utils.ExpandableHeightRecyclerView;
 
 public class CartAddressAdapter extends RecyclerView.Adapter<CartAddressAdapter.CartAddressViewHolder> {
 

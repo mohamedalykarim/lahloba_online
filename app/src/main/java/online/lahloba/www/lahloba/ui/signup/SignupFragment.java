@@ -1,11 +1,11 @@
 package online.lahloba.www.lahloba.ui.signup;
 
-import android.arch.lifecycle.ViewModelProviders;
-import android.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,13 +17,10 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
-import online.lahloba.www.lahloba.databinding.BottomSheetConfirmPhoneBinding;
 import online.lahloba.www.lahloba.databinding.FragmentSignupBinding;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
 import online.lahloba.www.lahloba.ui.signup.bottom_sheet.ConfirmPhoneBottomSheet;
 import online.lahloba.www.lahloba.utils.Injector;
-
-import static online.lahloba.www.lahloba.utils.Utils.checkValidEmail;
 
 public class SignupFragment extends Fragment {
 

@@ -1,20 +1,17 @@
 package online.lahloba.www.lahloba.ui.fragments;
 
-import android.arch.lifecycle.ViewModelProviders;
-import android.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
-import android.widget.Toast;
-
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +22,6 @@ import online.lahloba.www.lahloba.data.model.MainMenuItem;
 import online.lahloba.www.lahloba.databinding.FragmentAccountBinding;
 import online.lahloba.www.lahloba.ui.adapters.AccountAdapter;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
-import online.lahloba.www.lahloba.utils.ExpandableHeightGridView;
 import online.lahloba.www.lahloba.utils.Injector;
 
 public class AccountFragment extends Fragment {

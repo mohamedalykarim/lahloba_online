@@ -1,11 +1,9 @@
 package online.lahloba.www.lahloba.data.model;
 
-import android.databinding.BaseObservable;
-import android.databinding.Bindable;
+import androidx.databinding.BaseObservable;
+import androidx.databinding.Bindable;
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import com.google.firebase.database.Exclude;
 
 import online.lahloba.www.lahloba.BR;
 

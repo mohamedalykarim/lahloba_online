@@ -8,7 +8,7 @@
         <import type="online.lahloba.www.lahloba.utils.CustomSetter" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="16dp"
@@ -64,5 +64,5 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/confirm_icon" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

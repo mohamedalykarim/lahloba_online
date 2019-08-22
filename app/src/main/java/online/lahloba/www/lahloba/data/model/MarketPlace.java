@@ -1,9 +1,9 @@
 package online.lahloba.www.lahloba.data.model;
 
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.TypeConverter;
-import android.support.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverter;
+import androidx.annotation.NonNull;
 
 @Entity(tableName = "market_places")
 public class MarketPlace{

@@ -1,8 +1,8 @@
 package online.lahloba.www.lahloba.data.model.vm_helper;
 
-import android.arch.lifecycle.MutableLiveData;
-import android.databinding.BaseObservable;
-import android.databinding.Bindable;
+import androidx.lifecycle.MutableLiveData;
+import androidx.databinding.BaseObservable;
+import androidx.databinding.Bindable;
 import online.lahloba.www.lahloba.BR;
 import online.lahloba.www.lahloba.data.model.UserItem;
 

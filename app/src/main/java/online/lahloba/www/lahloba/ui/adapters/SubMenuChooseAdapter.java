@@ -3,9 +3,9 @@ package online.lahloba.www.lahloba.ui.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,9 +23,7 @@ import java.util.List;
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.data.model.SubMenuItem;
 import online.lahloba.www.lahloba.databinding.RowSubMenuBinding;
-import online.lahloba.www.lahloba.ui.products.ProductsActivity;
 import online.lahloba.www.lahloba.ui.seller.SellerProductsActivity;
-import online.lahloba.www.lahloba.ui.sub_menu.SubMenuActivity;
 import online.lahloba.www.lahloba.utils.Constants;
 
 public class SubMenuChooseAdapter extends RecyclerView.Adapter<SubMenuChooseAdapter.SubMenuViewHolder> {

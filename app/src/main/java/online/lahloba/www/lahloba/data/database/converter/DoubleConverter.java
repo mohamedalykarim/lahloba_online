@@ -1,6 +1,6 @@
 package online.lahloba.www.lahloba.data.database.converter;
 
-import android.arch.persistence.room.TypeConverter;
+import androidx.room.TypeConverter;
 
 public class DoubleConverter {
     @TypeConverter

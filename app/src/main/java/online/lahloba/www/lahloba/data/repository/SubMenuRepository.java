@@ -1,6 +1,6 @@
 package online.lahloba.www.lahloba.data.repository;
 
-import android.arch.lifecycle.MutableLiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
 

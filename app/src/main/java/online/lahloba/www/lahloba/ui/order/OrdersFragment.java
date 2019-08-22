@@ -1,37 +1,28 @@
 package online.lahloba.www.lahloba.ui.order;
 
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
-
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
-import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.OrderItem;
 import online.lahloba.www.lahloba.databinding.FragmentOrdersBinding;
 import online.lahloba.www.lahloba.ui.adapters.OrdersAdapter;
-import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.Injector;
-import online.lahloba.www.lahloba.utils.OrderStatusUtils;
 import online.lahloba.www.lahloba.utils.comparator.OrderItemDateComparable;
 
 import static online.lahloba.www.lahloba.utils.Constants.ORDER_TYPE_NEW;
-import static online.lahloba.www.lahloba.utils.Constants.ORDER_TYPE_OLD;
-import static online.lahloba.www.lahloba.utils.Constants.ORDER_TYPE_ONGOING;
 
 public class OrdersFragment extends Fragment {
 

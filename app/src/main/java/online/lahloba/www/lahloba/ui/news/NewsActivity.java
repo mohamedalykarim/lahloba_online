@@ -1,10 +1,9 @@
 package online.lahloba.www.lahloba.ui.news;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import online.lahloba.www.lahloba.R;
-import online.lahloba.www.lahloba.ui.news.NewsFragment;
 
 public class NewsActivity extends AppCompatActivity {
 

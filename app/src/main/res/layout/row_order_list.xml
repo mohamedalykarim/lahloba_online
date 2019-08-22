@@ -36,7 +36,7 @@
                 android:orderStatusImage="@{order.orderStatus}"
                 android:padding="16dp" />
 
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
                 android:layout_weight="1">
@@ -91,7 +91,7 @@
                     app:layout_constraintTop_toTopOf="@+id/textView19"
                     tools:textSize="30sp" />
 
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
 
         <View
@@ -99,7 +99,7 @@
             android:layout_height="1dp"
             android:background="#dadada" />
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/orderFooterContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -140,7 +140,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
 </layout>

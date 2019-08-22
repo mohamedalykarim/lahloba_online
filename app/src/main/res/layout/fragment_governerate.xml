@@ -5,12 +5,12 @@
     tools:context=".ui.governerate.GovernerateFragment">
     <data></data>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/governerate"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/governorateRV"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -24,7 +24,7 @@
             app:layout_constraintTop_toBottomOf="@+id/currentLocationContainer"
             tools:listitem="@layout/country_item" />
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/currentLocationContainer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -82,8 +82,8 @@
                 app:layout_constraintStart_toStartOf="@+id/getLocationBtn"
                 app:layout_constraintTop_toTopOf="@+id/getLocationBtn" />
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

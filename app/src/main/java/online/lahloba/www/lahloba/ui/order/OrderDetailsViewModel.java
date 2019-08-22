@@ -1,6 +1,6 @@
 package online.lahloba.www.lahloba.ui.order;
 
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModel;
 
 import online.lahloba.www.lahloba.data.repository.AppRepository;
 import online.lahloba.www.lahloba.data.model.OrderItem;

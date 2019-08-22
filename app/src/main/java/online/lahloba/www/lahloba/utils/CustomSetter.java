@@ -1,7 +1,7 @@
 package online.lahloba.www.lahloba.utils;
 
 
-import android.databinding.BindingAdapter;
+import androidx.databinding.BindingAdapter;
 import android.graphics.Typeface;
 import android.view.View;
 import android.widget.Button;
@@ -16,7 +16,6 @@ import java.util.Date;
 
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.data.model.vm_helper.CartVMHelper;
-import online.lahloba.www.lahloba.ui.cart.CartViewModel;
 
 public class CustomSetter {
     static Typeface type;

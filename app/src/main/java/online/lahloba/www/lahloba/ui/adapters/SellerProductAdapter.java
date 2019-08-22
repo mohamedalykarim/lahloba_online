@@ -1,17 +1,15 @@
 package online.lahloba.www.lahloba.ui.adapters;
 
 import android.net.Uri;
-import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -25,7 +23,6 @@ import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.databinding.SellerProductItemBinding;
 import online.lahloba.www.lahloba.ui.seller.SellerProductsViewModel;
-import online.lahloba.www.lahloba.utils.LocalUtils;
 
 public class SellerProductAdapter extends RecyclerView.Adapter<SellerProductAdapter.SellerProductViewHolder> {
     List<ProductItem> productItems;
