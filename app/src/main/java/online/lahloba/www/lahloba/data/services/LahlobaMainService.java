@@ -2,6 +2,9 @@ package online.lahloba.www.lahloba.data.services;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.util.Log;
+
 import androidx.annotation.Nullable;
 
 import online.lahloba.www.lahloba.data.NetworkDataHelper;
@@ -28,6 +31,10 @@ import static online.lahloba.www.lahloba.utils.Constants.ORDER_STATUS;
 import static online.lahloba.www.lahloba.utils.Constants.PRODUCT_ID;
 import static online.lahloba.www.lahloba.utils.Constants.RESET_CART_ITEM;
 import static online.lahloba.www.lahloba.utils.Constants.SELLER_GET_ORDERS;
+import static online.lahloba.www.lahloba.utils.Constants.START_ADD_NEW_PRODUCT;
+import static online.lahloba.www.lahloba.utils.Constants.START_ADD_NEW_PRODUCT_AR_PRODUCT;
+import static online.lahloba.www.lahloba.utils.Constants.START_ADD_NEW_PRODUCT_BITMAP;
+import static online.lahloba.www.lahloba.utils.Constants.START_ADD_NEW_PRODUCT_EN_PRODUCT;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_EMAIL;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_FIRSTNAME;
@@ -101,7 +108,19 @@ public class LahlobaMainService extends IntentService {
             ProductItem productItem = intent.getParcelableExtra(START_EDIT_PRODUCT);
             String language = intent.getStringExtra(Constants.LANGUAGE);
             networkDataHelper.editProduct(productItem, language);
+        }else if(intent.getAction().equals(START_ADD_NEW_PRODUCT)){
+
+            ProductItem en = intent.getParcelableExtra(START_ADD_NEW_PRODUCT_EN_PRODUCT);
+            ProductItem ar = intent.getParcelableExtra(START_ADD_NEW_PRODUCT_AR_PRODUCT);
+
+
+            networkDataHelper.addNewProduct(en, ar);
+
+
         }
+
+
+
 
         /**
          * Cart

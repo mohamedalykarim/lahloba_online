@@ -89,10 +89,15 @@ public class AccountFragment extends Fragment {
 
                 mainMenuItems.add(productItem);
 
+                mainMenuItems.addAll(getDefaultItems());
+                accountAdapter.notifyDataSetChanged();
+
+            }else{
+                mainMenuItems.addAll(getDefaultItems());
+                accountAdapter.notifyDataSetChanged();
+
             }
 
-            mainMenuItems.addAll(getDefaultItems());
-            accountAdapter.notifyDataSetChanged();
 
         });
 

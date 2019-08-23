@@ -22,6 +22,8 @@ public class ProductItem extends BaseObservable implements Parcelable {
     private boolean status;
     private boolean wantSaveEdit = false;
     private String sellerId;
+    private String parentIdMarketPlaceId;
+    private String parentIdSellerId;
 
 
     @Exclude
@@ -51,6 +53,8 @@ public class ProductItem extends BaseObservable implements Parcelable {
         count = in.readInt();
         currency = in.readString();
         isFavorite = in.readByte() != 0;
+        parentIdMarketPlaceId = in.readString();
+        parentIdSellerId = in.readString();
     }
 
     @Override
@@ -68,6 +72,8 @@ public class ProductItem extends BaseObservable implements Parcelable {
         dest.writeInt(count);
         dest.writeString(currency);
         dest.writeByte((byte) (isFavorite ? 1 : 0));
+        dest.writeString(parentIdMarketPlaceId);
+        dest.writeString(parentIdSellerId);
     }
 
     @Override
@@ -226,5 +232,21 @@ public class ProductItem extends BaseObservable implements Parcelable {
         this.wantSaveEdit = wantSaveEdit;
         notifyPropertyChanged(BR.wantSaveEdit);
 
+    }
+
+    public void setParentIdMarketPlaceId(String parentIdMarketPlaceId) {
+        this.parentIdMarketPlaceId = parentIdMarketPlaceId;
+    }
+
+    public String getParentIdMarketPlaceId() {
+        return parentIdMarketPlaceId;
+    }
+
+    public String getParentIdSellerId() {
+        return parentIdSellerId;
+    }
+
+    public void setParentIdSellerId(String parentIdSellerId) {
+        this.parentIdSellerId = parentIdSellerId;
     }
 }

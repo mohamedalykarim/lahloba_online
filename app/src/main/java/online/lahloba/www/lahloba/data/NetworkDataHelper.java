@@ -3,6 +3,9 @@ package online.lahloba.www.lahloba.data;
 import androidx.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -11,6 +14,7 @@ import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryDataEventListener;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -23,7 +27,11 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -80,6 +88,8 @@ public class NetworkDataHelper {
     private static final Object LOCK = new Object();
     private static NetworkDataHelper sInstance;
     Context mContext;
+
+    Bitmap bitmap;
 
     MutableLiveData<List<MainMenuItem>> mainMenuItems;
     MutableLiveData<List<SubMenuItem>> subMenuItems;
@@ -302,7 +312,7 @@ public class NetworkDataHelper {
                 Query database = FirebaseDatabase
                         .getInstance()
                         .getReference("Product")
-                        .child(language).orderByChild("parentId-marketPlaceId").equalTo(categoyId+"-"+dataSnapshot.getKey());
+                        .child(language).orderByChild("parentIdMarketPlaceId").equalTo(categoyId+"-"+dataSnapshot.getKey());
 
 
                 database.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -378,7 +388,7 @@ public class NetworkDataHelper {
                 .getInstance()
                 .getReference("Product")
                 .child(language)
-                .orderByChild("parentId-userId")
+                .orderByChild("parentIdSellerId")
                 .equalTo(categoyId+"-"+uid);
 
         database.addValueEventListener(new ValueEventListener() {
@@ -509,6 +519,78 @@ public class NetworkDataHelper {
                 .setValue(productItem);
 
     }
+
+
+
+    public void startAddNewProduct(Bitmap myBitmap, ProductItem enProductItem, ProductItem arProductItem) {
+        bitmap = myBitmap;
+
+
+
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.START_ADD_NEW_PRODUCT);
+        intent.putExtra(Constants.START_ADD_NEW_PRODUCT_EN_PRODUCT, enProductItem);
+        intent.putExtra(Constants.START_ADD_NEW_PRODUCT_AR_PRODUCT, arProductItem);
+        mContext.startService(intent);
+    }
+
+    public void addNewProduct(ProductItem enProduct, ProductItem arProduct){
+
+
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+
+
+
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+        StorageReference fileRef = storageRef.child("images/product/"+FirebaseAuth.getInstance().getUid()+"/thumb").child("product"+enProduct.getId()+".jpg");
+
+        UploadTask uploadTask = fileRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+
+            }
+        }).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                if (task.isSuccessful()){
+
+                    enProduct.setImage("images/product/"+FirebaseAuth.getInstance().getUid()+"/thumb/product"+enProduct.getId()+".jpg");
+                    arProduct.setImage("images/product/"+FirebaseAuth.getInstance().getUid()+"/thumb/product"+enProduct.getId()+".jpg");
+
+
+                    FirebaseDatabase.getInstance().getReference()
+                            .child("Product")
+                            .child("en")
+                            .child(enProduct.getId())
+                            .setValue(enProduct);
+
+
+                    FirebaseDatabase.getInstance().getReference()
+                            .child("Product")
+                            .child("ar")
+                            .child(enProduct.getId())
+                            .setValue(arProduct);
+                }
+            }
+        });
+
+
+
+
+
+
+    }
+
+
+
 
     //############################### Cart ############################//
 
@@ -1359,7 +1441,6 @@ public class NetworkDataHelper {
     public MutableLiveData<List<MarketPlace>> getMarketPlaces() {
         return marketPlaces;
     }
-
 
 
 }

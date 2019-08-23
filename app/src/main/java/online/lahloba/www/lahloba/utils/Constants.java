@@ -9,6 +9,7 @@ public class Constants {
     public static final String GET_SUB_MENU_ITEMS_NO_CHILD = "get_sub_menu_items_no_child";
 
     public static final String BASE_URI = "https://lahloba-dd68e.firebaseio.com/";
+    public static final String STORAGE_BUCKET_ADDRESS = "gs://lahloba-dd68e.appspot.com";
     public static final String EXTRA_SUBTITLE_ID = "extra_subtitle_id";
     public static final String GET_PRODUCTS_FOR_CATEGORY = "create_product_for_category";
 
@@ -86,4 +87,8 @@ public class Constants {
     public static final String CHANGE_PRODUCT_PRICE = "change_product_price";
     public static final String START_EDIT_PRODUCT = "start_edit_product";
     public static final String LANGUAGE = "language";
+    public static final String START_ADD_NEW_PRODUCT = "start_add_new_product";
+    public static final String START_ADD_NEW_PRODUCT_BITMAP = "start_add_new_product_bitmap";
+    public static final String START_ADD_NEW_PRODUCT_EN_PRODUCT = "start_add_new_product_en_product";
+    public static final String START_ADD_NEW_PRODUCT_AR_PRODUCT = "start_add_new_product_ar_product";
 }

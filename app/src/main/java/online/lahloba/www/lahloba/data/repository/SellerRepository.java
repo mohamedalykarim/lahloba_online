@@ -1,6 +1,9 @@
 package online.lahloba.www.lahloba.data.repository;
 
 
+import android.graphics.Bitmap;
+import android.util.Log;
+
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
@@ -82,5 +85,11 @@ public class SellerRepository {
 
     public void startEditProduct(ProductItem productItem, String language) {
         networkDataHelper.startEditProduct(productItem, language);
+    }
+
+    public void startAddNewProduct(Bitmap myBitmap, ProductItem enProductItem, ProductItem arProductItem) {
+        networkDataHelper.startAddNewProduct(myBitmap, enProductItem, arProductItem);
+
+
     }
 }

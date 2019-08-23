@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout"
-    tools:context=".ui.seller.SellerAddProductFragment">
+    tools:context=".ui.seller.SellerEditProductFragment">
 
     <data>
 
@@ -65,7 +65,7 @@
 
 
                     <EditText
-                        android:id="@+id/fEnglishNameET"
+                        android:id="@+id/englishNameET"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -75,14 +75,13 @@
                         android:hint="English name"
                         android:inputType="textPersonName"
                         android:padding="16dp"
-                        android:text="@={viewModel.helper.fStepEnName}"
                         android:textSize="14sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <EditText
-                        android:id="@+id/fArabicNameET"
+                        android:id="@+id/arabicNameET"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -93,15 +92,50 @@
                         android:hint="Arabic name"
                         android:inputType="textPersonName"
                         android:padding="16dp"
-                        android:text="@={viewModel.helper.fStepArName}"
                         android:textSize="14sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="1.0"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/fEnglishNameET" />
+                        app:layout_constraintTop_toBottomOf="@+id/englishNameET" />
 
                     <EditText
-                        android:id="@+id/fPriceET"
+                        android:id="@+id/englishDescTV"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="32dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/btn_bg_2"
+                        android:ems="10"
+                        android:hint="English description"
+                        android:inputType="textMultiLine|textPersonName"
+                        android:padding="16dp"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/arabicNameET" />
+
+                    <EditText
+                        android:id="@+id/arabicDescTV"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/btn_bg_2"
+                        android:ems="10"
+                        android:hint="Arabic description"
+                        android:inputType="textMultiLine|textPersonName"
+                        android:padding="16dp"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/englishDescTV" />
+
+                    <EditText
+                        android:id="@+id/priceET"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -112,15 +146,24 @@
                         android:hint="Price"
                         android:inputType="numberDecimal"
                         android:padding="16dp"
-                        android:text="@={viewModel.helper.fStepPrice}"
                         android:textSize="14sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="1.0"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/fArabicNameET" />
+                        app:layout_constraintTop_toBottomOf="@+id/arabicDescTV" />
+
+                    <Switch
+                        android:id="@+id/switch2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="32dp"
+                        android:text="Product Enable"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/spinner2" />
 
                     <Spinner
-                        android:id="@+id/spinner"
+                        android:id="@+id/spinner2"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -129,18 +172,9 @@
                         android:background="@drawable/btn_bg_2"
                         android:padding="10dp"
                         app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/fPriceET" />
-
-                    <Switch
-                        android:id="@+id/switch1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="32dp"
-                        android:text="Product Enable"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/spinner" />
+                        app:layout_constraintTop_toBottomOf="@+id/priceET" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

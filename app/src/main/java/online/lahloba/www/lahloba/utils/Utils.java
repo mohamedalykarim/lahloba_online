@@ -1,6 +1,7 @@
 package online.lahloba.www.lahloba.utils;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.text.format.DateUtils;
@@ -75,6 +76,21 @@ public class Utils {
         }else {
             return (String) android.text.format.DateFormat.format("hh:mm:ss a", past);
         }
+    }
+
+    public static Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        float bitmapRatio = (float)width / (float) height;
+        if (bitmapRatio > 1) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+        return Bitmap.createScaledBitmap(image, width, height, true);
     }
 
 }

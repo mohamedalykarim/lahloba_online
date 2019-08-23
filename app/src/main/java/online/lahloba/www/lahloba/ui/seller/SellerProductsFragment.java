@@ -19,6 +19,7 @@ import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.databinding.SellerProductsFragmentBinding;
 import online.lahloba.www.lahloba.ui.adapters.SellerProductAdapter;
+import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.Injector;
 
 
@@ -59,6 +60,28 @@ public class SellerProductsFragment extends Fragment {
 
         mViewModel.startGetProductForCategoryAndUser(category);
 
+
+
+
+
+
+        binding.fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), SellerAddProductActivity.class);
+                intent.putExtra(Constants.EXTRA_SUBTITLE_ID, category);
+
+                startActivity(intent);
+            }
+        });
+
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
         mViewModel.getProducts().observe(this, productItems -> {
             if (null == productItems) return;
 
@@ -68,22 +91,8 @@ public class SellerProductsFragment extends Fragment {
             productItemList.addAll(productItems);
             adapter.notifyDataSetChanged();
 
-
         });
-
-
-
-
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getActivity(), SellerAddProductActivity.class));
-            }
-        });
-
-        return binding.getRoot();
     }
-
 
     public void setCategory(String category) {
         this.category = category;
