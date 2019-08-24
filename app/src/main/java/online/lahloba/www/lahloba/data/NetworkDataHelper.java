@@ -76,6 +76,7 @@ import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_USER_
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_DEFAULT_ADDRESS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_GOVERNORATES;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_MARKETPLACE;
+import static online.lahloba.www.lahloba.utils.Constants.START_GET_USER_FOR_ORDER;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_EMAIL;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_PASSWORD;
@@ -117,6 +118,8 @@ public class NetworkDataHelper {
     private MutableLiveData<ProductItem> enProductItemForEdit;
     private MutableLiveData<ProductItem> arProductItemForEdit;
 
+    private MutableLiveData<UserItem> userForOrder;
+
 
     private NetworkDataHelper(Context applicationContext) {
         mContext = applicationContext;
@@ -143,6 +146,8 @@ public class NetworkDataHelper {
         productItem = new MutableLiveData<>();
         enProductItemForEdit = new MutableLiveData<>();
         arProductItemForEdit = new MutableLiveData<>();
+
+        userForOrder = new MutableLiveData<>();
 
 
         isUserCreated.setValue(false);
@@ -1368,6 +1373,36 @@ public class NetworkDataHelper {
                 .child("orderStatus").setValue(orderStatus);
     }
 
+    public void startGetUserForOrder(String userId) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(START_GET_USER_FOR_ORDER);
+        intent.putExtra(START_GET_USER_FOR_ORDER,userId);
+        mContext.startService(intent);
+
+    }
+
+    public void getUserForOrder(String userId){
+
+        FirebaseDatabase.getInstance().getReference()
+                .child("User")
+                .child(userId)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists())
+                        userForOrder.setValue(dataSnapshot.getValue(UserItem.class));
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    public MutableLiveData<UserItem> getUserForOrder() {
+        return userForOrder;
+    }
 
     //############################### Favorites ############################//
 
@@ -1572,4 +1607,6 @@ public class NetworkDataHelper {
         enProductItemForEdit.setValue(null);
         productItem.setValue(null);
     }
+
+
 }

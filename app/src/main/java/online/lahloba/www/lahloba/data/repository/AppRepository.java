@@ -285,6 +285,14 @@ public class AppRepository {
         networkDataHelper.startChangeOrderStatus(orderId, orderStatus);
     }
 
+    public void startGetUserForOrder(String userId) {
+        networkDataHelper.startGetUserForOrder(userId);
+    }
+
+    public MutableLiveData<UserItem> getUserForOrder() {
+        return networkDataHelper.getUserForOrder();
+    }
+
 
     //############################### Favorites ############################//
 
@@ -312,6 +320,7 @@ public class AppRepository {
     public void startReorder(OrderItem orderItem) {
         networkDataHelper.startReorder(orderItem);
     }
+
 
 
 }

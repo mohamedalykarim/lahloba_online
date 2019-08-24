@@ -58,6 +58,7 @@ import static online.lahloba.www.lahloba.utils.Constants.START_GET_MARKETPLACE;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_PRODUCT;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_PRODUCT_FOR_EDIT;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_SELLER_MARKETPLACE;
+import static online.lahloba.www.lahloba.utils.Constants.START_GET_USER_FOR_ORDER;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_EMAIL;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_PASSWORD;
@@ -218,6 +219,9 @@ public class LahlobaMainService extends IntentService {
             String orderId = intent.getStringExtra(ORDER_ID);
             int orderStatus = intent.getIntExtra(ORDER_STATUS,0);
             networkDataHelper.changeOrderStatusFirebase(orderId, orderStatus);
+        }else if(intent.getAction().equals(START_GET_USER_FOR_ORDER)){
+            String userId = intent.getStringExtra(START_GET_USER_FOR_ORDER);
+            networkDataHelper.getUserForOrder(userId);
         }
 
 

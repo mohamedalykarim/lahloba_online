@@ -6,10 +6,15 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.HashMap;
 
@@ -20,12 +25,16 @@ import online.lahloba.www.lahloba.data.model.OrderItem;
 import online.lahloba.www.lahloba.databinding.FragmentOrderDetailsBinding;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
 import online.lahloba.www.lahloba.utils.Injector;
+import online.lahloba.www.lahloba.utils.OrderStatusUtils;
 
 import static online.lahloba.www.lahloba.utils.Constants.ORDER_ITEM;
 
 public class OrderDetailsFragment extends Fragment {
 
     private OrderDetailsViewModel mViewModel;
+    private FragmentOrderDetailsBinding binding;
+    private LoginViewModel loginViewModel;
+    private OrderItem orderItem;
 
     public static OrderDetailsFragment newInstance() {
         return new OrderDetailsFragment();
@@ -36,13 +45,11 @@ public class OrderDetailsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        FragmentOrderDetailsBinding binding = FragmentOrderDetailsBinding.inflate(inflater,container,false);
+        binding = FragmentOrderDetailsBinding.inflate(inflater,container,false);
 
         ViewModelProviderFactory factory = Injector.getVMFactory(getContext());
         mViewModel = ViewModelProviders.of(this,factory).get(OrderDetailsViewModel.class);
-
-
-
+        loginViewModel = ViewModelProviders.of(this, factory).get(LoginViewModel.class);
 
 
 
@@ -51,24 +58,10 @@ public class OrderDetailsFragment extends Fragment {
             getActivity().finish();
         }
 
-        OrderItem orderItem = oldIntent.getParcelableExtra(ORDER_ITEM);
+        orderItem = oldIntent.getParcelableExtra(ORDER_ITEM);
 
-        /**
-         * If seller
-         */
+        mViewModel.startGetUserForOrder(orderItem.getUserId());
 
-        LoginViewModel loginViewModel = ViewModelProviders.of(this, factory).get(LoginViewModel.class);
-        loginViewModel.getCurrentUserDetails().observe(this, userItem -> {
-            if (userItem == null) return;
-            if (userItem.isSeller()){
-                if (orderItem.getOrderStatus() == 1){
-                    mViewModel.startChangeOrderStatus(orderItem.getId(),6);
-                }
-            }
-
-            loginViewModel.loginVMHelper.setCurrentUser(userItem);
-
-        });
 
 
         binding.setOrder(orderItem);
@@ -107,7 +100,35 @@ public class OrderDetailsFragment extends Fragment {
 
 
 
+
         return binding.getRoot();
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        loginViewModel.getCurrentUserDetails().observe(this, userItem -> {
+            if (userItem == null) return;
+            if (userItem.isSeller()){
+
+                if (orderItem.getOrderStatus() == 1){
+                    mViewModel.startChangeOrderStatus(orderItem.getId(), OrderStatusUtils.ORDER_STATUS_RECIEVED);
+                }
+            }
+
+            loginViewModel.loginVMHelper.setCurrentUser(userItem);
+
+        });
+
+        mViewModel.getUserForOrder().observe(this, userItem -> {
+            if (userItem == null) return;
+
+            Log.v("sss", userItem.getFirstName()+" "+userItem.getFirstName() );
+
+            binding.setUserForOrder(userItem);
+
+        });
+    }
 }
