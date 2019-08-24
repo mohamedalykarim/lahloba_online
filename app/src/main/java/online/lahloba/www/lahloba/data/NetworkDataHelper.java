@@ -87,23 +87,23 @@ import static online.lahloba.www.lahloba.utils.Constants.START_SET_DEFAULT_ADDRE
 public class NetworkDataHelper {
     private static final Object LOCK = new Object();
     private static NetworkDataHelper sInstance;
-    Context mContext;
+    private Context mContext;
 
-    Bitmap bitmap;
+    private Bitmap bitmap;
 
-    MutableLiveData<List<MainMenuItem>> mainMenuItems;
-    MutableLiveData<List<SubMenuItem>> subMenuItems;
-    MutableLiveData<List<CartItem>> cartItems;
-    MutableLiveData<List<AddressItem>> addressItems;
-    MutableLiveData<Boolean> isLogged;
-    MutableLiveData<Boolean> isUserCreated;
-    MutableLiveData<Boolean> isAddressAdded;
-    MutableLiveData<UserItem> userDetails;
-    MutableLiveData<AddressItem> defaultAddress;
-    MutableLiveData<DataSnapshot> governorates;
-    MutableLiveData<List<MarketPlace>> marketPlaces;
-    MutableLiveData<MarketPlace> marketPlace;
-    MutableLiveData<Boolean> isOrderAdded;
+    private MutableLiveData<List<MainMenuItem>> mainMenuItems;
+    private MutableLiveData<List<SubMenuItem>> subMenuItems;
+    private MutableLiveData<List<CartItem>> cartItems;
+    private MutableLiveData<List<AddressItem>> addressItems;
+    private MutableLiveData<Boolean> isLogged;
+    private MutableLiveData<Boolean> isUserCreated;
+    private MutableLiveData<Boolean> isAddressAdded;
+    private MutableLiveData<UserItem> userDetails;
+    private MutableLiveData<AddressItem> defaultAddress;
+    private MutableLiveData<DataSnapshot> governorates;
+    private MutableLiveData<List<MarketPlace>> marketPlaces;
+    private MutableLiveData<MarketPlace> marketPlace;
+    private MutableLiveData<Boolean> isOrderAdded;
     private MutableLiveData<Boolean> isAddressEdited;
 
     private MutableLiveData<List<OrderItem>> orderItems;
@@ -113,8 +113,12 @@ public class NetworkDataHelper {
     private MutableLiveData<List<ProductItem>> favoritesItems;
     private MutableLiveData<List<BannerItem>> bannerItems;
 
+    private MutableLiveData<ProductItem> productItem;
+    private MutableLiveData<ProductItem> enProductItemForEdit;
+    private MutableLiveData<ProductItem> arProductItemForEdit;
 
-    public NetworkDataHelper(Context applicationContext) {
+
+    private NetworkDataHelper(Context applicationContext) {
         mContext = applicationContext;
         mainMenuItems = new MutableLiveData<>();
         subMenuItems = new MutableLiveData<>();
@@ -135,6 +139,10 @@ public class NetworkDataHelper {
         isUserCreated = new MutableLiveData<>();
         isOrderAdded = new MutableLiveData<>();
         isAddressEdited = new MutableLiveData<>();
+
+        productItem = new MutableLiveData<>();
+        enProductItemForEdit = new MutableLiveData<>();
+        arProductItemForEdit = new MutableLiveData<>();
 
 
         isUserCreated.setValue(false);
@@ -517,7 +525,6 @@ public class NetworkDataHelper {
                 .child(language)
                 .child(productItem.getId())
                 .setValue(productItem);
-
     }
 
 
@@ -536,51 +543,78 @@ public class NetworkDataHelper {
 
     public void addNewProduct(ProductItem enProduct, ProductItem arProduct){
 
+        if (bitmap != null){
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] data = baos.toByteArray();
 
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] data = baos.toByteArray();
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
+            StorageReference fileRef = storageRef.child("images/product/"+FirebaseAuth.getInstance().getUid()+"/thumb").child("product"+enProduct.getId()+".jpg");
 
+            UploadTask uploadTask = fileRef.putBytes(data);
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle unsuccessful uploads
 
-
-
-
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageRef = storage.getReference();
-        StorageReference fileRef = storageRef.child("images/product/"+FirebaseAuth.getInstance().getUid()+"/thumb").child("product"+enProduct.getId()+".jpg");
-
-        UploadTask uploadTask = fileRef.putBytes(data);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle unsuccessful uploads
-
-            }
-        }).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                if (task.isSuccessful()){
-
-                    enProduct.setImage("images/product/"+FirebaseAuth.getInstance().getUid()+"/thumb/product"+enProduct.getId()+".jpg");
-                    arProduct.setImage("images/product/"+FirebaseAuth.getInstance().getUid()+"/thumb/product"+enProduct.getId()+".jpg");
-
-
-                    FirebaseDatabase.getInstance().getReference()
-                            .child("Product")
-                            .child("en")
-                            .child(enProduct.getId())
-                            .setValue(enProduct);
-
-
-                    FirebaseDatabase.getInstance().getReference()
-                            .child("Product")
-                            .child("ar")
-                            .child(enProduct.getId())
-                            .setValue(arProduct);
                 }
-            }
-        });
+            }).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    if (task.isSuccessful()){
+
+                        enProduct.setImage("images/product/"+FirebaseAuth.getInstance().getUid()+"/thumb/product"+enProduct.getId()+".jpg");
+                        arProduct.setImage("images/product/"+FirebaseAuth.getInstance().getUid()+"/thumb/product"+enProduct.getId()+".jpg");
+
+
+                        FirebaseDatabase.getInstance().getReference()
+                                .child("Product")
+                                .child("en")
+                                .child(enProduct.getId())
+                                .setValue(enProduct);
+
+
+                        FirebaseDatabase.getInstance().getReference()
+                                .child("Product")
+                                .child("ar")
+                                .child(enProduct.getId())
+                                .setValue(arProduct);
+
+
+                        bitmap = null;
+                    }
+                }
+            });
+
+
+
+
+
+        }else{
+
+            enProduct.setImage("images/product/"+FirebaseAuth.getInstance().getUid()+"/thumb/product"+enProduct.getId()+".jpg");
+            arProduct.setImage("images/product/"+FirebaseAuth.getInstance().getUid()+"/thumb/product"+enProduct.getId()+".jpg");
+
+
+            FirebaseDatabase.getInstance().getReference()
+                    .child("Product")
+                    .child("en")
+                    .child(enProduct.getId())
+                    .setValue(enProduct);
+
+
+            FirebaseDatabase.getInstance().getReference()
+                    .child("Product")
+                    .child("ar")
+                    .child(enProduct.getId())
+                    .setValue(arProduct);
+        }
+
+
+
+
 
 
 
@@ -590,7 +624,94 @@ public class NetworkDataHelper {
     }
 
 
+    public void startGetProduct(String productId, String language) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.START_GET_PRODUCT);
+        intent.putExtra(Constants.START_GET_PRODUCT, productId);
+        intent.putExtra(Constants.LANGUAGE, language);
+        mContext.startService(intent);
+    }
 
+    public void getProduct(String productId, String language){
+        FirebaseDatabase.getInstance().getReference()
+                .child("Product")
+                .child(language)
+                .child(productId)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()){
+                            productItem.setValue(dataSnapshot.getValue(ProductItem.class));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    public MutableLiveData<ProductItem> getProductItem() {
+        return productItem;
+    }
+
+
+    public void startGetProductForEdit(String productId) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.START_GET_PRODUCT_FOR_EDIT);
+        intent.putExtra(Constants.START_GET_PRODUCT_FOR_EDIT, productId);
+        mContext.startService(intent);
+    }
+
+    public void getProductForEdit(String productId){
+
+        FirebaseDatabase.getInstance().getReference()
+                .child("Product")
+                .child("en")
+                .child(productId)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()){
+                            enProductItemForEdit.setValue(dataSnapshot.getValue(ProductItem.class));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+        FirebaseDatabase.getInstance().getReference()
+                .child("Product")
+                .child("ar")
+                .child(productId)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()){
+                            arProductItemForEdit.setValue(dataSnapshot.getValue(ProductItem.class));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+
+    }
+
+    public MutableLiveData<ProductItem> getEnProductItemForEdit() {
+        return enProductItemForEdit;
+    }
+
+    public MutableLiveData<ProductItem> getArProductItemForEdit() {
+        return arProductItemForEdit;
+    }
 
     //############################### Cart ############################//
 
@@ -1443,4 +1564,12 @@ public class NetworkDataHelper {
     }
 
 
+
+    /*  ##################     RESET       #################   */
+
+    public void resetEditPage() {
+        arProductItemForEdit.setValue(null);
+        enProductItemForEdit.setValue(null);
+        productItem.setValue(null);
+    }
 }

@@ -1,5 +1,6 @@
 package online.lahloba.www.lahloba.ui.adapters;
 
+import android.content.Intent;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -22,7 +24,10 @@ import java.util.List;
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.databinding.SellerProductItemBinding;
+import online.lahloba.www.lahloba.ui.seller.SellerEditProductActivity;
 import online.lahloba.www.lahloba.ui.seller.SellerProductsViewModel;
+
+import static online.lahloba.www.lahloba.utils.Constants.PRODUCT_ID;
 
 public class SellerProductAdapter extends RecyclerView.Adapter<SellerProductAdapter.SellerProductViewHolder> {
     List<ProductItem> productItems;
@@ -45,25 +50,8 @@ public class SellerProductAdapter extends RecyclerView.Adapter<SellerProductAdap
         holder.binding.setViewModel(viewModel);
 
 
-        /**
-         * Load image from the storage
-         */
 
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageRef = storage.getReference();
-        storageRef.child(productItems.get(position).getImage())
-                .getDownloadUrl()
-                .addOnCompleteListener(new OnCompleteListener<Uri>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Uri> task) {
-                        if(task.isSuccessful()){
-                            Picasso.get()
-                                    .load(task.getResult())
-                                    .placeholder(R.drawable.progress_animation)
-                                    .into(holder.binding.productImage);
-                        }
-                    }
-                });
+        loadImage(productItems.get(position).getImage(), holder.binding.productImage);
 
 
 
@@ -173,7 +161,38 @@ public class SellerProductAdapter extends RecyclerView.Adapter<SellerProductAdap
            }
        });
 
+       holder.binding.getRoot().setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               Intent intent = new Intent(holder.binding.getRoot().getContext(), SellerEditProductActivity.class);
+               intent.putExtra(PRODUCT_ID, productItems.get(position).getId());
+               holder.binding.getRoot().getContext().startActivity(intent);
+           }
+       });
 
+    }
+
+    private void loadImage(String url, ImageView imageView) {
+        if (url==null)return;
+        /**
+         * Load image from the storage
+         */
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+        storageRef.child(url)
+                .getDownloadUrl()
+                .addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if(task.isSuccessful()){
+                            Picasso.get()
+                                    .load(task.getResult())
+                                    .placeholder(R.drawable.progress_animation)
+                                    .into(imageView);
+                        }
+                    }
+                });
     }
 
     @Override

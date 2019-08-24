@@ -2,6 +2,7 @@ package online.lahloba.www.lahloba.ui.seller;
 
 import androidx.lifecycle.ViewModelProviders;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -28,6 +29,7 @@ import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.databinding.SellerAddProductFragmentBinding;
 import online.lahloba.www.lahloba.ui.adapters.SellerAddProductSpinnerAdapter;
+import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.Injector;
 import online.lahloba.www.lahloba.utils.Utils;
 
@@ -37,6 +39,7 @@ public class SellerAddProductFragment extends Fragment {
 
     private SellerAddProductViewModel mViewModel;
     private HashMap<String, String> markets;
+    String push;
 
 
     public static SellerAddProductFragment newInstance() {
@@ -58,7 +61,6 @@ public class SellerAddProductFragment extends Fragment {
         binding.toolbar.setTitleTextColor(Color.parseColor("#ffffff"));
         ((SellerAddProductActivity)getActivity()).setSupportActionBar(binding.toolbar);
 
-        markets = new HashMap<String,String>();
 
 
         binding.fImage.setOnClickListener(new View.OnClickListener() {
@@ -105,6 +107,8 @@ public class SellerAddProductFragment extends Fragment {
 
                 if (mViewModel.helper.getError() == 0){
                     addProduct();
+                    Intent intent = new Intent(getActivity(), SellerEditProductActivity.class);
+                    intent.putExtra(Constants.PRODUCT_ID, push);
                     getActivity().finish();
                 }
 
@@ -119,7 +123,7 @@ public class SellerAddProductFragment extends Fragment {
     }
 
     private void addProduct() {
-        String push = FirebaseDatabase.getInstance().getReference().child("Product/en").push().getKey();
+        push = FirebaseDatabase.getInstance().getReference().child("Product/en").push().getKey();
 
         ProductItem arProductItem = new ProductItem();
         ProductItem enProductItem = new ProductItem();
@@ -130,7 +134,7 @@ public class SellerAddProductFragment extends Fragment {
         arProductItem.setTitle(binding.fArabicNameET.getText().toString());
         arProductItem.setMarketPlaceId(markets.get(binding.spinner.getSelectedItem().toString()));
         arProductItem.setParentId(mViewModel.helper.getCategoryId());
-        enProductItem.setParentIdMarketPlaceId( mViewModel.helper.getCategoryId()+ "-" + markets.get(binding.spinner.getSelectedItem().toString()));
+        arProductItem.setParentIdMarketPlaceId( mViewModel.helper.getCategoryId()+ "-" + markets.get(binding.spinner.getSelectedItem().toString()));
         arProductItem.setParentIdSellerId(mViewModel.helper.getCategoryId() +"-"+ FirebaseAuth.getInstance().getUid());
         arProductItem.setSellerId(FirebaseAuth.getInstance().getUid());
 
@@ -184,8 +188,10 @@ public class SellerAddProductFragment extends Fragment {
 
 
 
+
         mViewModel.getMarketPlacesForSeller().observe(this, marketPlaces -> {
             if (marketPlaces == null) return;
+            markets = new HashMap<String,String>();
 
             ArrayList<String> marketsName = new ArrayList<>();
 

@@ -25,6 +25,7 @@ import static online.lahloba.www.lahloba.utils.Constants.GET_PRODUCTS_FOR_CATEGO
 import static online.lahloba.www.lahloba.utils.Constants.GET_SUB_MENU_ITEMS;
 import static online.lahloba.www.lahloba.utils.Constants.GET_SUB_MENU_ITEMS_NO_CHILD;
 import static online.lahloba.www.lahloba.utils.Constants.IS_ENABLE;
+import static online.lahloba.www.lahloba.utils.Constants.LANGUAGE;
 import static online.lahloba.www.lahloba.utils.Constants.MARKETPLACE_ID;
 import static online.lahloba.www.lahloba.utils.Constants.ORDER_ID;
 import static online.lahloba.www.lahloba.utils.Constants.ORDER_STATUS;
@@ -54,6 +55,8 @@ import static online.lahloba.www.lahloba.utils.Constants.START_GET_DEFAULT_ADDRE
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_FAVORITES;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_GOVERNORATES;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_MARKETPLACE;
+import static online.lahloba.www.lahloba.utils.Constants.START_GET_PRODUCT;
+import static online.lahloba.www.lahloba.utils.Constants.START_GET_PRODUCT_FOR_EDIT;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_SELLER_MARKETPLACE;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_EMAIL;
@@ -109,14 +112,16 @@ public class LahlobaMainService extends IntentService {
             String language = intent.getStringExtra(Constants.LANGUAGE);
             networkDataHelper.editProduct(productItem, language);
         }else if(intent.getAction().equals(START_ADD_NEW_PRODUCT)){
-
             ProductItem en = intent.getParcelableExtra(START_ADD_NEW_PRODUCT_EN_PRODUCT);
             ProductItem ar = intent.getParcelableExtra(START_ADD_NEW_PRODUCT_AR_PRODUCT);
-
-
             networkDataHelper.addNewProduct(en, ar);
-
-
+        }else if(intent.getAction().equals(START_GET_PRODUCT)){
+            String productId = intent.getStringExtra(START_GET_PRODUCT);
+            String language = intent.getStringExtra(LANGUAGE);
+            networkDataHelper.getProduct(productId, language);
+        }else if(intent.getAction().equals(START_GET_PRODUCT_FOR_EDIT)){
+            String productId = intent.getStringExtra(START_GET_PRODUCT_FOR_EDIT);
+            networkDataHelper.getProductForEdit(productId);
         }
 
 

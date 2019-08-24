@@ -161,7 +161,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:background="@drawable/btn_bg_3"
-                            android:text="Complete Adding"
+                            android:text="More.."
                             android:textColor="#fff"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"

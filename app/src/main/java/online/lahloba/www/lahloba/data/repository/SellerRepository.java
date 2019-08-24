@@ -89,7 +89,21 @@ public class SellerRepository {
 
     public void startAddNewProduct(Bitmap myBitmap, ProductItem enProductItem, ProductItem arProductItem) {
         networkDataHelper.startAddNewProduct(myBitmap, enProductItem, arProductItem);
+    }
 
+    public void startGetProductForEdit(String productId) {
+        networkDataHelper.startGetProductForEdit(productId);
+    }
 
+    public MutableLiveData<ProductItem> getEnProductItemForEdit() {
+        return networkDataHelper.getEnProductItemForEdit();
+    }
+
+    public MutableLiveData<ProductItem> getArProductItemForEdit() {
+        return networkDataHelper.getArProductItemForEdit();
+    }
+
+    public void resetEditPage() {
+        networkDataHelper.resetEditPage();
     }
 }

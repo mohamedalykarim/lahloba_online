@@ -91,4 +91,6 @@ public class Constants {
     public static final String START_ADD_NEW_PRODUCT_BITMAP = "start_add_new_product_bitmap";
     public static final String START_ADD_NEW_PRODUCT_EN_PRODUCT = "start_add_new_product_en_product";
     public static final String START_ADD_NEW_PRODUCT_AR_PRODUCT = "start_add_new_product_ar_product";
+    public static final String START_GET_PRODUCT = "start_get_product";
+    public static final String START_GET_PRODUCT_FOR_EDIT = "start_get_product_for_edit";
 }

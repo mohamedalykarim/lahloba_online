@@ -20,6 +20,8 @@ import online.lahloba.www.lahloba.ui.order.OrderDetailsViewModel;
 import online.lahloba.www.lahloba.ui.order.OrdersViewModel;
 import online.lahloba.www.lahloba.ui.products.ProductsViewModel;
 import online.lahloba.www.lahloba.ui.seller.SellerAddProductViewModel;
+import online.lahloba.www.lahloba.ui.seller.SellerEditProductFragment;
+import online.lahloba.www.lahloba.ui.seller.SellerEditProductViewModel;
 import online.lahloba.www.lahloba.ui.seller.SellerProductsCategoryViewModel;
 import online.lahloba.www.lahloba.ui.seller.SellerOrdersViewModel;
 import online.lahloba.www.lahloba.ui.seller.SellerProductsViewModel;
@@ -75,6 +77,8 @@ public class ViewModelProviderFactory extends ViewModelProvider.NewInstanceFacto
             return (T) new SellerOrdersViewModel(sellerRepository);
         }else if(modelClass.isAssignableFrom(SellerAddProductViewModel.class)){
             return (T) new SellerAddProductViewModel(sellerRepository);
+        }else if(modelClass.isAssignableFrom(SellerEditProductViewModel.class)){
+            return (T) new SellerEditProductViewModel(sellerRepository);
         }
 
 
