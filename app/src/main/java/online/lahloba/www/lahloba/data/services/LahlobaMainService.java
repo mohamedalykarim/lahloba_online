@@ -55,6 +55,7 @@ import static online.lahloba.www.lahloba.utils.Constants.START_GET_DEFAULT_ADDRE
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_FAVORITES;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_GOVERNORATES;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_MARKETPLACE;
+import static online.lahloba.www.lahloba.utils.Constants.START_GET_ORDER;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_PRODUCT;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_PRODUCT_FOR_EDIT;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_SELLER_MARKETPLACE;
@@ -222,6 +223,9 @@ public class LahlobaMainService extends IntentService {
         }else if(intent.getAction().equals(START_GET_USER_FOR_ORDER)){
             String userId = intent.getStringExtra(START_GET_USER_FOR_ORDER);
             networkDataHelper.getUserForOrder(userId);
+        }else if(intent.getAction().equals(START_GET_ORDER)){
+            String orderId = intent.getStringExtra(START_GET_ORDER);
+            networkDataHelper.getOrderById(orderId);
         }
 
 

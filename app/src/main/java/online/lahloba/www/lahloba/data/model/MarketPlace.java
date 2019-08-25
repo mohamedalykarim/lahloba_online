@@ -1,12 +1,16 @@
 package online.lahloba.www.lahloba.data.model;
 
+import androidx.databinding.BaseObservable;
+import androidx.databinding.Bindable;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverter;
 import androidx.annotation.NonNull;
 
+import online.lahloba.www.lahloba.BR;
+
 @Entity(tableName = "market_places")
-public class MarketPlace{
+public class MarketPlace extends BaseObservable {
     @NonNull
     @PrimaryKey
     String id;
@@ -22,6 +26,7 @@ public class MarketPlace{
         return id;
     }
 
+    @Bindable
     public String getName() {
         return name;
     }
@@ -50,8 +55,10 @@ public class MarketPlace{
         this.id = id;
     }
 
+    @Bindable
     public void setName(String name) {
         this.name = name;
+        notifyPropertyChanged(BR.name);
     }
 
     public void setSellerId(String sellerId) {

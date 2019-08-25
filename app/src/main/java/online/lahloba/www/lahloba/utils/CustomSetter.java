@@ -76,24 +76,26 @@ public static void setFont(View view, String font){
 
     @BindingAdapter("android:orderStatus")
     public static void setOrderStatus(TextView textView, int order){
-        if (order == 1){
-            textView.setText(textView.getResources().getString(R.string.pending_order));
+        if (order == 0){
+            textView.setText("Order Canceled");
+        }else if (order == 1){
+            textView.setText("Order pending");
         }else if (order == 2){
-            textView.setText(textView.getResources().getString(R.string.processing_order));
+            textView.setText("Order recieved");
         }else if (order == 3){
-            textView.setText(textView.getResources().getString(R.string.processed_order));
+            textView.setText("Order prepared");
         }else if (order == 4){
-            textView.setText(textView.getResources().getString(R.string.shipped_order));
+            textView.setText("Order shipped");
         }else if (order == 5){
-            textView.setText(textView.getResources().getString(R.string.completed_order));
-        }else if (order == 65){
-            textView.setText(textView.getResources().getString(R.string.order_recieved));
+            textView.setText("Order completed");
         }
     }
 
     @BindingAdapter("android:orderStatusImage")
     public static void setOrderStatusImage(ImageView imageView, int order){
-        if (order == 1){
+        if (order == 0){
+            Picasso.get().load(R.drawable.order_cancel_icon).into(imageView);
+        }else if (order == 1){
             Picasso.get().load(R.drawable.order_pending_icon).into(imageView);
         }else if (order == 2){
             Picasso.get().load(R.drawable.order_processing_icon).into(imageView);
@@ -110,6 +112,7 @@ public static void setFont(View view, String font){
 
     @BindingAdapter("android:orderDate")
     public static void setOrderDate(TextView textView, Date date){
+        if (date == null)return;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yyyy");
         textView.setText(simpleDateFormat.format(date));
     }

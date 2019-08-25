@@ -294,6 +294,16 @@ public class AppRepository {
     }
 
 
+    public void startGetOrderById(String orderId) {
+        networkDataHelper.startGetOrderById(orderId);
+    }
+
+    public MutableLiveData<OrderItem> getOrderItem() {
+        return networkDataHelper.getOrderItem();
+    }
+
+
+
     //############################### Favorites ############################//
 
     public void startGetFavoriteItems() {

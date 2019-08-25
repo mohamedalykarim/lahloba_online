@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -34,7 +35,7 @@ public class OrderDetailsFragment extends Fragment {
     private OrderDetailsViewModel mViewModel;
     private FragmentOrderDetailsBinding binding;
     private LoginViewModel loginViewModel;
-    private OrderItem orderItem;
+    private OrderItem oldOrderItem;
 
     public static OrderDetailsFragment newInstance() {
         return new OrderDetailsFragment();
@@ -51,6 +52,8 @@ public class OrderDetailsFragment extends Fragment {
         mViewModel = ViewModelProviders.of(this,factory).get(OrderDetailsViewModel.class);
         loginViewModel = ViewModelProviders.of(this, factory).get(LoginViewModel.class);
 
+        binding.setViewModel(mViewModel);
+
 
 
         Intent oldIntent = getActivity().getIntent();
@@ -58,19 +61,18 @@ public class OrderDetailsFragment extends Fragment {
             getActivity().finish();
         }
 
-        orderItem = oldIntent.getParcelableExtra(ORDER_ITEM);
+        oldOrderItem = oldIntent.getParcelableExtra(ORDER_ITEM);
 
-        mViewModel.startGetUserForOrder(orderItem.getUserId());
+        mViewModel.startGetOrderById(oldOrderItem.getId());
+        mViewModel.startGetUserForOrder(oldOrderItem.getUserId());
+        mViewModel.startGetMarketPlaceForOrder(oldOrderItem.getMarketplaceId());
 
-
-
-        binding.setOrder(orderItem);
 
 
         /*
          * Add Products to view
          */
-        HashMap<String, CartItem> products = orderItem.getProducts();
+        HashMap<String, CartItem> products = oldOrderItem.getProducts();
 
         binding.productsContainer.removeAllViews();
         for(CartItem product: products.values()){
@@ -94,10 +96,25 @@ public class OrderDetailsFragment extends Fragment {
         binding.reorderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mViewModel.startReorder(orderItem);
+                mViewModel.startReorder(oldOrderItem);
             }
         });
 
+
+        binding.preparedBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mViewModel.startChangeOrderStatus(oldOrderItem.getId(), OrderStatusUtils.ORDER_STATUS_PREPARED);
+
+            }
+        });
+
+        binding.cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mViewModel.startChangeOrderStatus(oldOrderItem.getId(), OrderStatusUtils.ORDER_STATUS_CANCELED);
+            }
+        });
 
 
 
@@ -109,13 +126,15 @@ public class OrderDetailsFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
+        mViewModel.getOrderItem().observe(this, orderItem -> {
+            if (orderItem == null)return;
+            mViewModel.helper.setOrderItem(orderItem);
+        });
+
         loginViewModel.getCurrentUserDetails().observe(this, userItem -> {
             if (userItem == null) return;
             if (userItem.isSeller()){
 
-                if (orderItem.getOrderStatus() == 1){
-                    mViewModel.startChangeOrderStatus(orderItem.getId(), OrderStatusUtils.ORDER_STATUS_RECIEVED);
-                }
             }
 
             loginViewModel.loginVMHelper.setCurrentUser(userItem);
@@ -124,11 +143,28 @@ public class OrderDetailsFragment extends Fragment {
 
         mViewModel.getUserForOrder().observe(this, userItem -> {
             if (userItem == null) return;
-
-            Log.v("sss", userItem.getFirstName()+" "+userItem.getFirstName() );
-
             binding.setUserForOrder(userItem);
+        });
 
+
+        mViewModel.getMarketplace().observe(this, marketPlace -> {
+            if (marketPlace == null) return;
+            binding.setMarketPlace(marketPlace);
+
+            if ( marketPlace.getId().equals(oldOrderItem.getMarketplaceId())
+                    && marketPlace.getSellerId().equals(FirebaseAuth.getInstance().getUid())){
+
+
+                if (loginViewModel.loginVMHelper.getCurrentUser().isSeller()){
+                    mViewModel.helper.setThisSeller(true);
+
+                    if (mViewModel.helper.getOrderItem().getOrderStatus() == 1){
+                        mViewModel.startChangeOrderStatus(oldOrderItem.getId(), OrderStatusUtils.ORDER_STATUS_RECIEVED);
+                    }
+
+                }
+
+            }
         });
     }
 }

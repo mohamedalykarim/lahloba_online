@@ -62,6 +62,8 @@ public class Utils {
 
 
     public static String getRelationTime(Date past) {
+        if (past == null) return "";
+
         long now = System.currentTimeMillis();
         long difference = now - past.getTime();
 

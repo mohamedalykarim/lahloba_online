@@ -76,6 +76,7 @@ import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_USER_
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_DEFAULT_ADDRESS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_GOVERNORATES;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_MARKETPLACE;
+import static online.lahloba.www.lahloba.utils.Constants.START_GET_ORDER;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_USER_FOR_ORDER;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN;
 import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_EMAIL;
@@ -119,6 +120,7 @@ public class NetworkDataHelper {
     private MutableLiveData<ProductItem> arProductItemForEdit;
 
     private MutableLiveData<UserItem> userForOrder;
+    private MutableLiveData<OrderItem> orderItem;
 
 
     private NetworkDataHelper(Context applicationContext) {
@@ -148,6 +150,7 @@ public class NetworkDataHelper {
         arProductItemForEdit = new MutableLiveData<>();
 
         userForOrder = new MutableLiveData<>();
+        orderItem = new MutableLiveData<>();
 
 
         isUserCreated.setValue(false);
@@ -1367,10 +1370,12 @@ public class NetworkDataHelper {
 
     public void changeOrderStatusFirebase(String orderId, int orderStatus) {
         if (FirebaseAuth.getInstance().getCurrentUser() == null)return;
-        String userId = FirebaseAuth.getInstance().getUid();
+
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("Orders").child(userId).child(orderId)
-                .child("orderStatus").setValue(orderStatus);
+        mDatabase.child("Orders")
+                .child(orderId)
+                .child("orderStatus")
+                .setValue(orderStatus);
     }
 
     public void startGetUserForOrder(String userId) {
@@ -1402,6 +1407,37 @@ public class NetworkDataHelper {
 
     public MutableLiveData<UserItem> getUserForOrder() {
         return userForOrder;
+    }
+
+
+    public void startGetOrderById(String orderId) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(START_GET_ORDER);
+        intent.putExtra(START_GET_ORDER,orderId);
+        mContext.startService(intent);
+    }
+
+    public void getOrderById(String orderId){
+        FirebaseDatabase.getInstance().getReference()
+                .child("Orders")
+                .child(orderId)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists())
+                        orderItem.setValue(dataSnapshot.getValue(OrderItem.class));
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+
+    public MutableLiveData<OrderItem> getOrderItem () {
+        return orderItem;
     }
 
     //############################### Favorites ############################//
@@ -1607,6 +1643,4 @@ public class NetworkDataHelper {
         enProductItemForEdit.setValue(null);
         productItem.setValue(null);
     }
-
-
 }
