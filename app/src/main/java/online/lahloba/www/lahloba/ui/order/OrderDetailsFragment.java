@@ -149,6 +149,9 @@ public class OrderDetailsFragment extends Fragment {
 
         mViewModel.getMarketplace().observe(this, marketPlace -> {
             if (marketPlace == null) return;
+
+            Log.v("sss first : ", ""+mViewModel.helper.isThisSeller());
+
             binding.setMarketPlace(marketPlace);
 
             if ( marketPlace.getId().equals(oldOrderItem.getMarketplaceId())
@@ -157,6 +160,9 @@ public class OrderDetailsFragment extends Fragment {
 
                 if (loginViewModel.loginVMHelper.getCurrentUser().isSeller()){
                     mViewModel.helper.setThisSeller(true);
+
+
+                    if (mViewModel.helper.getOrderItem() == null ) return;
 
                     if (mViewModel.helper.getOrderItem().getOrderStatus() == 1){
                         mViewModel.startChangeOrderStatus(oldOrderItem.getId(), OrderStatusUtils.ORDER_STATUS_RECIEVED);

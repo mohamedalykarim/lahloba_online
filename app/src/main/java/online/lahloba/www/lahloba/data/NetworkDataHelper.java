@@ -809,6 +809,23 @@ public class NetworkDataHelper {
     }
 
 
+    public void startDeleteAllFromCart() {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.START_DELETE_CART);
+        mContext.startService(intent);
+
+    }
+
+    public void deleteAllFromCart(){
+        String uid = FirebaseAuth.getInstance().getUid();
+
+        FirebaseDatabase.getInstance().getReference()
+                .child("Cart")
+                .child(uid)
+                .removeValue();
+    }
+
+
     //############################### Login ############################//
     public void startLogin(String email, String password) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
@@ -849,6 +866,8 @@ public class NetworkDataHelper {
     }
 
     public void fetchCurrentUserDetails(String uid) {
+        if (uid == null) return;
+        
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference()
                 .child("User").child(uid);
 
@@ -1643,4 +1662,5 @@ public class NetworkDataHelper {
         enProductItemForEdit.setValue(null);
         productItem.setValue(null);
     }
+
 }

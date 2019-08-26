@@ -45,6 +45,7 @@ import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUN
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS;
 import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_ADDRESS_ITEM;
 import static online.lahloba.www.lahloba.utils.Constants.START_DELETE_ADDRESS;
+import static online.lahloba.www.lahloba.utils.Constants.START_DELETE_CART;
 import static online.lahloba.www.lahloba.utils.Constants.START_EDIT_ADDRESS;
 import static online.lahloba.www.lahloba.utils.Constants.START_EDIT_PRODUCT;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_ADDRESSES;
@@ -137,6 +138,8 @@ public class LahlobaMainService extends IntentService {
             networkDataHelper.startFetchCartItem(userId);
         }else if(intent.getAction().equals(RESET_CART_ITEM)){
             networkDataHelper.resetFirebaseCart();
+        }else if(intent.getAction().equals(START_DELETE_CART)){
+            networkDataHelper.deleteAllFromCart();
         }
 
         /**

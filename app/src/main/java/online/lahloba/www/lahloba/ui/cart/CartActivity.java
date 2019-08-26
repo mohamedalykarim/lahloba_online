@@ -161,13 +161,13 @@ implements
                                     return;
                                 }
 
-                                  /*
+                                  /**
                                    * address selected then choose shipping method
                                    */
 
                                 if (((CartFragment)getSupportFragmentManager().getFragments().get(0))
                                         .getmViewModel().cartVMHelper.getShippingMethodSelected() == null){
-                                    /*
+                                    /**
                                      * Shipping method not set
                                      */
 
@@ -240,6 +240,7 @@ implements
                     .cartVMHelper.setShippingMethodSelected(CartVMHelper.FREE_SHIPPING);
             shippingMethodBottomSheet.dismiss();
         }else if (id == R.id.hyperLocalShippingBtn3){
+
             ((CartFragment)getSupportFragmentManager().getFragments().get(0))
                     .getmViewModel().cartVMHelper.setShippingMethodSelected(CartVMHelper.HYPERLOCAL_SHIPPING);
 

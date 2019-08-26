@@ -101,13 +101,17 @@ public class AppRepository {
         database.cartDao().deleteAllCount0();
     }
 
-    public void deleteAllFromCart() {
+    public void deleteAllFromInternalCart() {
         database.cartDao().deleteAll();
     }
 
 
     public void startResetFirebaseCart() {
         networkDataHelper.startResetFirebaseCart();
+    }
+
+    public void startDeleteAllFromCart() {
+        networkDataHelper.startDeleteAllFromCart();
     }
 
 
@@ -237,7 +241,6 @@ public class AppRepository {
     }
 
     public LiveData<List<MarketPlace>> getMarketPlacesFromInternal(List<String> ids) {
-
         return database.marketPlaceDao().getSpecificMarketPlaces(ids);
     }
 

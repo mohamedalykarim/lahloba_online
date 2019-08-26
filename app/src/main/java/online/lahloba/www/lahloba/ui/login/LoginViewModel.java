@@ -59,7 +59,7 @@ public class LoginViewModel extends ViewModel {
         Injector.getExecuter().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                appRepository.deleteAllFromCart();
+                appRepository.deleteAllFromInternalCart();
             }
         });
 
