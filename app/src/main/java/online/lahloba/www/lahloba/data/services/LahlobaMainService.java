@@ -50,11 +50,12 @@ import static online.lahloba.www.lahloba.utils.Constants.START_EDIT_ADDRESS;
 import static online.lahloba.www.lahloba.utils.Constants.START_EDIT_PRODUCT;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_ADDRESSES;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_BANNER;
+import static online.lahloba.www.lahloba.utils.Constants.START_GET_CITIES;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_ORDERS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_USER_DETAILS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_DEFAULT_ADDRESS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_FAVORITES;
-import static online.lahloba.www.lahloba.utils.Constants.START_GET_GOVERNORATES;
+import static online.lahloba.www.lahloba.utils.Constants.START_GET_GOVERNORATE;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_MARKETPLACE;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_ORDER;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_PRODUCT;
@@ -190,8 +191,10 @@ public class LahlobaMainService extends IntentService {
 
 
 
-        else if(intent.getAction().equals(START_GET_GOVERNORATES)){
-            networkDataHelper.getGovernoratesFromFirebase();
+        else if(intent.getAction().equals(START_GET_GOVERNORATE)){
+            networkDataHelper.getGovernorateFromFirebase();
+        }else if(intent.getAction().equals(START_GET_CITIES)){
+            networkDataHelper.getCitiesFromFirebase();
         }
 
 

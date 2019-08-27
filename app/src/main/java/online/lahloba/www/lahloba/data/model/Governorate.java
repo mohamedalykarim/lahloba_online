@@ -4,9 +4,9 @@ import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 
 import java.util.List;
 
-public class Country extends ExpandableGroup<Governerate> {
+public class Governorate extends ExpandableGroup<CityItem> {
 
-    public Country(String title, List<Governerate> items) {
+    public Governorate(String title, List<CityItem> items) {
         super(title, items);
     }
 }

@@ -1,4 +1,4 @@
-package online.lahloba.www.lahloba.ui.governerate;
+package online.lahloba.www.lahloba.ui.city;
 
 import android.Manifest;
 import androidx.lifecycle.ViewModelProviders;
@@ -23,51 +23,52 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.firebase.database.DataSnapshot;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
-import online.lahloba.www.lahloba.data.model.Country;
-import online.lahloba.www.lahloba.data.model.Governerate;
-import online.lahloba.www.lahloba.databinding.FragmentGovernerateBinding;
-import online.lahloba.www.lahloba.ui.adapters.GovernerateAdapter;
+import online.lahloba.www.lahloba.data.model.CityItem;
+import online.lahloba.www.lahloba.data.model.Governorate;
+import online.lahloba.www.lahloba.data.model.GovernorateItem;
+import online.lahloba.www.lahloba.databinding.FragmentCityBinding;
+import online.lahloba.www.lahloba.ui.adapters.CityAdapter;
 import online.lahloba.www.lahloba.utils.Injector;
 import online.lahloba.www.lahloba.utils.SharedPreferencesManager;
 
 
-public class GovernerateFragment extends Fragment implements GovernerateAdapter.OnChildClicked , LocationListener {
+public class CityFragment extends Fragment implements CityAdapter.OnChildClicked , LocationListener {
     private static final int ACCESS_FINE_LOCATION_REQUEST_CODE = 1;
 
-    private GovernerateViewModel mViewModel;
-    RecyclerView governorateRV;
-    FragmentGovernerateBinding binding;
+    private CityViewModel mViewModel;
+    RecyclerView cityRV;
+    FragmentCityBinding binding;
     LocationManager mLocationManager;
     Location location;
+    private List<GovernorateItem> governorates;
 
-    public static GovernerateFragment newInstance() {
-        return new GovernerateFragment();
+    public static CityFragment newInstance() {
+        return new CityFragment();
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        binding = FragmentGovernerateBinding.inflate(inflater,container, false);
+        binding = FragmentCityBinding.inflate(inflater,container, false);
 
         ViewModelProviderFactory factory = Injector.getVMFactory(getContext());
-        mViewModel = ViewModelProviders.of(this, factory).get(GovernerateViewModel.class);
+        mViewModel = ViewModelProviders.of(this, factory).get(CityViewModel.class);
 
-        mViewModel.startGetGovernorates();
+        mViewModel.startGetGovernorate();
+        mViewModel.startGetCities();
 
-        governorateRV = binding.governorateRV;
-        governorateRV.setLayoutManager(new LinearLayoutManager(getContext()));
+        cityRV = binding.cityRV;
+        cityRV.setLayoutManager(new LinearLayoutManager(getContext()));
 
 
-        List<Country> countries = new ArrayList<>();
+        List<Governorate> governorateArrayList = new ArrayList<>();
 
         if (null == SharedPreferencesManager.getCurrentLocationAddress(getContext()) || SharedPreferencesManager.getCurrentLocationAddress(getContext()).equals("")){
             binding.currentLocationTv.setVisibility(View.INVISIBLE);
@@ -75,37 +76,47 @@ public class GovernerateFragment extends Fragment implements GovernerateAdapter.
             binding.currentLocationTv.setText(SharedPreferencesManager.getCurrentLocationAddress(getContext()));
         }
 
-        mViewModel.getGovernorates().observe(this,governorates->{
-            countries.clear();
+        mViewModel.getGovernorates().observe(this, governorateItems -> {
+            if (governorateItems == null) return;
+            this.governorates = governorateItems;
+        });
 
-            for (DataSnapshot child: governorates.getChildren()) {
-                List<Governerate> egyptGovernorate = new ArrayList<>();
+        mViewModel.getCities().observe(this,cities->{
+            if (cities== null)return;
+            if (governorates == null)return;
+            governorateArrayList.clear();
 
-                String name = child.child("name").getValue().toString();
-                DataSnapshot governorate = child.child("governorate");
+            for (GovernorateItem governorateItem :governorates){
+                ArrayList<CityItem> filteredCities = new ArrayList<>();
 
-
-                for (DataSnapshot governorateChild : governorate.getChildren()) {
-                    egyptGovernorate.add(governorateChild.getValue(Governerate.class));
+                for (CityItem cityItem : cities){
+                    if (cityItem.getParent().equals(governorateItem.getId())){
+                        filteredCities.add(cityItem);
+                    }
                 }
 
-                Country country = new Country(name, egyptGovernorate);
-                countries.add(country);
+
+                Governorate governorate = new Governorate(governorateItem.getName(), filteredCities);
+                governorateArrayList.add(governorate);
 
 
+
+                CityAdapter cityAdapter = new CityAdapter(governorateArrayList, this);
+                cityRV.setAdapter(cityAdapter);
             }
 
-            GovernerateAdapter governerateAdapter = new GovernerateAdapter(countries, this);
-            governorateRV.setAdapter(governerateAdapter);
+
 
         });
+
+
 
         binding.getLocationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 if(mLocationManager != null)
-                mLocationManager.removeUpdates(GovernerateFragment.this);
+                mLocationManager.removeUpdates(CityFragment.this);
 
 
                 mLocationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);

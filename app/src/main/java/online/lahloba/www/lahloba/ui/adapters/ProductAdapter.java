@@ -184,11 +184,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             }else {
                 Injector.provideRepository(context).getSpecificCartItem(item.getId())
                 .observe((LifecycleOwner) context, cartItem -> {
-                    if (cartItem!= null){
-                        productItemList.get(i).setCount(cartItem.getCount());
-                    }else {
-                        productItemList.get(i).setCount(0);
-                    }
+                    if (cartItem == null) return;
+                    productItemList.get(i).setCount(cartItem.getCount());
                 });
             }
 

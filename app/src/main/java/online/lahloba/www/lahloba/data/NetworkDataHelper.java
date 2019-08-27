@@ -39,6 +39,8 @@ import java.util.List;
 import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.BannerItem;
 import online.lahloba.www.lahloba.data.model.CartItem;
+import online.lahloba.www.lahloba.data.model.CityItem;
+import online.lahloba.www.lahloba.data.model.GovernorateItem;
 import online.lahloba.www.lahloba.data.model.MainMenuItem;
 import online.lahloba.www.lahloba.data.model.MarketPlace;
 import online.lahloba.www.lahloba.data.model.OrderItem;
@@ -71,10 +73,10 @@ import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRES
 import static online.lahloba.www.lahloba.utils.Constants.START_DELETE_ADDRESS;
 import static online.lahloba.www.lahloba.utils.Constants.START_EDIT_ADDRESS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_ADDRESSES;
+import static online.lahloba.www.lahloba.utils.Constants.START_GET_CITIES;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_ORDERS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_USER_DETAILS;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_DEFAULT_ADDRESS;
-import static online.lahloba.www.lahloba.utils.Constants.START_GET_GOVERNORATES;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_MARKETPLACE;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_ORDER;
 import static online.lahloba.www.lahloba.utils.Constants.START_GET_USER_FOR_ORDER;
@@ -102,7 +104,8 @@ public class NetworkDataHelper {
     private MutableLiveData<Boolean> isAddressAdded;
     private MutableLiveData<UserItem> userDetails;
     private MutableLiveData<AddressItem> defaultAddress;
-    private MutableLiveData<DataSnapshot> governorates;
+    private MutableLiveData<List<CityItem>> cities;
+    private MutableLiveData<List<GovernorateItem>> governorates;
     private MutableLiveData<List<MarketPlace>> marketPlaces;
     private MutableLiveData<MarketPlace> marketPlace;
     private MutableLiveData<Boolean> isOrderAdded;
@@ -130,6 +133,7 @@ public class NetworkDataHelper {
         productsItems = new MutableLiveData<>();
         addressItems = new MutableLiveData<>();
         cartItems = new MutableLiveData<>();
+        cities = new MutableLiveData<>();
         governorates = new MutableLiveData<>();
         marketPlaces = new MutableLiveData<>();
         marketPlace = new MutableLiveData<>();
@@ -920,8 +924,9 @@ public class NetworkDataHelper {
                             userItem.setLastName(secondname);
                             userItem.setMobile(phone);
                             userItem.setSeller(false);
-                            userItem.setSellerId("");
                             userItem.setStatus(true);
+                            userItem.setDelivery(false);
+                            userItem.setDeliverySupervisor(false);
 
                             mDatabase.child("User").child(uid).setValue(userItem)
                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -1201,22 +1206,64 @@ public class NetworkDataHelper {
         return isAddressEdited;
     }
 
-    //############################### Governorates ############################//
-    public void startGetGovernorates() {
+    //############################### Cities ############################//
+    public void startGetGovernorate() {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
-        intent.setAction(START_GET_GOVERNORATES);
+        intent.setAction(Constants.START_GET_GOVERNORATE);
         mContext.startService(intent);
+
     }
 
-    public void getGovernoratesFromFirebase() {
+    public void getGovernorateFromFirebase() {
         String language = LocalUtils.getLangauge();
 
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("Governorate").child(language).addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.child("Governorate").child(language).child("Egypt")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.hasChildren()){
+                            List<GovernorateItem> governorateItems = new ArrayList<>();
+                            for(DataSnapshot child : dataSnapshot.getChildren()){
+                                governorateItems.add(child.getValue(GovernorateItem.class));
+                            }
+
+                            governorates.setValue(governorateItems);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    public MutableLiveData<List<GovernorateItem>> getGovernorates() {
+        return governorates;
+    }
+
+    public void startGetCities() {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(START_GET_CITIES);
+        mContext.startService(intent);
+    }
+
+    public void getCitiesFromFirebase() {
+        String language = LocalUtils.getLangauge();
+
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.child("City").child(language)
+        .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChildren()){
-                    governorates.setValue(dataSnapshot);
+                    List<CityItem> cityItems = new ArrayList<>();
+                    for(DataSnapshot child : dataSnapshot.getChildren()){
+                        cityItems.add(child.getValue(CityItem.class));
+                    }
+
+                    cities.setValue(cityItems);
                 }
             }
 
@@ -1227,8 +1274,8 @@ public class NetworkDataHelper {
         });
     }
 
-    public MutableLiveData<DataSnapshot> getGovernorates() {
-        return governorates;
+    public MutableLiveData<List<CityItem>> getCities() {
+        return cities;
     }
 
 
@@ -1662,5 +1709,6 @@ public class NetworkDataHelper {
         enProductItemForEdit.setValue(null);
         productItem.setValue(null);
     }
+
 
 }

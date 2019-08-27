@@ -12,7 +12,7 @@ import online.lahloba.www.lahloba.ui.address.AddAddressViewModel;
 import online.lahloba.www.lahloba.ui.address.AddressViewModel;
 import online.lahloba.www.lahloba.ui.cart.CartViewModel;
 import online.lahloba.www.lahloba.ui.favorites.FavoritesViewModel;
-import online.lahloba.www.lahloba.ui.governerate.GovernerateViewModel;
+import online.lahloba.www.lahloba.ui.city.CityViewModel;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
 import online.lahloba.www.lahloba.ui.main.MainViewModel;
 import online.lahloba.www.lahloba.ui.news.NewsViewModel;
@@ -20,7 +20,6 @@ import online.lahloba.www.lahloba.ui.order.OrderDetailsViewModel;
 import online.lahloba.www.lahloba.ui.order.OrdersViewModel;
 import online.lahloba.www.lahloba.ui.products.ProductsViewModel;
 import online.lahloba.www.lahloba.ui.seller.SellerAddProductViewModel;
-import online.lahloba.www.lahloba.ui.seller.SellerEditProductFragment;
 import online.lahloba.www.lahloba.ui.seller.SellerEditProductViewModel;
 import online.lahloba.www.lahloba.ui.seller.SellerProductsCategoryViewModel;
 import online.lahloba.www.lahloba.ui.seller.SellerOrdersViewModel;
@@ -59,8 +58,8 @@ public class ViewModelProviderFactory extends ViewModelProvider.NewInstanceFacto
             return (T) new AddressViewModel(appRepository);
         }else if(modelClass.isAssignableFrom(AddAddressViewModel.class)){
             return (T) new AddAddressViewModel(appRepository);
-        }else if(modelClass.isAssignableFrom(GovernerateViewModel.class)){
-            return (T) new GovernerateViewModel(appRepository);
+        }else if(modelClass.isAssignableFrom(CityViewModel.class)){
+            return (T) new CityViewModel(appRepository);
         }else if(modelClass.isAssignableFrom(OrdersViewModel.class)){
             return (T) new OrdersViewModel(appRepository);
         }else if(modelClass.isAssignableFrom(FavoritesViewModel.class)){

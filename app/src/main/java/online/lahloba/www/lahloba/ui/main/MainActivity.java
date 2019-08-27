@@ -20,7 +20,7 @@ import online.lahloba.www.lahloba.databinding.ActivityMainBinding;
 import online.lahloba.www.lahloba.ui.favorites.FavoritesFragment;
 import online.lahloba.www.lahloba.ui.fragments.AccountFragment;
 import online.lahloba.www.lahloba.ui.login.LoginFragment;
-import online.lahloba.www.lahloba.ui.governerate.GovernerateActivity;
+import online.lahloba.www.lahloba.ui.city.CityActivity;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
 import online.lahloba.www.lahloba.utils.Injector;
 
@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity  {
         int id = item.getItemId();
         switch (id) {
             case android.R.id.home:
-                Intent intent = new Intent(this, GovernerateActivity.class);
+                Intent intent = new Intent(this, CityActivity.class);
                 startActivity(intent);
 
 

@@ -12,6 +12,8 @@ import online.lahloba.www.lahloba.data.database.LahlobaDatabase;
 import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.BannerItem;
 import online.lahloba.www.lahloba.data.model.CartItem;
+import online.lahloba.www.lahloba.data.model.CityItem;
+import online.lahloba.www.lahloba.data.model.GovernorateItem;
 import online.lahloba.www.lahloba.data.model.MainMenuItem;
 import online.lahloba.www.lahloba.data.model.MarketPlace;
 import online.lahloba.www.lahloba.data.model.OrderItem;
@@ -206,13 +208,23 @@ public class AppRepository {
         networkDataHelper.startDeleteAddress(id);
     }
 
-    //############################### Governorates ############################//
-    public void startGetGovernorates() {
-        networkDataHelper.startGetGovernorates();
+    //############################### GoverCities ############################//
+
+    public void startGetGovernorate() {
+        networkDataHelper.startGetGovernorate();
     }
 
-    public MutableLiveData<DataSnapshot> getGovernorates() {
+    public MutableLiveData<List<GovernorateItem>> getGovernorates() {
         return networkDataHelper.getGovernorates();
+    }
+
+    
+    public void startGetCities() {
+        networkDataHelper.startGetCities();
+    }
+
+    public MutableLiveData<List<CityItem>> getCities() {
+        return networkDataHelper.getCities();
     }
 
     //############################### Market Place ############################//
@@ -333,7 +345,6 @@ public class AppRepository {
     public void startReorder(OrderItem orderItem) {
         networkDataHelper.startReorder(orderItem);
     }
-
 
 
 }

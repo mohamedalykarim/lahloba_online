@@ -131,7 +131,7 @@ public class AddAddressFragment extends Fragment implements LocationListener {
         }
 
         if (binding.countryET.getText().length() < 1){
-            binding.countryET.setError("Please Insert Country Name");
+            binding.countryET.setError("Please Insert Governorate Name");
             error++;
         }
 

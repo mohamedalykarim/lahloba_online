@@ -460,8 +460,9 @@ implements
                             userItem.setLastName(familyName);
                             userItem.setId(FirebaseAuth.getInstance().getUid());
                             userItem.setSeller(false);
-                            userItem.setSellerId("");
                             userItem.setStatus(true);
+                            userItem.setDelivery(false);
+                            userItem.setDeliverySupervisor(false);
 
                             DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
                             mRef.child("User").child(FirebaseAuth.getInstance().getUid())

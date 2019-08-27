@@ -2,16 +2,16 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.governerate.GovernerateFragment">
+    tools:context=".ui.cityItem.GovernerateFragment">
     <data></data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/governerate"
+        android:id="@+id/cityItem"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/governorateRV"
+            android:id="@+id/cityRV"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="8dp"

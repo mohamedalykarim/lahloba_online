@@ -34,18 +34,55 @@ public class LoginFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+
+        ViewModelProviderFactory loginFactory = Injector.getVMFactory(this.getContext());
+        mViewModel = ViewModelProviders.of(this,loginFactory).get(LoginViewModel.class);
+
+
+
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_login, container, false);
         binding.setLifecycleOwner(this);
         phoneET = binding.phoneET;
         passwordET = binding.passwordET;
 
-        createAccount();
+
+        binding.newAccountTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), SignupActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
         login();
+
 
 
 
         View view = binding.getRoot();
         return view;
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        mViewModel.getIsLogged().observe(this, isLogged->{
+            if(isLogged == null) return;
+
+            if (isLogged){
+                mViewModel.deleteLocalCartItems();
+                Toast.makeText(this.getContext(), "Welcome Back", Toast.LENGTH_SHORT).show();
+                binding.loginProgressBar.setVisibility(View.INVISIBLE);
+
+                if (getActivity() instanceof LoginActivity){
+                    getActivity().finish();
+                }
+
+            }
+        });
     }
 
     private void login() {
@@ -95,35 +132,6 @@ public class LoginFragment extends Fragment {
 
 
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        ViewModelProviderFactory loginFactory = Injector.getVMFactory(this.getContext());
-        mViewModel = ViewModelProviders.of(this,loginFactory).get(LoginViewModel.class);
-
-        mViewModel.getIsLogged().observe(this, isLogged->{
-            if (isLogged){
-                mViewModel.deleteLocalCartItems();
-                Toast.makeText(this.getContext(), "Welcome Back", Toast.LENGTH_SHORT).show();
-                binding.loginProgressBar.setVisibility(View.INVISIBLE);
-
-                if (getActivity() instanceof LoginActivity){
-                    getActivity().finish();
-                }
-
-            }
-        });
-    }
-
-    public void createAccount(){
-        binding.newAccountTV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), SignupActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
 
 
 

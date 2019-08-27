@@ -12,17 +12,17 @@ import com.thoughtbot.expandablerecyclerview.viewholders.GroupViewHolder;
 
 import java.util.List;
 
-import online.lahloba.www.lahloba.data.model.Governerate;
+import online.lahloba.www.lahloba.data.model.CityItem;
+import online.lahloba.www.lahloba.databinding.CityItemBinding;
 import online.lahloba.www.lahloba.databinding.CountryItemBinding;
-import online.lahloba.www.lahloba.databinding.GovernerateItemBinding;
 import online.lahloba.www.lahloba.utils.SharedPreferencesManager;
 
-public class GovernerateAdapter extends
-        ExpandableRecyclerViewAdapter<GovernerateAdapter.CountryViewHolder, GovernerateAdapter.GovernerateViewHolder> {
+public class CityAdapter extends
+        ExpandableRecyclerViewAdapter<CityAdapter.CountryViewHolder, CityAdapter.CityViewHolder> {
     OnChildClicked onChildClicked;
 
 
-    public GovernerateAdapter(List<? extends ExpandableGroup> groups, OnChildClicked onChildClicked) {
+    public CityAdapter(List<? extends ExpandableGroup> groups, OnChildClicked onChildClicked) {
         super(groups);
         this.onChildClicked = onChildClicked;
     }
@@ -35,31 +35,29 @@ public class GovernerateAdapter extends
     }
 
     @Override
-    public GovernerateViewHolder onCreateChildViewHolder(ViewGroup parent, int viewType) {
-        GovernerateItemBinding binding = GovernerateItemBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false);
-        return new GovernerateViewHolder(binding);
+    public CityViewHolder onCreateChildViewHolder(ViewGroup parent, int viewType) {
+        CityItemBinding binding = CityItemBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false);
+        return new CityViewHolder(binding);
     }
 
     @Override
-    public void onBindChildViewHolder(GovernerateViewHolder holder, int flatPosition, ExpandableGroup group, int childIndex) {
-        Governerate governerate = (Governerate) group.getItems().get(childIndex);
+    public void onBindChildViewHolder(CityViewHolder holder, int flatPosition, ExpandableGroup group, int childIndex) {
+        CityItem cityItem = (CityItem) group.getItems().get(childIndex);
 
-        holder.binding.textView30.setText(governerate.getName());
+        holder.binding.textView30.setText(cityItem.getName());
 
 
         holder.binding.getRoot().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
-                SharedPreferencesManager.setCurrentLocationLat(holder.binding.getRoot().getContext(), String.valueOf(governerate.getLat()));
-                SharedPreferencesManager.setCurrentLocationLan(holder.binding.getRoot().getContext(), String.valueOf(governerate.getLan()));
-                SharedPreferencesManager.setCurrentLocationAddress(holder.binding.getRoot().getContext(), governerate.getName());
+                SharedPreferencesManager.setCurrentLocationLat(holder.binding.getRoot().getContext(), String.valueOf(cityItem.getLat()));
+                SharedPreferencesManager.setCurrentLocationLan(holder.binding.getRoot().getContext(), String.valueOf(cityItem.getLan()));
+                SharedPreferencesManager.setCurrentLocationAddress(holder.binding.getRoot().getContext(), cityItem.getName());
 
                 Toast.makeText(holder.binding.getRoot().getContext(),
-                        governerate.getName() + " "+ "governorate has choosen", Toast.LENGTH_SHORT).show();
+                        cityItem.getName() + " "+ "City has choosen", Toast.LENGTH_SHORT).show();
 
-                onChildClicked.onChildClicked(governerate.getName());
+                onChildClicked.onChildClicked(cityItem.getName());
 
             }
         });
@@ -79,13 +77,12 @@ public class GovernerateAdapter extends
         }
     }
 
-    class GovernerateViewHolder extends ChildViewHolder {
-        GovernerateItemBinding binding;
-        public GovernerateViewHolder(GovernerateItemBinding binding) {
+    class CityViewHolder extends ChildViewHolder {
+        CityItemBinding binding;
+        public CityViewHolder(CityItemBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
-
     }
 
 

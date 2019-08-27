@@ -41,7 +41,7 @@ public class Constants {
     public static final String START_DELETE_ADDRESS = "start_delete_address";
 
 
-    public static final String START_GET_GOVERNORATES = "start_get_governorates";
+    public static final String START_GET_CITIES = "start_get_cities";
     public static final String START_GET_MARKETPLACE = "start_get_marketplace";
     public static final String START_NEW_ORDER = "start_new_order";
     public static final String START_GET_CURRENT_ORDERS = "start_get_current_orders";
@@ -96,4 +96,5 @@ public class Constants {
     public static final String START_GET_USER_FOR_ORDER = "start_get_user_for_order";
     public static final String START_GET_ORDER = "start_get_order";
     public static final String START_DELETE_CART = "start_delete_cart";
+    public static final String START_GET_GOVERNORATE = "start_get_governorate";
 }

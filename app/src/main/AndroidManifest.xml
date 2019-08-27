@@ -9,13 +9,14 @@
 
     <application
         android:allowBackup="true"
+        android:hardwareAccelerated="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:hardwareAccelerated="false"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.seller.SellerEditProductActivity"></activity>
+        <activity android:name=".ui.delivery_supervisor.DeliverySupervisorMainActivity"></activity>
+        <activity android:name=".ui.seller.SellerEditProductActivity" />
         <activity android:name=".ui.seller.SellerAddProductActivity" />
         <activity android:name=".ui.seller.SellerProductsActivity" />
         <activity android:name=".ui.seller.SellerOrdersActivity" />
@@ -24,7 +25,7 @@
         <activity android:name=".ui.news.NewsActivity" />
         <activity android:name=".ui.favorites.FavoritesActivity" />
         <activity android:name=".ui.order.OrdersActivity" />
-        <activity android:name=".ui.governerate.GovernerateActivity" />
+        <activity android:name=".ui.city.CityActivity" />
         <activity android:name=".ui.address.AddAddressActivity" />
         <activity android:name=".ui.address.AddressActivity" />
         <activity android:name=".ui.signup.SignupActivity" />
