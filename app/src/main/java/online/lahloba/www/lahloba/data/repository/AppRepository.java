@@ -210,7 +210,7 @@ public class AppRepository {
 
     //############################### GoverCities ############################//
 
-    public void startGetGovernorate() {
+    public void startGetGovernorates() {
         networkDataHelper.startGetGovernorate();
     }
 
@@ -345,6 +345,7 @@ public class AppRepository {
     public void startReorder(OrderItem orderItem) {
         networkDataHelper.startReorder(orderItem);
     }
+
 
 
 }

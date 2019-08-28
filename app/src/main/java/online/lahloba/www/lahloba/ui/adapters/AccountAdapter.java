@@ -18,6 +18,8 @@ import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.data.model.MainMenuItem;
 import online.lahloba.www.lahloba.ui.address.AddressActivity;
 import online.lahloba.www.lahloba.ui.cart.CartActivity;
+import online.lahloba.www.lahloba.ui.delivery.DeliveryMainActivity;
+import online.lahloba.www.lahloba.ui.delivery_supervisor.DeliverySupervisorMainActivity;
 import online.lahloba.www.lahloba.ui.favorites.FavoritesActivity;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
 import online.lahloba.www.lahloba.ui.order.OrdersActivity;
@@ -52,7 +54,7 @@ public class AccountAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.row_account_grid, null, false);
+        View view = layoutInflater.inflate(R.layout.row_account_grid, parent, false);
         ImageView imageView = view.findViewById(R.id.imageView2);
         TextView titleTV = view.findViewById(R.id.titleTV);
         titleTV.setText(accountItemList.get(position).getTitle());
@@ -84,6 +86,12 @@ public class AccountAdapter extends BaseAdapter {
                     context.startActivity(intent);
                 }else if (accountItemList.get(position).getTitle().equals(context.getResources().getString(R.string.seller_Products))){
                     Intent intent = new Intent(context, SellerProductsCategoryActivity.class);
+                    context.startActivity(intent);
+                }else if (accountItemList.get(position).getTitle().equals(context.getResources().getString(R.string.delivery_supervisor))){
+                    Intent intent = new Intent(context, DeliverySupervisorMainActivity.class);
+                    context.startActivity(intent);
+                }else if (accountItemList.get(position).getTitle().equals(context.getResources().getString(R.string.delivery))){
+                    Intent intent = new Intent(context, DeliveryMainActivity.class);
                     context.startActivity(intent);
                 }
             }

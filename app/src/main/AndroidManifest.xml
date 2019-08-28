@@ -15,7 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.delivery_supervisor.DeliverySupervisorMainActivity"></activity>
+        <activity android:name=".ui.delivery.DeliveryMainActivity"></activity>
+        <activity android:name=".ui.delivery_supervisor.DeliverySupervisorMainActivity" />
         <activity android:name=".ui.seller.SellerEditProductActivity" />
         <activity android:name=".ui.seller.SellerAddProductActivity" />
         <activity android:name=".ui.seller.SellerProductsActivity" />

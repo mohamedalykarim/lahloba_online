@@ -11,13 +11,13 @@ import androidx.annotation.Nullable;
 import java.util.List;
 
 
-public class SellerAddProductSpinnerAdapter extends ArrayAdapter<String> {
+public class CustomSpinnerAdapter extends ArrayAdapter<String> {
 
-    public SellerAddProductSpinnerAdapter(@NonNull Context context, int resource, @NonNull List<String> objects) {
+    public CustomSpinnerAdapter(@NonNull Context context, int resource, @NonNull List<String> objects) {
         super(context, resource, objects);
     }
 
-    public SellerAddProductSpinnerAdapter(@NonNull Context context, int resource, @NonNull String[] objects) {
+    public CustomSpinnerAdapter(@NonNull Context context, int resource, @NonNull String[] objects) {
         super(context, resource, objects);
     }
 

@@ -11,6 +11,7 @@ import online.lahloba.www.lahloba.data.repository.SubMenuRepository;
 import online.lahloba.www.lahloba.ui.address.AddAddressViewModel;
 import online.lahloba.www.lahloba.ui.address.AddressViewModel;
 import online.lahloba.www.lahloba.ui.cart.CartViewModel;
+import online.lahloba.www.lahloba.ui.delivery.DeliveryMainViewModel;
 import online.lahloba.www.lahloba.ui.favorites.FavoritesViewModel;
 import online.lahloba.www.lahloba.ui.city.CityViewModel;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
@@ -78,6 +79,8 @@ public class ViewModelProviderFactory extends ViewModelProvider.NewInstanceFacto
             return (T) new SellerAddProductViewModel(sellerRepository);
         }else if(modelClass.isAssignableFrom(SellerEditProductViewModel.class)){
             return (T) new SellerEditProductViewModel(sellerRepository);
+        }else if(modelClass.isAssignableFrom(DeliveryMainViewModel.class)){
+            return (T) new DeliveryMainViewModel(appRepository);
         }
 
 

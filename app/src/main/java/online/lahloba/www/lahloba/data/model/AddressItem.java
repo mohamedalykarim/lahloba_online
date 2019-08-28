@@ -12,6 +12,9 @@ public class AddressItem extends BaseObservable implements Parcelable {
     private String name;
     private String country;
     private String city;
+    private String cityId;
+    private String governorate;
+    private String governorateId;
     private String zone;
     private String street;
     private String building;
@@ -30,6 +33,9 @@ public class AddressItem extends BaseObservable implements Parcelable {
         name = in.readString();
         country = in.readString();
         city = in.readString();
+        cityId = in.readString();
+        governorate = in.readString();
+        governorateId = in.readString();
         zone = in.readString();
         street = in.readString();
         building = in.readString();
@@ -39,6 +45,7 @@ public class AddressItem extends BaseObservable implements Parcelable {
         flatNumber = in.readInt();
         isDefaultAddress = in.readByte() != 0;
         address = in.readString();
+
     }
 
     @Override
@@ -47,6 +54,9 @@ public class AddressItem extends BaseObservable implements Parcelable {
         dest.writeString(name);
         dest.writeString(country);
         dest.writeString(city);
+        dest.writeString(cityId);
+        dest.writeString(governorate);
+        dest.writeString(governorateId);
         dest.writeString(zone);
         dest.writeString(street);
         dest.writeString(building);
@@ -173,6 +183,7 @@ public class AddressItem extends BaseObservable implements Parcelable {
     }
 
 
+    @Bindable
     public void setDefaultAddress(boolean aDefault) {
         isDefaultAddress = aDefault;
         notifyPropertyChanged(BR.defaultAddress);
@@ -183,5 +194,27 @@ public class AddressItem extends BaseObservable implements Parcelable {
     }
 
 
+    public String getCityId() {
+        return cityId;
+    }
 
+    public void setCityId(String cityId) {
+        this.cityId = cityId;
+    }
+
+    public String getGovernorate() {
+        return governorate;
+    }
+
+    public void setGovernorate(String governorate) {
+        this.governorate = governorate;
+    }
+
+    public String getGovernorateId() {
+        return governorateId;
+    }
+
+    public void setGovernorateId(String governorateId) {
+        this.governorateId = governorateId;
+    }
 }

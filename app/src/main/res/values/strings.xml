@@ -35,5 +35,7 @@
     <string name="cart">Cart</string>
     <string name="seller_orders">Seller Orders</string>
     <string name="seller_Products">Products</string>
+    <string name="delivery_supervisor">Delivery supervisor</string>
+    <string name="delivery">Delivery</string>
 
 </resources>

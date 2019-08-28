@@ -133,10 +133,6 @@ public class OrderDetailsFragment extends Fragment {
 
         loginViewModel.getCurrentUserDetails().observe(this, userItem -> {
             if (userItem == null) return;
-            if (userItem.isSeller()){
-
-            }
-
             loginViewModel.loginVMHelper.setCurrentUser(userItem);
 
         });

@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -33,17 +34,20 @@ import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.databinding.FragmentAddAddressBinding;
+import online.lahloba.www.lahloba.ui.adapters.CustomSpinnerAdapter;
 import online.lahloba.www.lahloba.utils.Injector;
 
 public class AddAddressFragment extends Fragment implements LocationListener {
     private static final int ACCESS_FINE_LOCATION_REQUEST_CODE = 1;
 
 
-    private AddAddressViewModel mViewModel;
+    private AddAddressViewModel addAddressViewModel;
     FragmentAddAddressBinding binding;
     private int error = 0;
     private AddressViewModel addressViewModel;
     private AddressItem defaultAddress;
+
+    List<String> citiesIds, governoratesIds;
 
     double lat, lon;
     String locationAddress;
@@ -66,15 +70,20 @@ public class AddAddressFragment extends Fragment implements LocationListener {
                 false
         );
 
-        ViewModelProviderFactory factory = Injector.getVMFactory(getContext());
-        mViewModel = ViewModelProviders.of(this,factory).get(AddAddressViewModel.class);
-
         ViewModelProviderFactory addressFactory = Injector.getVMFactory(getContext());
         addressViewModel = ViewModelProviders.of(this,addressFactory).get(AddressViewModel.class);
 
+        ViewModelProviderFactory factory = Injector.getVMFactory(getContext());
+        addAddressViewModel = ViewModelProviders.of(this,factory).get(AddAddressViewModel.class);
 
 
-        mViewModel.setIsAddressAddedFalse();
+        addAddressViewModel.startGetCitities();
+        addAddressViewModel.startGetGovernorates();
+
+        citiesIds = new ArrayList<>();
+        governoratesIds = new ArrayList<>();
+
+        addAddressViewModel.setIsAddressAddedFalse();
 
 
         binding.addAddressBtn.setOnClickListener(new View.OnClickListener() {
@@ -86,7 +95,9 @@ public class AddAddressFragment extends Fragment implements LocationListener {
                     addressItem.setDefaultAddress(binding.switch1.isChecked());
                     addressItem.setName(binding.nameET.getText().toString());
                     addressItem.setCountry(binding.countryET.getText().toString());
-                    addressItem.setCity(binding.cityET.getText().toString());
+                    addressItem.setCity(binding.citySpinner.getSelectedItem().toString());
+                    addressItem.setCityId(citiesIds.get(binding.citySpinner.getSelectedItemPosition()));
+                    addressItem.setGovernorate(binding.governorateSpinner.getSelectedItem().toString());
                     addressItem.setZone(binding.zoneET.getText().toString());
                     addressItem.setStreet(binding.streetET.getText().toString());
                     addressItem.setBuilding(binding.buildingET.getText().toString());
@@ -97,8 +108,7 @@ public class AddAddressFragment extends Fragment implements LocationListener {
                     addressItem.setAddress(locationAddress);
 
 
-
-                    mViewModel.startAddNewAddress(
+                    addAddressViewModel.startAddNewAddress(
                             FirebaseAuth.getInstance().getCurrentUser().getUid(),
                             addressItem
                     );
@@ -109,7 +119,7 @@ public class AddAddressFragment extends Fragment implements LocationListener {
             }
         });
 
-        mViewModel.getIsAddressAdded().observe(this, isAddressAdded->{
+        addAddressViewModel.getIsAddressAdded().observe(this, isAddressAdded->{
             if (isAddressAdded){
                 Toast.makeText(getContext(), "New Address Added Successfully", Toast.LENGTH_SHORT).show();
                 getActivity().finish();
@@ -122,6 +132,8 @@ public class AddAddressFragment extends Fragment implements LocationListener {
     }
 
 
+
+
     public void validateForm(){
         error = 0;
 
@@ -132,11 +144,6 @@ public class AddAddressFragment extends Fragment implements LocationListener {
 
         if (binding.countryET.getText().length() < 1){
             binding.countryET.setError("Please Insert Governorate Name");
-            error++;
-        }
-
-        if (binding.cityET.getText().length() < 1){
-            binding.cityET.setError("Please Insert City Name");
             error++;
         }
 
@@ -203,6 +210,43 @@ public class AddAddressFragment extends Fragment implements LocationListener {
         addressViewModel.getDefaultAddress().observe(this, defaultAddress->{
             this.defaultAddress = defaultAddress;
         });
+
+
+        addAddressViewModel.getCities().observe(this, cityItems -> {
+            if (cityItems == null)return;
+            citiesIds.clear();
+
+            ArrayList<String> citiesNames = new ArrayList<>();
+
+            for (int i = 0; i < cityItems.size(); i++)
+            {
+                citiesNames.add(cityItems.get(i).getName());
+                citiesIds.add(cityItems.get(i).getId());
+            }
+
+            CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(getContext(),android.R.layout.simple_spinner_item,citiesNames);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            binding.citySpinner.setAdapter(adapter);
+        });
+
+
+        addAddressViewModel.getGovernorates().observe(this, governorateItems -> {
+            if (governorateItems == null)return;
+            governoratesIds.clear();
+
+            ArrayList<String> governoratesNames = new ArrayList<>();
+
+            for (int i = 0; i < governorateItems.size(); i++)
+            {
+                governoratesNames.add(governorateItems.get(i).getName());
+                governoratesIds.add(governorateItems.get(i).getId());
+            }
+
+            CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(getContext(),android.R.layout.simple_spinner_item,governoratesNames);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            binding.governorateSpinner.setAdapter(adapter);
+        });
+
     }
 
 

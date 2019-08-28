@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +45,7 @@ public class AccountFragment extends Fragment {
 
         ViewModelProviderFactory loginFactory = Injector.getVMFactory(this.getContext());
         loginViewModel = ViewModelProviders.of(this,loginFactory).get(LoginViewModel.class);
+        loginViewModel.startGetUserDetails(FirebaseAuth.getInstance().getUid());
 
 
         gridView = binding.gridview;
@@ -58,6 +61,7 @@ public class AccountFragment extends Fragment {
         gridView.setAdapter(accountAdapter);
 
 
+
         View view = binding.getRoot();
         return view;
     }
@@ -67,9 +71,7 @@ public class AccountFragment extends Fragment {
         super.onResume();
 
         loginViewModel.getCurrentUserDetails().observe(this, userItem -> {
-            if (userItem == null){
-                return;
-            }
+            if (userItem == null)return;
 
             mainMenuItems.clear();
 
@@ -88,15 +90,31 @@ public class AccountFragment extends Fragment {
                 productItem.setTitle(getResources().getString(R.string.seller_Products));
 
                 mainMenuItems.add(productItem);
-
-                mainMenuItems.addAll(getDefaultItems());
-                accountAdapter.notifyDataSetChanged();
-
-            }else{
-                mainMenuItems.addAll(getDefaultItems());
-                accountAdapter.notifyDataSetChanged();
-
             }
+
+            if (userItem.isDeliverySupervisor()){
+
+                MainMenuItem productItem = new MainMenuItem();
+                Uri productsUri = Uri.parse("android.resource://online.lahloba.www.lahloba/drawable/delivery_supervisor");
+                productItem.setImage(productsUri.toString());
+                productItem.setTitle(getResources().getString(R.string.delivery_supervisor));
+
+                mainMenuItems.add(productItem);
+            }
+
+            if (userItem.isDelivery()){
+
+                MainMenuItem productItem = new MainMenuItem();
+                Uri productsUri = Uri.parse("android.resource://online.lahloba.www.lahloba/drawable/delivery");
+                productItem.setImage(productsUri.toString());
+                productItem.setTitle(getResources().getString(R.string.delivery));
+
+                mainMenuItems.add(productItem);
+            }
+
+
+            mainMenuItems.addAll(getDefaultItems());
+            accountAdapter.notifyDataSetChanged();
 
 
         });
@@ -117,12 +135,12 @@ public class AccountFragment extends Fragment {
         List<MainMenuItem> defaultItems = new ArrayList<>();
 
 
-        defaultItems.add(
-                getMenuItem(
-                        "android.resource://online.lahloba.www.lahloba/drawable/cart",
-                        getResources().getString(R.string.cart)
-                )
-        );
+//        defaultItems.add(
+//                getMenuItem(
+//                        "android.resource://online.lahloba.www.lahloba/drawable/cart",
+//                        getResources().getString(R.string.cart)
+//                )
+//        );
 
         defaultItems.add(
                 getMenuItem(

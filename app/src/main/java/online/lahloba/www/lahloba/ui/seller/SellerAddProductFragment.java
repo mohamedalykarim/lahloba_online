@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +27,7 @@ import java.util.HashMap;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.databinding.SellerAddProductFragmentBinding;
-import online.lahloba.www.lahloba.ui.adapters.SellerAddProductSpinnerAdapter;
+import online.lahloba.www.lahloba.ui.adapters.CustomSpinnerAdapter;
 import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.Injector;
 import online.lahloba.www.lahloba.utils.Utils;
@@ -202,7 +201,7 @@ public class SellerAddProductFragment extends Fragment {
             }
 
 
-            SellerAddProductSpinnerAdapter adapter = new SellerAddProductSpinnerAdapter(getContext(),android.R.layout.simple_spinner_item,marketsName);
+            CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(getContext(),android.R.layout.simple_spinner_item,marketsName);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             binding.spinner.setAdapter(adapter);
 

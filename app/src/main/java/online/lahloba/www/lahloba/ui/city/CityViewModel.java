@@ -26,10 +26,12 @@ public class CityViewModel extends ViewModel {
 
 
     public void startGetGovernorate() {
-        appRepository.startGetGovernorate();
+        appRepository.startGetGovernorates();
     }
 
     public MutableLiveData<List<GovernorateItem>> getGovernorates() {
         return appRepository.getGovernorates();
     }
+
+
 }

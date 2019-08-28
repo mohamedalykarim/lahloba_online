@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModelProviders;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -13,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,22 +22,18 @@ import com.esafirm.imagepicker.model.Image;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
-import java.nio.IntBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.databinding.SellerEditProductFragmentBinding;
-import online.lahloba.www.lahloba.ui.adapters.SellerAddProductSpinnerAdapter;
+import online.lahloba.www.lahloba.ui.adapters.CustomSpinnerAdapter;
 import online.lahloba.www.lahloba.utils.Injector;
 import online.lahloba.www.lahloba.utils.Utils;
 
@@ -154,7 +148,7 @@ public class SellerEditProductFragment extends Fragment {
             }
 
 
-            SellerAddProductSpinnerAdapter adapter = new SellerAddProductSpinnerAdapter(getContext(),android.R.layout.simple_spinner_item,marketsName);
+            CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(getContext(),android.R.layout.simple_spinner_item,marketsName);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             binding.spinner2.setAdapter(adapter);
 

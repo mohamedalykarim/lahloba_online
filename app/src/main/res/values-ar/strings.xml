@@ -31,4 +31,6 @@
     <string name="cart">سلة التسوق</string>
     <string name="seller_orders">طلبات البائع</string>
     <string name="seller_Products">المنتجات</string>
+    <string name="delivery_supervisor">مراقب الديلفري</string>
+    <string name="delivery">الديلفري</string>
 </resources>
