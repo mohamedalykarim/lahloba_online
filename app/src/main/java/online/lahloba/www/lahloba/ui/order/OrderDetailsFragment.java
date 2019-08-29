@@ -7,13 +7,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.os.Parcelable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -104,7 +101,7 @@ public class OrderDetailsFragment extends Fragment {
         binding.preparedBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mViewModel.startChangeOrderStatus(oldOrderItem.getId(), OrderStatusUtils.ORDER_STATUS_PREPARED);
+                mViewModel.startChangeOrderStatus(oldOrderItem.getId(), oldOrderItem.getCityId(), OrderStatusUtils.ORDER_STATUS_PREPARED);
 
             }
         });
@@ -112,7 +109,7 @@ public class OrderDetailsFragment extends Fragment {
         binding.cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mViewModel.startChangeOrderStatus(oldOrderItem.getId(), OrderStatusUtils.ORDER_STATUS_CANCELED);
+                mViewModel.startChangeOrderStatus(oldOrderItem.getId(), oldOrderItem.getCityId(), OrderStatusUtils.ORDER_STATUS_CANCELED);
             }
         });
 
@@ -146,8 +143,6 @@ public class OrderDetailsFragment extends Fragment {
         mViewModel.getMarketplace().observe(this, marketPlace -> {
             if (marketPlace == null) return;
 
-            Log.v("sss first : ", ""+mViewModel.helper.isThisSeller());
-
             binding.setMarketPlace(marketPlace);
 
             if ( marketPlace.getId().equals(oldOrderItem.getMarketplaceId())
@@ -161,7 +156,7 @@ public class OrderDetailsFragment extends Fragment {
                     if (mViewModel.helper.getOrderItem() == null ) return;
 
                     if (mViewModel.helper.getOrderItem().getOrderStatus() == 1){
-                        mViewModel.startChangeOrderStatus(oldOrderItem.getId(), OrderStatusUtils.ORDER_STATUS_RECIEVED);
+                        mViewModel.startChangeOrderStatus(oldOrderItem.getId(), oldOrderItem.getCityId(), OrderStatusUtils.ORDER_STATUS_RECIEVED);
                     }
 
                 }

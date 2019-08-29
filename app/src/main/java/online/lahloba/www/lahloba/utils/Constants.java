@@ -97,4 +97,7 @@ public class Constants {
     public static final String START_GET_ORDER = "start_get_order";
     public static final String START_DELETE_CART = "start_delete_cart";
     public static final String START_GET_GOVERNORATE = "start_get_governorate";
+    public static final String START_GET_DELIVERY_AREAS = "start_get_delivery_areas";
+    public static final String START_GET_ORDERS_FOR_DELIVERY_SUPERVISOR = "start_get_orders_for_delivery_supervisor";
+    public static final String CITY_ID = "city_id";
 }

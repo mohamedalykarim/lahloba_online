@@ -3,9 +3,13 @@ package online.lahloba.www.lahloba.data.model;
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverter;
 import androidx.annotation.NonNull;
+import androidx.room.TypeConverters;
+
+import com.google.firebase.database.Exclude;
 
 import online.lahloba.www.lahloba.BR;
 
@@ -20,6 +24,9 @@ public class MarketPlace extends BaseObservable {
     String governerateId;
     double lat;
     double lan;
+
+    private AddressItem addressSelected;
+
 
 
     public String getId() {
@@ -79,5 +86,14 @@ public class MarketPlace extends BaseObservable {
 
     public void setLan(double lan) {
         this.lan = lan;
+    }
+
+    @TypeConverters(AddressItem.class)
+    public AddressItem getAddressSelected() {
+        return addressSelected;
+    }
+
+    public void setAddressSelected(AddressItem addressSelected) {
+        this.addressSelected = addressSelected;
     }
 }

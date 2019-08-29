@@ -51,47 +51,16 @@ import online.lahloba.www.lahloba.data.model.room_entity.CartItemRoom;
 import online.lahloba.www.lahloba.data.services.LahlobaMainService;
 import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.LocalUtils;
+import online.lahloba.www.lahloba.utils.OrderStatusUtils;
 import online.lahloba.www.lahloba.utils.SharedPreferencesManager;
 
-import static online.lahloba.www.lahloba.utils.Constants.CHANGE_ORDER_STATUS;
-import static online.lahloba.www.lahloba.utils.Constants.EXTRA_USER_ID;
-import static online.lahloba.www.lahloba.utils.Constants.GET_CART_ITEM;
-import static online.lahloba.www.lahloba.utils.Constants.GET_MAIN_MENU_ITEMS;
-import static online.lahloba.www.lahloba.utils.Constants.GET_PRODUCTS_FOR_CATEGORY;
-import static online.lahloba.www.lahloba.utils.Constants.GET_SUB_MENU_ITEMS;
-import static online.lahloba.www.lahloba.utils.Constants.MARKETPLACE_ID;
-import static online.lahloba.www.lahloba.utils.Constants.ORDER_ID;
-import static online.lahloba.www.lahloba.utils.Constants.ORDER_STATUS;
-import static online.lahloba.www.lahloba.utils.Constants.RESET_CART_ITEM;
-import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_EMAIL;
-import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_FIRSTNAME;
-import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_PASSWORD;
-import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_PHONE;
-import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ACCOUNT_SECONDNAME;
-import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS;
-import static online.lahloba.www.lahloba.utils.Constants.START_CREATE_NEW_ADDRESS_ADDRESS_ITEM;
-import static online.lahloba.www.lahloba.utils.Constants.START_DELETE_ADDRESS;
-import static online.lahloba.www.lahloba.utils.Constants.START_EDIT_ADDRESS;
-import static online.lahloba.www.lahloba.utils.Constants.START_GET_ADDRESSES;
-import static online.lahloba.www.lahloba.utils.Constants.START_GET_CITIES;
-import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_ORDERS;
-import static online.lahloba.www.lahloba.utils.Constants.START_GET_CURRENT_USER_DETAILS;
-import static online.lahloba.www.lahloba.utils.Constants.START_GET_DEFAULT_ADDRESS;
-import static online.lahloba.www.lahloba.utils.Constants.START_GET_MARKETPLACE;
-import static online.lahloba.www.lahloba.utils.Constants.START_GET_ORDER;
-import static online.lahloba.www.lahloba.utils.Constants.START_GET_USER_FOR_ORDER;
-import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN;
-import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_EMAIL;
-import static online.lahloba.www.lahloba.utils.Constants.START_LOGIN_PASSWORD;
-import static online.lahloba.www.lahloba.utils.Constants.START_NEW_ORDER;
-import static online.lahloba.www.lahloba.utils.Constants.START_REMOVE_ORDER;
-import static online.lahloba.www.lahloba.utils.Constants.START_REORDER;
-import static online.lahloba.www.lahloba.utils.Constants.START_SET_DEFAULT_ADDRESS;
 
 public class NetworkDataHelper {
     private static final Object LOCK = new Object();
     private static NetworkDataHelper sInstance;
+    private final DatabaseReference firebaseRef;
     private Context mContext;
+    
 
     private Bitmap bitmap;
 
@@ -124,6 +93,7 @@ public class NetworkDataHelper {
 
     private MutableLiveData<UserItem> userForOrder;
     private MutableLiveData<OrderItem> orderItem;
+    private MutableLiveData<List<CityItem>> deliveryAreas;
 
 
     private NetworkDataHelper(Context applicationContext) {
@@ -134,6 +104,7 @@ public class NetworkDataHelper {
         addressItems = new MutableLiveData<>();
         cartItems = new MutableLiveData<>();
         cities = new MutableLiveData<>();
+        deliveryAreas = new MutableLiveData<>();
         governorates = new MutableLiveData<>();
         marketPlaces = new MutableLiveData<>();
         marketPlace = new MutableLiveData<>();
@@ -167,6 +138,8 @@ public class NetworkDataHelper {
         }else {
             isLogged.setValue(true);
         }
+        
+        firebaseRef = FirebaseDatabase.getInstance().getReference();
     }
 
     public static NetworkDataHelper getInstance(Context context){
@@ -185,7 +158,7 @@ public class NetworkDataHelper {
 
     public void startGetMainMenuItems() {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
-        intent.setAction(GET_MAIN_MENU_ITEMS);
+        intent.setAction(Constants.GET_MAIN_MENU_ITEMS);
         mContext.startService(intent);
 
     }
@@ -193,11 +166,8 @@ public class NetworkDataHelper {
     public void startFetchMainMenuItems() {
 
         String language = LocalUtils.getLangauge();
-        DatabaseReference database = FirebaseDatabase
-                .getInstance()
-                .getReference("MainMenu")
-                .child(language);
-        database.addValueEventListener(new ValueEventListener() {
+        firebaseRef.child("MainMenu")
+                .child(language).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<MainMenuItem> mainMenuItemList = new ArrayList<>();
@@ -226,8 +196,8 @@ public class NetworkDataHelper {
     //############################### Sup Menu Item ############################//
     public void startGetSupMenuItems(String subMenuId) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
-        intent.setAction(GET_SUB_MENU_ITEMS);
-        intent.putExtra(GET_SUB_MENU_ITEMS, subMenuId);
+        intent.setAction(Constants.GET_SUB_MENU_ITEMS);
+        intent.putExtra(Constants.GET_SUB_MENU_ITEMS, subMenuId);
         mContext.startService(intent);
     }
 
@@ -301,8 +271,8 @@ public class NetworkDataHelper {
     //############################### Products ############################//
     public void startGetProductsFromCategory(String categoryId) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
-        intent.setAction(GET_PRODUCTS_FOR_CATEGORY);
-        intent.putExtra(GET_PRODUCTS_FOR_CATEGORY, categoryId);
+        intent.setAction(Constants.GET_PRODUCTS_FOR_CATEGORY);
+        intent.putExtra(Constants.GET_PRODUCTS_FOR_CATEGORY, categoryId);
         mContext.startService(intent);
     }
 
@@ -442,14 +412,12 @@ public class NetworkDataHelper {
     }
 
     public void changeProductStatus(String productId, boolean isEnable){
-        FirebaseDatabase.getInstance().getReference()
-                .child("Product")
+        firebaseRef.child("Product")
                 .child("en")
                 .child(productId)
                 .child("status").setValue(isEnable);
 
-        FirebaseDatabase.getInstance().getReference()
-                .child("Product")
+        firebaseRef.child("Product")
                 .child("ar")
                 .child(productId)
                 .child("status").setValue(isEnable);
@@ -467,8 +435,7 @@ public class NetworkDataHelper {
 
     public void changeProductPrice(String productId, String price){
 
-        FirebaseDatabase.getInstance().getReference()
-                .child("Product")
+        firebaseRef.child("Product")
                 .child("en")
                 .child(productId)
                 .child("price").runTransaction(new Transaction.Handler() {
@@ -492,8 +459,7 @@ public class NetworkDataHelper {
             }
         });
 
-        FirebaseDatabase.getInstance().getReference()
-                .child("Product")
+        firebaseRef.child("Product")
                 .child("ar")
                 .child(productId)
                 .child("price").runTransaction(new Transaction.Handler() {
@@ -532,8 +498,7 @@ public class NetworkDataHelper {
     }
 
     public void editProduct(ProductItem productItem, String language){
-        FirebaseDatabase.getInstance().getReference()
-                .child("Product")
+        firebaseRef.child("Product")
                 .child(language)
                 .child(productItem.getId())
                 .setValue(productItem);
@@ -581,14 +546,14 @@ public class NetworkDataHelper {
                         arProduct.setImage("images/product/"+FirebaseAuth.getInstance().getUid()+"/thumb/product"+enProduct.getId()+".jpg");
 
 
-                        FirebaseDatabase.getInstance().getReference()
+                        firebaseRef
                                 .child("Product")
                                 .child("en")
                                 .child(enProduct.getId())
                                 .setValue(enProduct);
 
 
-                        FirebaseDatabase.getInstance().getReference()
+                        firebaseRef
                                 .child("Product")
                                 .child("ar")
                                 .child(enProduct.getId())
@@ -610,14 +575,14 @@ public class NetworkDataHelper {
             arProduct.setImage("images/product/"+FirebaseAuth.getInstance().getUid()+"/thumb/product"+enProduct.getId()+".jpg");
 
 
-            FirebaseDatabase.getInstance().getReference()
+            firebaseRef
                     .child("Product")
                     .child("en")
                     .child(enProduct.getId())
                     .setValue(enProduct);
 
 
-            FirebaseDatabase.getInstance().getReference()
+            firebaseRef
                     .child("Product")
                     .child("ar")
                     .child(enProduct.getId())
@@ -645,7 +610,7 @@ public class NetworkDataHelper {
     }
 
     public void getProduct(String productId, String language){
-        FirebaseDatabase.getInstance().getReference()
+        firebaseRef
                 .child("Product")
                 .child(language)
                 .child(productId)
@@ -678,7 +643,7 @@ public class NetworkDataHelper {
 
     public void getProductForEdit(String productId){
 
-        FirebaseDatabase.getInstance().getReference()
+        firebaseRef
                 .child("Product")
                 .child("en")
                 .child(productId)
@@ -696,7 +661,7 @@ public class NetworkDataHelper {
                     }
                 });
 
-        FirebaseDatabase.getInstance().getReference()
+        firebaseRef
                 .child("Product")
                 .child("ar")
                 .child(productId)
@@ -729,8 +694,8 @@ public class NetworkDataHelper {
 
     public void startGetCartItems(String userId) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
-        intent.setAction(GET_CART_ITEM);
-        intent.putExtra(GET_CART_ITEM, userId);
+        intent.setAction(Constants.GET_CART_ITEM);
+        intent.putExtra(Constants.GET_CART_ITEM, userId);
         mContext.startService(intent);
     }
 
@@ -785,7 +750,7 @@ public class NetworkDataHelper {
 
 
 
-            FirebaseDatabase.getInstance().getReference()
+            firebaseRef
                     .child("Cart")
                     .child(userId)
                     .child("CartItems")
@@ -797,7 +762,7 @@ public class NetworkDataHelper {
 
     public void startResetFirebaseCart() {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
-        intent.setAction(RESET_CART_ITEM);
+        intent.setAction(Constants.RESET_CART_ITEM);
         mContext.startService(intent);
     }
 
@@ -806,7 +771,7 @@ public class NetworkDataHelper {
 
         String userId = FirebaseAuth.getInstance().getUid();
 
-        FirebaseDatabase.getInstance().getReference()
+        firebaseRef
                 .child("Cart")
                 .child(userId).removeValue();
 
@@ -823,7 +788,7 @@ public class NetworkDataHelper {
     public void deleteAllFromCart(){
         String uid = FirebaseAuth.getInstance().getUid();
 
-        FirebaseDatabase.getInstance().getReference()
+        firebaseRef
                 .child("Cart")
                 .child(uid)
                 .removeValue();
@@ -833,9 +798,9 @@ public class NetworkDataHelper {
     //############################### Login ############################//
     public void startLogin(String email, String password) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
-        intent.setAction(START_LOGIN);
-        intent.putExtra(START_LOGIN_EMAIL, email);
-        intent.putExtra(START_LOGIN_PASSWORD, password);
+        intent.setAction(Constants.START_LOGIN);
+        intent.putExtra(Constants.START_LOGIN_EMAIL, email);
+        intent.putExtra(Constants.START_LOGIN_PASSWORD, password);
         mContext.startService(intent);
     }
 
@@ -864,15 +829,15 @@ public class NetworkDataHelper {
 
     public void startGetUserDetails(String uid) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
-        intent.setAction(START_GET_CURRENT_USER_DETAILS);
-        intent.putExtra(START_GET_CURRENT_USER_DETAILS, uid);
+        intent.setAction(Constants.START_GET_CURRENT_USER_DETAILS);
+        intent.putExtra(Constants.START_GET_CURRENT_USER_DETAILS, uid);
         mContext.startService(intent);
     }
 
     public void fetchCurrentUserDetails(String uid) {
         if (uid == null) return;
         
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference()
+        DatabaseReference mDatabase = firebaseRef
                 .child("User").child(uid);
 
         mDatabase.addValueEventListener(new ValueEventListener() {
@@ -900,11 +865,11 @@ public class NetworkDataHelper {
 
         Intent intent = new Intent(mContext, LahlobaMainService.class);
         intent.setAction(Constants.START_CREATE_NEW_ACCOUNT);
-        intent.putExtra(START_CREATE_NEW_ACCOUNT_FIRSTNAME, firstName);
-        intent.putExtra(START_CREATE_NEW_ACCOUNT_SECONDNAME, secondName);
-        intent.putExtra(START_CREATE_NEW_ACCOUNT_PHONE, phone);
-        intent.putExtra(START_CREATE_NEW_ACCOUNT_EMAIL, email);
-        intent.putExtra(START_CREATE_NEW_ACCOUNT_PASSWORD, password);
+        intent.putExtra(Constants.START_CREATE_NEW_ACCOUNT_FIRSTNAME, firstName);
+        intent.putExtra(Constants.START_CREATE_NEW_ACCOUNT_SECONDNAME, secondName);
+        intent.putExtra(Constants.START_CREATE_NEW_ACCOUNT_PHONE, phone);
+        intent.putExtra(Constants.START_CREATE_NEW_ACCOUNT_EMAIL, email);
+        intent.putExtra(Constants.START_CREATE_NEW_ACCOUNT_PASSWORD, password);
         mContext.startService(intent);
     }
 
@@ -916,7 +881,7 @@ public class NetworkDataHelper {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()){
                             String uid = task.getResult().getUser().getUid();
-                            DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                            DatabaseReference mDatabase = firebaseRef;
                             UserItem userItem = new UserItem();
                             userItem.setId(uid);
                             userItem.setEmail(email);
@@ -955,15 +920,15 @@ public class NetworkDataHelper {
     public void startAddNewAddress(String userId, AddressItem addressItem) {
 
         Intent intent = new Intent(mContext, LahlobaMainService.class);
-        intent.setAction(START_CREATE_NEW_ADDRESS);
-        intent.putExtra(START_CREATE_NEW_ADDRESS, userId);
-        intent.putExtra(START_CREATE_NEW_ADDRESS_ADDRESS_ITEM, addressItem);
+        intent.setAction(Constants.START_CREATE_NEW_ADDRESS);
+        intent.putExtra(Constants.START_CREATE_NEW_ADDRESS, userId);
+        intent.putExtra(Constants.START_CREATE_NEW_ADDRESS_ADDRESS_ITEM, addressItem);
         mContext.startService(intent);
 
     }
 
     public void addNewAddress(String userId, AddressItem addressItem) {
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference mDatabase = firebaseRef;
         String push = mDatabase.child("Address").child(userId).push().getKey();
         addressItem.setId(push);
 
@@ -974,7 +939,7 @@ public class NetworkDataHelper {
                         if (task.isSuccessful()){
 
                             if (addressItem.isDefaultAddress()){
-                                FirebaseDatabase.getInstance().getReference()
+                                firebaseRef
                                         .child("Address")
                                         .child(userId)
                                         .orderByChild("default")
@@ -985,7 +950,7 @@ public class NetworkDataHelper {
                                                 for (DataSnapshot child : dataSnapshot.getChildren()){
                                                     AddressItem address = child.getValue(AddressItem.class);
                                                     if (!address.getId().equals(addressItem.getId())){
-                                                        FirebaseDatabase.getInstance().getReference()
+                                                        firebaseRef
                                                                 .child("Address")
                                                                 .child(userId)
                                                                 .child(address.getId())
@@ -1031,13 +996,13 @@ public class NetworkDataHelper {
 
     public void startGetAddrresses(String userId) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
-        intent.setAction(START_GET_ADDRESSES);
-        intent.putExtra(START_GET_ADDRESSES, userId);
+        intent.setAction(Constants.START_GET_ADDRESSES);
+        intent.putExtra(Constants.START_GET_ADDRESSES, userId);
         mContext.startService(intent);
     }
 
     public void getAddressesFromFirebase(String userId) {
-        FirebaseDatabase.getInstance().getReference()
+        firebaseRef
                 .child("Address")
                 .child(userId)
                 .addValueEventListener(new ValueEventListener() {
@@ -1066,13 +1031,13 @@ public class NetworkDataHelper {
 
     public void startGetDefaultAddress(String uid) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
-        intent.setAction(START_GET_DEFAULT_ADDRESS);
-        intent.putExtra(START_GET_DEFAULT_ADDRESS, uid);
+        intent.setAction(Constants.START_GET_DEFAULT_ADDRESS);
+        intent.putExtra(Constants.START_GET_DEFAULT_ADDRESS, uid);
         mContext.startService(intent);
     }
 
     public void getDefaultAddressFromFirebase(String userId) {
-        FirebaseDatabase.getInstance().getReference()
+        firebaseRef
                 .child("Address")
                 .child(userId)
                 .orderByChild("default")
@@ -1101,13 +1066,13 @@ public class NetworkDataHelper {
 
     public void startSetDefaultAddress(String id) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
-        intent.setAction(START_SET_DEFAULT_ADDRESS);
-        intent.putExtra(START_SET_DEFAULT_ADDRESS, id);
+        intent.setAction(Constants.START_SET_DEFAULT_ADDRESS);
+        intent.putExtra(Constants.START_SET_DEFAULT_ADDRESS, id);
         mContext.startService(intent);
     }
 
     public void setDefaultAddress(String id) {
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference mDatabase = firebaseRef;
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         mDatabase.child("Address").child(userId).child(id)
@@ -1118,7 +1083,7 @@ public class NetworkDataHelper {
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()){
 
-                                FirebaseDatabase.getInstance().getReference()
+                                firebaseRef
                                         .child("Address")
                                         .child(userId)
                                         .orderByChild("defaultAddress")
@@ -1129,7 +1094,7 @@ public class NetworkDataHelper {
                                                 for (DataSnapshot child : dataSnapshot.getChildren()){
                                                     AddressItem address = child.getValue(AddressItem.class);
                                                     if (!address.getId().equals(id)){
-                                                        FirebaseDatabase.getInstance().getReference()
+                                                        firebaseRef
                                                                 .child("Address")
                                                                 .child(userId)
                                                                 .child(address.getId())
@@ -1164,13 +1129,13 @@ public class NetworkDataHelper {
 
     public void startDeleteAddress(String id) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
-        intent.setAction(START_DELETE_ADDRESS);
-        intent.putExtra(START_DELETE_ADDRESS, id);
+        intent.setAction(Constants.START_DELETE_ADDRESS);
+        intent.putExtra(Constants.START_DELETE_ADDRESS, id);
         mContext.startService(intent);
     }
 
     public void deleteAddress(String id) {
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference mDatabase = firebaseRef;
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         mDatabase.child("Address").child(userId).child(id)
@@ -1180,13 +1145,13 @@ public class NetworkDataHelper {
 
     public void startEditAddress(AddressItem editedAddress) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
-        intent.setAction(START_EDIT_ADDRESS);
-        intent.putExtra(START_EDIT_ADDRESS, editedAddress);
+        intent.setAction(Constants.START_EDIT_ADDRESS);
+        intent.putExtra(Constants.START_EDIT_ADDRESS, editedAddress);
         mContext.startService(intent);
     }
 
     public void editAddress(AddressItem addressItem){
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference mDatabase = firebaseRef;
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         mDatabase.child("Address").child(userId).child(addressItem.getId())
@@ -1217,7 +1182,7 @@ public class NetworkDataHelper {
     public void getGovernorateFromFirebase() {
         String language = LocalUtils.getLangauge();
 
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference mDatabase = firebaseRef;
         mDatabase.child("Governorate").child(language).child("Egypt")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -1245,14 +1210,14 @@ public class NetworkDataHelper {
 
     public void startGetCities() {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
-        intent.setAction(START_GET_CITIES);
+        intent.setAction(Constants.START_GET_CITIES);
         mContext.startService(intent);
     }
 
     public void getCitiesFromFirebase() {
         String language = LocalUtils.getLangauge();
 
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference mDatabase = firebaseRef;
         mDatabase.child("City").child(language)
         .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -1282,14 +1247,14 @@ public class NetworkDataHelper {
     //############################### MarketPlace ############################//
     public void startGetMarketPlaceForId(String id) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
-        intent.setAction(START_GET_MARKETPLACE);
-        intent.putExtra(START_GET_MARKETPLACE,id);
+        intent.setAction(Constants.START_GET_MARKETPLACE);
+        intent.putExtra(Constants.START_GET_MARKETPLACE,id);
         mContext.startService(intent);
     }
 
     public void getMarketPlaceForId(String id) {
 
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference mDatabase = firebaseRef;
         mDatabase.child("MarketPlace").child(id)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -1318,18 +1283,19 @@ public class NetworkDataHelper {
     //############################### Orders ############################//
     public void startNewOrder(OrderItem orderItem) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
-        intent.setAction(START_NEW_ORDER);
-        intent.putExtra(START_NEW_ORDER,orderItem);
+        intent.setAction(Constants.START_NEW_ORDER);
+        intent.putExtra(Constants.START_NEW_ORDER,orderItem);
         mContext.startService(intent);
     }
 
     public void startAddNewOrderToFirebase(OrderItem orderItem, String from) {
-        if (from.equals(START_REORDER)){
-            orderItem.setOrderStatus(1);
+        if (from.equals(Constants.START_REORDER)){
+            orderItem.setOrderStatus(OrderStatusUtils.ORDER_STATUS_PENDING);
+            orderItem.setCityIdStatus(orderItem.getCityId()+"-"+OrderStatusUtils.ORDER_STATUS_PENDING);
         }
 
         String userId = FirebaseAuth.getInstance().getUid();
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference mDatabase = firebaseRef;
         String pushKey = mDatabase.child("Orders").child(userId).push().getKey();
         orderItem.setId(pushKey);
         int uNumber = pushKey.hashCode();
@@ -1361,7 +1327,7 @@ public class NetworkDataHelper {
 
     public void startGetCurrentOrders() {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
-        intent.setAction(START_GET_CURRENT_ORDERS);
+        intent.setAction(Constants.START_GET_CURRENT_ORDERS);
         mContext.startService(intent);
     }
 
@@ -1371,7 +1337,7 @@ public class NetworkDataHelper {
             return;
         }
 
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference mDatabase = firebaseRef;
 
         mDatabase.child("Orders").orderByChild("userId").equalTo(userId)
                 .addValueEventListener(new ValueEventListener() {
@@ -1400,7 +1366,7 @@ public class NetworkDataHelper {
     public void startRemoveOrder(String orderId) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
         intent.setAction(Constants.START_REMOVE_ORDER);
-        intent.putExtra(START_REMOVE_ORDER,orderId);
+        intent.putExtra(Constants.START_REMOVE_ORDER,orderId);
         mContext.startService(intent);
     }
 
@@ -1414,7 +1380,7 @@ public class NetworkDataHelper {
             return;
         }
 
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference mDatabase = firebaseRef;
 
         mDatabase.child("Orders").child(userId).child(orderId).removeValue();
     }
@@ -1422,39 +1388,44 @@ public class NetworkDataHelper {
     public void startReorder(OrderItem orderItem) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
         intent.setAction(Constants.START_REORDER);
-        intent.putExtra(START_REORDER,orderItem);
+        intent.putExtra(Constants.START_REORDER,orderItem);
         mContext.startService(intent);
     }
 
-    public void startChangeOrderStatus(String orderId, int orderStatus) {
+    public void startChangeOrderStatus(String orderId, String cityId, int orderStatus) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
-        intent.setAction(CHANGE_ORDER_STATUS);
-        intent.putExtra(ORDER_ID,orderId);
-        intent.putExtra(ORDER_STATUS,orderStatus);
+        intent.setAction(Constants.CHANGE_ORDER_STATUS);
+        intent.putExtra(Constants.ORDER_ID,orderId);
+        intent.putExtra(Constants.CITY_ID,cityId);
+        intent.putExtra(Constants.ORDER_STATUS,orderStatus);
         mContext.startService(intent);
     }
 
-    public void changeOrderStatusFirebase(String orderId, int orderStatus) {
+    public void     changeOrderStatusFirebase(String orderId, String cityId, int orderStatus) {
         if (FirebaseAuth.getInstance().getCurrentUser() == null)return;
 
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("Orders")
+        firebaseRef.child("Orders")
                 .child(orderId)
                 .child("orderStatus")
                 .setValue(orderStatus);
+
+        firebaseRef.child("Orders")
+                .child(orderId)
+                .child("cityIdStatus")
+                .setValue(cityId+"-"+orderStatus);
     }
 
     public void startGetUserForOrder(String userId) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
-        intent.setAction(START_GET_USER_FOR_ORDER);
-        intent.putExtra(START_GET_USER_FOR_ORDER,userId);
+        intent.setAction(Constants.START_GET_USER_FOR_ORDER);
+        intent.putExtra(Constants.START_GET_USER_FOR_ORDER,userId);
         mContext.startService(intent);
 
     }
 
     public void getUserForOrder(String userId){
 
-        FirebaseDatabase.getInstance().getReference()
+        firebaseRef
                 .child("User")
                 .child(userId)
                 .addValueEventListener(new ValueEventListener() {
@@ -1478,13 +1449,13 @@ public class NetworkDataHelper {
 
     public void startGetOrderById(String orderId) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
-        intent.setAction(START_GET_ORDER);
-        intent.putExtra(START_GET_ORDER,orderId);
+        intent.setAction(Constants.START_GET_ORDER);
+        intent.putExtra(Constants.START_GET_ORDER,orderId);
         mContext.startService(intent);
     }
 
     public void getOrderById(String orderId){
-        FirebaseDatabase.getInstance().getReference()
+        firebaseRef
                 .child("Orders")
                 .child(orderId)
                 .addValueEventListener(new ValueEventListener() {
@@ -1520,7 +1491,7 @@ public class NetworkDataHelper {
         }
 
         String userId = FirebaseAuth.getInstance().getUid();
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference mDatabase = firebaseRef;
 
         mDatabase.child("Favorites").child(userId)
                 .addValueEventListener(new ValueEventListener() {
@@ -1561,7 +1532,7 @@ public class NetworkDataHelper {
     }
 
     public void getBannerFromFirebase() {
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference mDatabase = firebaseRef;
 
         mDatabase.child("Banner").addValueEventListener(new ValueEventListener() {
             @Override
@@ -1595,7 +1566,7 @@ public class NetworkDataHelper {
     public void startGetSellerOrders(String marketId) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
         intent.setAction(Constants.SELLER_GET_ORDERS);
-        intent.putExtra(MARKETPLACE_ID, marketId);
+        intent.putExtra(Constants.MARKETPLACE_ID, marketId);
         mContext.startService(intent);
 
     }
@@ -1608,7 +1579,7 @@ public class NetworkDataHelper {
 
 
 
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference mDatabase = firebaseRef;
         mDatabase.child("User").child(uid)
                 .child("seller")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -1669,13 +1640,13 @@ public class NetworkDataHelper {
     public void startGetMarketPlacesBySeller(String uid) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
         intent.setAction(Constants.START_GET_SELLER_MARKETPLACE);
-        intent.putExtra(EXTRA_USER_ID, uid);
+        intent.putExtra(Constants.EXTRA_USER_ID, uid);
         mContext.startService(intent);
     }
 
     public void getMarketPlacesForSeller(String uid) {
         marketPlaces.postValue(null);
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference mDatabase = firebaseRef;
         mDatabase.child("MarketPlace").orderByChild("sellerId").equalTo(uid)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
@@ -1701,6 +1672,69 @@ public class NetworkDataHelper {
     }
 
 
+    //############################### Delivery Supervisor ############################//
+    public void startGetDeliveryArea() {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.START_GET_DELIVERY_AREAS);
+        mContext.startService(intent);
+
+    }
+
+    public void getDeliveryAreaFromFirebase() {
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null)return;
+        firebaseRef.child("DeliveryArea").child(uid)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (!dataSnapshot.exists())return;
+                        List<CityItem> deliveryAreasList = new ArrayList<>();
+                        for (DataSnapshot child : dataSnapshot.getChildren()){
+                            deliveryAreasList.add(child.getValue(CityItem.class));
+                        }
+
+                        deliveryAreas.setValue(deliveryAreasList);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+        });
+
+
+    }
+
+    public MutableLiveData<List<CityItem>> getDeliveryAreas() {
+        return deliveryAreas;
+    }
+
+    public void startGetOrdersForDeliverysupervisor(String cityId) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.START_GET_ORDERS_FOR_DELIVERY_SUPERVISOR);
+        intent.putExtra(Constants.START_GET_ORDERS_FOR_DELIVERY_SUPERVISOR, cityId);
+        mContext.startService(intent);
+    }
+
+    public void getOrdersForDeliverysupervisor(String cityId) {
+        Query query = firebaseRef.child("Orders").orderByChild("cityIdStatus").equalTo(cityId+"-"+ OrderStatusUtils.ORDER_STATUS_PREPARED);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists())return;
+                List<OrderItem> items = new ArrayList<>();
+                for (DataSnapshot child : dataSnapshot.getChildren()){
+                    items.add(child.getValue(OrderItem.class));
+                }
+                orderItems.setValue(items);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
 
     /*  ##################     RESET       #################   */
 
@@ -1709,6 +1743,7 @@ public class NetworkDataHelper {
         enProductItemForEdit.setValue(null);
         productItem.setValue(null);
     }
+
 
 
 }

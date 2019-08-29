@@ -372,6 +372,9 @@ implements
                         orderItem.setUserId(FirebaseAuth.getInstance().getUid());
 
                         orderItem.setOrderStatus(OrderStatusUtils.ORDER_STATUS_PENDING);
+                        orderItem.setCityId(marketPlace.getAddressSelected().getCityId());
+                        orderItem.setCityIdStatus(marketPlace.getAddressSelected().getCityId()+"-"+OrderStatusUtils.ORDER_STATUS_PENDING);
+
 
                         ((CartFragment)getSupportFragmentManager().getFragments().get(0))
                                 .getmViewModel()

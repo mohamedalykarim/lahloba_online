@@ -296,8 +296,8 @@ public class AppRepository {
         return networkDataHelper.getIsAddressEdited();
     }
 
-    public void startChangeOrderStatus(String orderId, int orderStatus) {
-        networkDataHelper.startChangeOrderStatus(orderId, orderStatus);
+    public void startChangeOrderStatus(String orderId, String cityId, int orderStatus) {
+        networkDataHelper.startChangeOrderStatus(orderId, cityId, orderStatus);
     }
 
     public void startGetUserForOrder(String userId) {
@@ -348,4 +348,17 @@ public class AppRepository {
 
 
 
+    //############################### Delivery Supervisor ############################//
+    public void startGetDeliveryArea() {
+        networkDataHelper.startGetDeliveryArea();
+    }
+
+    public MutableLiveData<List<CityItem>> getDeliveryAreas() {
+        return networkDataHelper.getDeliveryAreas();
+    }
+
+
+    public void startGetOrdersForDeliverysupervisor(String cityId) {
+        networkDataHelper.startGetOrdersForDeliverysupervisor(cityId);
+    }
 }

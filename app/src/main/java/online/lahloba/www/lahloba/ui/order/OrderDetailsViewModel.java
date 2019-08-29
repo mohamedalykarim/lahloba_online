@@ -22,8 +22,8 @@ public class OrderDetailsViewModel extends ViewModel {
         appRepository.startReorder(orderItem);
     }
 
-    public void startChangeOrderStatus(String orderId, int orderStatus) {
-        appRepository.startChangeOrderStatus(orderId, orderStatus);
+    public void startChangeOrderStatus(String orderId, String cityId, int orderStatus) {
+        appRepository.startChangeOrderStatus(orderId, cityId, orderStatus);
     }
 
     public void startGetUserForOrder(String userId) {
