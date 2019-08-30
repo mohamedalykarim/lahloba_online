@@ -26,6 +26,7 @@ public class OrderItem extends BaseObservable implements Parcelable {
     private String userId;
     private String cityId;
     private String cityIdStatus;
+    private String deliveryAllocatedTo;
 
     public OrderItem() {
     }
@@ -47,6 +48,7 @@ public class OrderItem extends BaseObservable implements Parcelable {
         userId = in.readString();
         cityId = in.readString();
         cityIdStatus = in.readString();
+        deliveryAllocatedTo = in.readString();
     }
 
     @Override
@@ -66,6 +68,7 @@ public class OrderItem extends BaseObservable implements Parcelable {
         dest.writeString(userId);
         dest.writeString(cityId);
         dest.writeString(cityIdStatus);
+        dest.writeString(deliveryAllocatedTo);
     }
 
     @Override
@@ -205,5 +208,13 @@ public class OrderItem extends BaseObservable implements Parcelable {
 
     public void setCityIdStatus(String cityIdStatus) {
         this.cityIdStatus = cityIdStatus;
+    }
+
+    public String getDeliveryAllocatedTo() {
+        return deliveryAllocatedTo;
+    }
+
+    public void setDeliveryAllocatedTo(String deliveryAllocatedTo) {
+        this.deliveryAllocatedTo = deliveryAllocatedTo;
     }
 }

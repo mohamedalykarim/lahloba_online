@@ -5,9 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import online.lahloba.www.lahloba.R;
+import online.lahloba.www.lahloba.data.model.OrderItem;
+import online.lahloba.www.lahloba.ui.adapters.DeliverSupervisorAdapter;
+import online.lahloba.www.lahloba.ui.adapters.DeliverySDeliveryAdapter;
 
 
-public class DeliverySupervisorMainActivity extends AppCompatActivity {
+public class DeliverySupervisorMainActivity extends AppCompatActivity implements
+        DeliverSupervisorAdapter.DeliverySupervisorAdapterClick,
+        DeliverySDeliveryAdapter.DeliverySDeliveryAdapterClick {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,5 +23,18 @@ public class DeliverySupervisorMainActivity extends AppCompatActivity {
                     .replace(R.id.container, DeliverySupervisorMainFragment.newInstance())
                     .commitNow();
         }
+    }
+
+    @Override
+    public void onDeliverySupervisorAdapterClick(OrderItem orderItem) {
+        ((DeliverySupervisorMainFragment)getSupportFragmentManager().getFragments().get(0))
+                .onDeliverySupervisorAdapterClick(orderItem);
+    }
+
+    @Override
+    public void onDeliverySDeliveryAdapterClick() {
+        ((DeliverySupervisorMainFragment)getSupportFragmentManager().getFragments().get(0))
+                .onDeliverySDeliveryAdapterClick();
+
     }
 }

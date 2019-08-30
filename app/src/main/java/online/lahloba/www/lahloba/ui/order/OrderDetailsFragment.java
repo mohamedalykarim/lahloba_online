@@ -23,7 +23,7 @@ import online.lahloba.www.lahloba.data.model.OrderItem;
 import online.lahloba.www.lahloba.databinding.FragmentOrderDetailsBinding;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
 import online.lahloba.www.lahloba.utils.Injector;
-import online.lahloba.www.lahloba.utils.OrderStatusUtils;
+import online.lahloba.www.lahloba.utils.StatusUtils;
 
 import static online.lahloba.www.lahloba.utils.Constants.ORDER_ITEM;
 
@@ -101,7 +101,7 @@ public class OrderDetailsFragment extends Fragment {
         binding.preparedBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mViewModel.startChangeOrderStatus(oldOrderItem.getId(), oldOrderItem.getCityId(), OrderStatusUtils.ORDER_STATUS_PREPARED);
+                mViewModel.startChangeOrderStatus(oldOrderItem.getId(), oldOrderItem.getCityId(), StatusUtils.ORDER_STATUS_PREPARED);
 
             }
         });
@@ -109,7 +109,7 @@ public class OrderDetailsFragment extends Fragment {
         binding.cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mViewModel.startChangeOrderStatus(oldOrderItem.getId(), oldOrderItem.getCityId(), OrderStatusUtils.ORDER_STATUS_CANCELED);
+                mViewModel.startChangeOrderStatus(oldOrderItem.getId(), oldOrderItem.getCityId(), StatusUtils.ORDER_STATUS_CANCELED);
             }
         });
 
@@ -156,7 +156,7 @@ public class OrderDetailsFragment extends Fragment {
                     if (mViewModel.helper.getOrderItem() == null ) return;
 
                     if (mViewModel.helper.getOrderItem().getOrderStatus() == 1){
-                        mViewModel.startChangeOrderStatus(oldOrderItem.getId(), oldOrderItem.getCityId(), OrderStatusUtils.ORDER_STATUS_RECIEVED);
+                        mViewModel.startChangeOrderStatus(oldOrderItem.getId(), oldOrderItem.getCityId(), StatusUtils.ORDER_STATUS_RECIEVED);
                     }
 
                 }

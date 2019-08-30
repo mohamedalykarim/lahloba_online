@@ -11,10 +11,10 @@ public class AddressItem extends BaseObservable implements Parcelable {
     private String id;
     private String name;
     private String country;
-    private String city;
-    private String cityId;
     private String governorate;
     private String governorateId;
+    private String city;
+    private String cityId;
     private String zone;
     private String street;
     private String building;
@@ -89,6 +89,7 @@ public class AddressItem extends BaseObservable implements Parcelable {
         return id;
     }
 
+
     public String getName() {
         return name;
     }
@@ -97,6 +98,7 @@ public class AddressItem extends BaseObservable implements Parcelable {
         return country;
     }
 
+    @Bindable
     public String getCity() {
         return city;
     }
@@ -150,8 +152,10 @@ public class AddressItem extends BaseObservable implements Parcelable {
         this.country = country;
     }
 
+    @Bindable
     public void setCity(String city) {
         this.city = city;
+        notifyPropertyChanged(BR.city);
     }
 
     public void setZone(String zone) {

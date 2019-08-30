@@ -13,6 +13,7 @@ import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.BannerItem;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.CityItem;
+import online.lahloba.www.lahloba.data.model.DeliveryArea;
 import online.lahloba.www.lahloba.data.model.GovernorateItem;
 import online.lahloba.www.lahloba.data.model.MainMenuItem;
 import online.lahloba.www.lahloba.data.model.MarketPlace;
@@ -318,6 +319,11 @@ public class AppRepository {
     }
 
 
+    public void startUpdateOrder(OrderItem orderItem) {
+        networkDataHelper.startUpdateOrder(orderItem);
+    }
+
+
 
     //############################### Favorites ############################//
 
@@ -349,11 +355,11 @@ public class AppRepository {
 
 
     //############################### Delivery Supervisor ############################//
-    public void startGetDeliveryArea() {
-        networkDataHelper.startGetDeliveryArea();
+    public void startGetDeliveryAreas(int areaType) {
+        networkDataHelper.startGetDeliveryAreas(areaType);
     }
 
-    public MutableLiveData<List<CityItem>> getDeliveryAreas() {
+    public MutableLiveData<List<DeliveryArea>> getDeliveryAreas() {
         return networkDataHelper.getDeliveryAreas();
     }
 
@@ -361,4 +367,17 @@ public class AppRepository {
     public void startGetOrdersForDeliverysupervisor(String cityId) {
         networkDataHelper.startGetOrdersForDeliverysupervisor(cityId);
     }
+
+    public void startGetDeliveriesForCity(String cityId, int areaType) {
+        networkDataHelper.startGetDeliveriesForCity(cityId, areaType);
+    }
+
+    public MutableLiveData<List<String>> getDeliveriesId() {
+        return networkDataHelper.getDeliveriesId();
+    }
+
+    public void clearDeliveriesIdForCity() {
+        networkDataHelper.clearDeliveriesIdForCity();
+    }
+
 }

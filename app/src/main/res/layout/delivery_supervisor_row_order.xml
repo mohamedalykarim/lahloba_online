@@ -9,6 +9,10 @@
         <variable
             name="order"
             type="online.lahloba.www.lahloba.data.model.OrderItem" />
+
+        <variable
+            name="marketplace"
+            type="online.lahloba.www.lahloba.data.model.MarketPlace" />
     </data>
 
     <LinearLayout
@@ -119,7 +123,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="24dp"
+                    android:layout_marginTop="8dp"
                     android:text="From :"
                     android:textColor="@color/black"
                     android:textSize="18sp"
@@ -133,7 +137,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
-                    android:text='@{order.orderNumber+""}'
+                    android:text='@{marketplace.addressSelected.name.equals("") || marketplace.addressSelected==null ? "" : marketplace.addressSelected.name+"\n"+marketplace.addressSelected.governorate +", "+marketplace.addressSelected.city+", "+marketplace.addressSelected.zone+", "+marketplace.addressSelected.street+", "+marketplace.addressSelected.building+", floor "+marketplace.addressSelected.floor+", flat"+marketplace.addressSelected.flatNumber}'
+                    android:textAlignment="textStart"
                     android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -146,6 +151,7 @@
             android:id="@+id/view7"
             android:layout_width="match_parent"
             android:layout_height="1dp"
+            android:layout_marginTop="10dp"
             android:background="#dadada" />
 
         <LinearLayout
@@ -168,7 +174,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="24dp"
+                    android:layout_marginTop="8dp"
                     android:text="To :"
                     android:textColor="@color/black"
                     android:textSize="18sp"
@@ -181,8 +187,9 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="8dp"
-                    android:text='@{order.orderNumber+""}'
+                    android:text='@{order.addressSelected.name.equals("") || order.addressSelected==null ? "" : order.addressSelected.name+"\n"+order.addressSelected.governorate +", "+order.addressSelected.city+", "+order.addressSelected.zone+", "+order.addressSelected.street+", "+order.addressSelected.building+", floor "+order.addressSelected.floor+", flat"+order.addressSelected.flatNumber}'
                     android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -195,6 +202,7 @@
             android:id="@+id/view8"
             android:layout_width="match_parent"
             android:layout_height="1dp"
+            android:layout_marginTop="10dp"
             android:background="#dadada" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -205,12 +213,14 @@
             android:paddingBottom="8dp">
 
             <Button
-                android:id="@+id/reorderBtn"
-                android:layout_width="wrap_content"
+                android:id="@+id/allocateBtn"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="Re-order Order"
-                android:visibility="@{order.orderStatus == 5 ? View.VISIBLE : View.INVISIBLE}"
+                android:background="@drawable/btn_bg_3"
+                android:text="Allocate"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 

@@ -40,6 +40,7 @@ import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.BannerItem;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.CityItem;
+import online.lahloba.www.lahloba.data.model.DeliveryArea;
 import online.lahloba.www.lahloba.data.model.GovernorateItem;
 import online.lahloba.www.lahloba.data.model.MainMenuItem;
 import online.lahloba.www.lahloba.data.model.MarketPlace;
@@ -51,7 +52,7 @@ import online.lahloba.www.lahloba.data.model.room_entity.CartItemRoom;
 import online.lahloba.www.lahloba.data.services.LahlobaMainService;
 import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.LocalUtils;
-import online.lahloba.www.lahloba.utils.OrderStatusUtils;
+import online.lahloba.www.lahloba.utils.StatusUtils;
 import online.lahloba.www.lahloba.utils.SharedPreferencesManager;
 
 
@@ -93,7 +94,8 @@ public class NetworkDataHelper {
 
     private MutableLiveData<UserItem> userForOrder;
     private MutableLiveData<OrderItem> orderItem;
-    private MutableLiveData<List<CityItem>> deliveryAreas;
+    private MutableLiveData<List<DeliveryArea>> deliveryAreas;
+    private MutableLiveData<List<String>> deliveriesId;
 
 
     private NetworkDataHelper(Context applicationContext) {
@@ -126,6 +128,8 @@ public class NetworkDataHelper {
 
         userForOrder = new MutableLiveData<>();
         orderItem = new MutableLiveData<>();
+
+        deliveriesId = new MutableLiveData<>();
 
 
         isUserCreated.setValue(false);
@@ -1260,7 +1264,7 @@ public class NetworkDataHelper {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChildren()){
-                    marketPlace.setValue(dataSnapshot.getValue(MarketPlace.class));
+                        marketPlace.setValue(dataSnapshot.getValue(MarketPlace.class));
                 }
             }
 
@@ -1290,8 +1294,8 @@ public class NetworkDataHelper {
 
     public void startAddNewOrderToFirebase(OrderItem orderItem, String from) {
         if (from.equals(Constants.START_REORDER)){
-            orderItem.setOrderStatus(OrderStatusUtils.ORDER_STATUS_PENDING);
-            orderItem.setCityIdStatus(orderItem.getCityId()+"-"+OrderStatusUtils.ORDER_STATUS_PENDING);
+            orderItem.setOrderStatus(StatusUtils.ORDER_STATUS_PENDING);
+            orderItem.setCityIdStatus(orderItem.getCityId()+"-"+ StatusUtils.ORDER_STATUS_PENDING);
         }
 
         String userId = FirebaseAuth.getInstance().getUid();
@@ -1475,6 +1479,19 @@ public class NetworkDataHelper {
 
     public MutableLiveData<OrderItem> getOrderItem () {
         return orderItem;
+    }
+
+    public void startUpdateOrder(OrderItem orderItem) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.START_UPDATE_ORDER);
+        intent.putExtra(Constants.START_UPDATE_ORDER, orderItem);
+        mContext.startService(intent);
+    }
+
+    public void updateOrder(OrderItem orderItem){
+        firebaseRef.child("Orders")
+                .child(orderItem.getId())
+                .setValue(orderItem);
     }
 
     //############################### Favorites ############################//
@@ -1673,24 +1690,25 @@ public class NetworkDataHelper {
 
 
     //############################### Delivery Supervisor ############################//
-    public void startGetDeliveryArea() {
+    public void startGetDeliveryAreas(int areaType) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
         intent.setAction(Constants.START_GET_DELIVERY_AREAS);
+        intent.putExtra(Constants.START_GET_DELIVERY_AREAS, areaType);
         mContext.startService(intent);
 
     }
 
-    public void getDeliveryAreaFromFirebase() {
+    public void getDeliveryAreasFromFirebase(int areaType) {
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null)return;
-        firebaseRef.child("DeliveryArea").child(uid)
+        firebaseRef.child("DeliveryArea").orderByChild("uidType").equalTo(uid + "-"+areaType)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (!dataSnapshot.exists())return;
-                        List<CityItem> deliveryAreasList = new ArrayList<>();
+                        List<DeliveryArea> deliveryAreasList = new ArrayList<>();
                         for (DataSnapshot child : dataSnapshot.getChildren()){
-                            deliveryAreasList.add(child.getValue(CityItem.class));
+                            deliveryAreasList.add(child.getValue(DeliveryArea.class));
                         }
 
                         deliveryAreas.setValue(deliveryAreasList);
@@ -1705,7 +1723,7 @@ public class NetworkDataHelper {
 
     }
 
-    public MutableLiveData<List<CityItem>> getDeliveryAreas() {
+    public MutableLiveData<List<DeliveryArea>> getDeliveryAreas() {
         return deliveryAreas;
     }
 
@@ -1717,7 +1735,7 @@ public class NetworkDataHelper {
     }
 
     public void getOrdersForDeliverysupervisor(String cityId) {
-        Query query = firebaseRef.child("Orders").orderByChild("cityIdStatus").equalTo(cityId+"-"+ OrderStatusUtils.ORDER_STATUS_PREPARED);
+        Query query = firebaseRef.child("Orders").orderByChild("cityIdStatus").equalTo(cityId+"-"+ StatusUtils.ORDER_STATUS_PREPARED);
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -1735,6 +1753,55 @@ public class NetworkDataHelper {
             }
         });
     }
+
+    public void startGetDeliveriesForCity(String cityId, int areaType) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.START_GET_DELIVERIES_FOR_CITY);
+        intent.putExtra(Constants.CITY_ID, cityId);
+        intent.putExtra(Constants.DELIVERY_AREA_TYPE, areaType);
+        mContext.startService(intent);
+
+    }
+
+    public void getDeliveriesForCity(String cityId, int areaType) {
+        Log.v("string: ", cityId+areaType);
+
+        firebaseRef.child("DeliveryArea")
+                .orderByChild("cityType")
+                .equalTo(cityId+"-"+areaType)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (!dataSnapshot.exists())return;
+                        List<String> items = new ArrayList<>();
+                        for (DataSnapshot child : dataSnapshot.getChildren()){
+                            try {
+                                items.add(child.getValue(DeliveryArea.class).getUserId());
+                            }catch (Exception e){
+
+                            }
+                        }
+
+                        deliveriesId.setValue(items);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    public MutableLiveData<List<String>> getDeliveriesId() {
+        return deliveriesId;
+    }
+
+
+    public void clearDeliveriesIdForCity() {
+        deliveriesId.setValue(null);
+    }
+
+
 
     /*  ##################     RESET       #################   */
 

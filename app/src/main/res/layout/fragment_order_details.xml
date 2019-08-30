@@ -5,7 +5,7 @@
 
     <data>
         <import type="android.view.View" />
-        <import type="online.lahloba.www.lahloba.utils.OrderStatusUtils" />
+        <import type="online.lahloba.www.lahloba.utils.StatusUtils" />
 
         <variable
             name="viewModel"
@@ -274,7 +274,7 @@
                         android:layout_height="50dp"
                         android:background="@drawable/btn_bg_4"
                         android:text="Cancel"
-                        android:visibility="@{viewModel.helper.orderItem.orderStatus == OrderStatusUtils.ORDER_STATUS_RECIEVED? View.VISIBLE : View.GONE}"
+                        android:visibility="@{viewModel.helper.orderItem.orderStatus == StatusUtils.ORDER_STATUS_RECIEVED? View.VISIBLE : View.GONE}"
                         android:textColor="#fff"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -294,7 +294,7 @@
                         android:layout_height="50dp"
                         android:background="@drawable/btn_bg_3"
                         android:text="Prepared"
-                        android:visibility="@{viewModel.helper.orderItem.orderStatus == OrderStatusUtils.ORDER_STATUS_RECIEVED ? View.VISIBLE : View.GONE}"
+                        android:visibility="@{viewModel.helper.orderItem.orderStatus == StatusUtils.ORDER_STATUS_RECIEVED ? View.VISIBLE : View.GONE}"
                         android:textColor="#fff"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"

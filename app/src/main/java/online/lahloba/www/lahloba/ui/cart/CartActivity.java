@@ -48,7 +48,7 @@ import online.lahloba.www.lahloba.ui.cart.bottom_sheet.ShippingMethodBottomSheet
 import online.lahloba.www.lahloba.ui.login.LoginActivity;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
 import online.lahloba.www.lahloba.utils.Injector;
-import online.lahloba.www.lahloba.utils.OrderStatusUtils;
+import online.lahloba.www.lahloba.utils.StatusUtils;
 import online.lahloba.www.lahloba.utils.Utils;
 
 import static online.lahloba.www.lahloba.utils.Constants.EXTRA_USER_ID;
@@ -371,9 +371,9 @@ implements
                         orderItem.setMarketplaceId(marketId);
                         orderItem.setUserId(FirebaseAuth.getInstance().getUid());
 
-                        orderItem.setOrderStatus(OrderStatusUtils.ORDER_STATUS_PENDING);
+                        orderItem.setOrderStatus(StatusUtils.ORDER_STATUS_PENDING);
                         orderItem.setCityId(marketPlace.getAddressSelected().getCityId());
-                        orderItem.setCityIdStatus(marketPlace.getAddressSelected().getCityId()+"-"+OrderStatusUtils.ORDER_STATUS_PENDING);
+                        orderItem.setCityIdStatus(marketPlace.getAddressSelected().getCityId()+"-"+ StatusUtils.ORDER_STATUS_PENDING);
 
 
                         ((CartFragment)getSupportFragmentManager().getFragments().get(0))

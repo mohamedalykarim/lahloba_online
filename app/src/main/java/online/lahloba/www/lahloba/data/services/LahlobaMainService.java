@@ -179,6 +179,9 @@ public class LahlobaMainService extends IntentService {
         }else if(intent.getAction().equals(Constants.START_GET_ORDER)){
             String orderId = intent.getStringExtra(Constants.START_GET_ORDER);
             networkDataHelper.getOrderById(orderId);
+        }else if(intent.getAction().equals(Constants.START_UPDATE_ORDER)){
+            OrderItem orderItem = intent.getParcelableExtra(Constants.START_UPDATE_ORDER);
+            networkDataHelper.updateOrder(orderItem);
         }
 
 
@@ -209,10 +212,15 @@ public class LahlobaMainService extends IntentService {
          */
 
         else if(intent.getAction().equals(Constants.START_GET_DELIVERY_AREAS)){
-            networkDataHelper.getDeliveryAreaFromFirebase();
+            int areaType = intent.getIntExtra(Constants.START_GET_DELIVERY_AREAS,0);
+            networkDataHelper.getDeliveryAreasFromFirebase(areaType);
         }else if(intent.getAction().equals(Constants.START_GET_ORDERS_FOR_DELIVERY_SUPERVISOR)){
             String cityId = intent.getStringExtra(Constants.START_GET_ORDERS_FOR_DELIVERY_SUPERVISOR);
             networkDataHelper.getOrdersForDeliverysupervisor(cityId);
+        }else if(intent.getAction().equals(Constants.START_GET_DELIVERIES_FOR_CITY)){
+            String cityId = intent.getStringExtra(Constants.CITY_ID);
+            int areaType = intent.getIntExtra(Constants.DELIVERY_AREA_TYPE,1);
+            networkDataHelper.getDeliveriesForCity(cityId, areaType);
         }
 
 

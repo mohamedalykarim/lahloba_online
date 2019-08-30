@@ -23,10 +23,12 @@ import java.util.List;
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.CityItem;
+import online.lahloba.www.lahloba.data.model.DeliveryArea;
 import online.lahloba.www.lahloba.data.model.OrderItem;
 import online.lahloba.www.lahloba.databinding.DeliverySupervisorMainFragmentBinding;
 import online.lahloba.www.lahloba.ui.adapters.CustomSpinnerAdapter;
 import online.lahloba.www.lahloba.ui.adapters.DeliverSupervisorAdapter;
+import online.lahloba.www.lahloba.ui.delivery_supervisor.bootom_sheet.DeliverySAllocationBSH;
 import online.lahloba.www.lahloba.utils.Injector;
 
 public class DeliverySupervisorMainFragment extends Fragment {
@@ -37,6 +39,8 @@ public class DeliverySupervisorMainFragment extends Fragment {
 
     DeliverSupervisorAdapter adapter;
     List<OrderItem> orderItems;
+    private DeliverySAllocationBSH deliverySAllocationBSH;
+
 
     public static DeliverySupervisorMainFragment newInstance() {
         return new DeliverySupervisorMainFragment();
@@ -51,7 +55,7 @@ public class DeliverySupervisorMainFragment extends Fragment {
 
         ViewModelProviderFactory factory = Injector.getVMFactory(getContext());
         mViewModel = ViewModelProviders.of(this,factory).get(DeliverySupervisorMainViewModel.class);
-        mViewModel.startGetDeliveryArea();
+        mViewModel.startGetDeliveryAreas();
 
         citySpinnerIds = new ArrayList<>();
 
@@ -63,8 +67,9 @@ public class DeliverySupervisorMainFragment extends Fragment {
 
         orderItems = new ArrayList<>();
 
-        adapter = new DeliverSupervisorAdapter();
+        adapter = new DeliverSupervisorAdapter(getContext());
         adapter.setOrderItems(orderItems);
+        adapter.setViewModel(mViewModel);
 
         binding.orderRv.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.orderRv.setAdapter(adapter);
@@ -93,12 +98,12 @@ public class DeliverySupervisorMainFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        mViewModel.getDeliveryAreas().observe(this, cityItems -> {
-            if (cityItems==null)return;
+        mViewModel.getDeliveryAreas().observe(this, deliveryAreas -> {
+            if (deliveryAreas==null)return;
 
 
             List<String> areasName = new ArrayList<>();
-            for (CityItem cityItem : cityItems){
+            for (DeliveryArea cityItem : deliveryAreas){
                 areasName.add(cityItem.getName());
                 citySpinnerIds.add(cityItem.getId());
             }
@@ -109,7 +114,7 @@ public class DeliverySupervisorMainFragment extends Fragment {
                  areasName
             );
 
-            mViewModel.startGetOrdersForDeliverysupervisor(cityItems.get(0).getId());
+            mViewModel.startGetOrdersForDeliverysupervisor(deliveryAreas.get(0).getId());
 
 
             binding.citiesSpinner.setAdapter(spinnerAdapter);
@@ -119,12 +124,29 @@ public class DeliverySupervisorMainFragment extends Fragment {
 
         mViewModel.getOrders().observe(this, orders -> {
             if (orders==null)return;
+            if (citySpinnerIds == null)return;
+
             orderItems.clear();
+
 
             if (!orders.get(0).getCityId().equals(citySpinnerIds.get(binding.citiesSpinner.getSelectedItemPosition())))
                 return;
+
+
             orderItems.addAll(orders);
             adapter.notifyDataSetChanged();
         });
+    }
+
+    public void onDeliverySupervisorAdapterClick(OrderItem orderItem) {
+        deliverySAllocationBSH = new DeliverySAllocationBSH();
+        deliverySAllocationBSH.setOrderItem(orderItem);
+        deliverySAllocationBSH.setmViewModel(mViewModel);
+        deliverySAllocationBSH.show(getFragmentManager(), "");
+
+    }
+
+    public void onDeliverySDeliveryAdapterClick() {
+        deliverySAllocationBSH.dismiss();
     }
 }

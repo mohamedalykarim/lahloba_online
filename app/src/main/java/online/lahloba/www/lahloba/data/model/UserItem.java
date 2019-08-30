@@ -1,6 +1,11 @@
 package online.lahloba.www.lahloba.data.model;
 
-public class UserItem {
+import androidx.databinding.BaseObservable;
+import androidx.databinding.Bindable;
+
+import online.lahloba.www.lahloba.BR;
+
+public class UserItem extends BaseObservable {
     String id;
     String firstName;
     String lastName;
@@ -25,20 +30,26 @@ public class UserItem {
         this.id = id;
     }
 
+    @Bindable
     public String getFirstName() {
         return firstName;
     }
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+        notifyPropertyChanged(BR.firstName);
     }
 
+
+    @Bindable
     public String getLastName() {
         return lastName;
     }
 
+    @Bindable
     public void setLastName(String lastName) {
         this.lastName = lastName;
+        notifyPropertyChanged(BR.lastName);
     }
 
     public String getMobile() {
