@@ -221,6 +221,8 @@ public class LahlobaMainService extends IntentService {
             String cityId = intent.getStringExtra(Constants.CITY_ID);
             int areaType = intent.getIntExtra(Constants.DELIVERY_AREA_TYPE,1);
             networkDataHelper.getDeliveriesForCity(cityId, areaType);
+        }else if(intent.getAction().equals(Constants.START_GET_ORDERS_FOR_DELIVERY)){
+            networkDataHelper.getOrdersForDelivery();
         }
 
 

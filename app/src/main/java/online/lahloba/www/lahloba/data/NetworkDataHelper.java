@@ -1801,7 +1801,41 @@ public class NetworkDataHelper {
         deliveriesId.setValue(null);
     }
 
+    public void startGetOrdersForDelivery() {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.START_GET_ORDERS_FOR_DELIVERY);
+        mContext.startService(intent);
+    }
 
+    public void getOrdersForDelivery() {
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null)return;
+
+        firebaseRef.child("Orders").orderByChild("deliveryAllocatedTo")
+                .equalTo(uid)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (!dataSnapshot.exists())return;
+
+                        List<OrderItem> items = new ArrayList<>();
+                        for (DataSnapshot child : dataSnapshot.getChildren()){
+                            try {
+                                items.add(child.getValue(OrderItem.class));
+                            }catch (Exception c){
+
+                            }
+                        }
+
+                        orderItems.setValue(items);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
 
     /*  ##################     RESET       #################   */
 

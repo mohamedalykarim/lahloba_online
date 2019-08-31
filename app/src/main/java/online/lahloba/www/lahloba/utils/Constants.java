@@ -103,4 +103,5 @@ public class Constants {
     public static final String START_GET_DELIVERIES_FOR_CITY = "start_get_dekiveries_for_cities";
     public static final String DELIVERY_AREA_TYPE = "area_type";
     public static final String START_UPDATE_ORDER = "start_update_order";
+    public static final String START_GET_ORDERS_FOR_DELIVERY = "start_get_orders_for_delivery";
 }

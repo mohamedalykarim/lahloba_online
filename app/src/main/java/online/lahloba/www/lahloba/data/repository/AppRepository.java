@@ -380,4 +380,7 @@ public class AppRepository {
         networkDataHelper.clearDeliveriesIdForCity();
     }
 
+    public void startGetOrdersForDelivery() {
+        networkDataHelper.startGetOrdersForDelivery();
+    }
 }
