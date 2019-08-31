@@ -1,13 +1,13 @@
 package online.lahloba.www.lahloba.ui.adapters;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.List;
 import online.lahloba.www.lahloba.data.model.OrderItem;
 import online.lahloba.www.lahloba.databinding.DeliveryRowOrderBinding;
 import online.lahloba.www.lahloba.ui.delivery.DeliveryMainViewModel;
-import online.lahloba.www.lahloba.utils.OnSwipeTouchListener;
+import online.lahloba.www.lahloba.utils.StatusUtils;
 
 public class DeliveryOrdersAdapter extends RecyclerView.Adapter<DeliveryOrdersAdapter.DeliveryOrdersViewHolder> {
     List<OrderItem> orderItems;
@@ -42,6 +42,70 @@ public class DeliveryOrdersAdapter extends RecyclerView.Adapter<DeliveryOrdersAd
 
             if (marketPlace.getId().equals(orderItems.get(position).getMarketplaceId())){
                 holder.binding.setMarketplace(marketPlace);
+            }
+        });
+
+
+        holder.binding.catchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                new AlertDialog.Builder(holder.binding.getRoot().getContext())
+                        .setTitle("Alert")
+                        .setMessage("Are you sure you want to catch the order?")
+
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                mViewModel.changeOrderStatus(
+                                        orderItems.get(position).getId(),
+                                        orderItems.get(position).getCityId(),
+                                        StatusUtils.ORDER_STATUS_ON_THE_WAY
+                                );
+
+                            }
+                        })
+
+                        // A null listener allows the button to dismiss the dialog and take no further action.
+                        .setNegativeButton(android.R.string.no, null)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+
+
+
+            }
+        });
+
+
+        holder.binding.completeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                new AlertDialog.Builder(holder.binding.getRoot().getContext())
+                        .setTitle("Alert")
+                        .setMessage("Are you sure you want to catch the order?")
+
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                mViewModel.changeOrderStatus(
+                                        orderItems.get(position).getId(),
+                                        orderItems.get(position).getCityId(),
+                                        StatusUtils.ORDER_STATUS_COMPLETED
+                                );
+
+                            }
+                        })
+
+                        // A null listener allows the button to dismiss the dialog and take no further action.
+                        .setNegativeButton(android.R.string.no, null)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+
+
+
             }
         });
 

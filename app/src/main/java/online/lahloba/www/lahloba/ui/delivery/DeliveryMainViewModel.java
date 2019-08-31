@@ -31,4 +31,8 @@ public class DeliveryMainViewModel extends ViewModel {
     public MutableLiveData<List<OrderItem>> getOrders(){
         return appRepository.getCurrentOrders();
     }
+
+    public void changeOrderStatus(String orderId, String cityId, int status) {
+        appRepository.startChangeOrderStatus(orderId, cityId, status);
+    }
 }

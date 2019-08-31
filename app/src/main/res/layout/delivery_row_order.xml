@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     <data>
         <import type="android.view.View" />
+        <import type="online.lahloba.www.lahloba.utils.StatusUtils"/>
 
         <variable
             name="order"
@@ -206,19 +207,42 @@
             android:background="#dadada" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/orderFooterContainer"
+            android:id="@+id/catchContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="@{order.orderStatus == StatusUtils.ORDER_STATUS_ALLOCATE_TO_DELIVERY ? View.VISIBLE : View.GONE }"
             android:paddingTop="8dp"
             android:paddingBottom="8dp">
 
             <Button
-                android:id="@+id/allocateBtn"
+                android:id="@+id/catchBtn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:background="@drawable/btn_bg_3"
-                android:text="Allocate"
+                android:text="Catch"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/completeContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="@{order.orderStatus == StatusUtils.ORDER_STATUS_ON_THE_WAY ? View.VISIBLE : View.GONE }"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
+
+            <Button
+                android:id="@+id/completeBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/btn_bg_3"
+                android:text="Delivered"
                 android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

@@ -24,6 +24,7 @@ import online.lahloba.www.lahloba.data.model.OrderItem;
 import online.lahloba.www.lahloba.databinding.DeliveryMainFragmentBinding;
 import online.lahloba.www.lahloba.ui.adapters.DeliveryOrdersAdapter;
 import online.lahloba.www.lahloba.utils.Injector;
+import online.lahloba.www.lahloba.utils.StatusUtils;
 
 
 public class DeliveryMainFragment extends Fragment {
@@ -76,12 +77,22 @@ public class DeliveryMainFragment extends Fragment {
 
         mViewModel.getOrders().observe(this, items -> {
             if (items == null)return;
+            if (items.size() == 0)return;
+            if (items.get(0).getDeliveryAllocatedTo() == null)return;
+
+
             orderItems.clear();
 
             if (!items.get(0).getDeliveryAllocatedTo().equals(FirebaseAuth.getInstance().getUid()))
                 return;
 
-            orderItems.addAll(items);
+            for (OrderItem child : items){
+                if (child.getOrderStatus() == StatusUtils.ORDER_STATUS_ALLOCATE_TO_DELIVERY ||
+                        child.getOrderStatus() == StatusUtils.ORDER_STATUS_ON_THE_WAY){
+                    orderItems.add(child);
+                }
+            }
+
             adapter.notifyDataSetChanged();
 
         });

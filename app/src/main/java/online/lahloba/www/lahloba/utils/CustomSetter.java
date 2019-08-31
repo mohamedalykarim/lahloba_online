@@ -85,8 +85,10 @@ public static void setFont(View view, String font){
         }else if (order == 3){
             textView.setText("Order prepared");
         }else if (order == 4){
-            textView.setText("Order shipped");
+            textView.setText("Order allocated to delivery");
         }else if (order == 5){
+            textView.setText("Order on the way");
+        }else if (order == 6){
             textView.setText("Order completed");
         }
     }
