@@ -140,7 +140,7 @@ implements
                              * If not logged in ask user for login
                              */
                             
-                            logginBottomSheet.show(getSupportFragmentManager(),"");
+                            logginBottomSheet.show(getSupportFragmentManager(),"logginBottomSheet");
                         }else{
                             /**
                              * user is log in
@@ -152,7 +152,7 @@ implements
                                     .getmViewModel().cartVMHelper.getAddressSelected() == null){
 
                                 addressBottomSheet.setCartViewModel(((CartFragment)((CartFragment) getSupportFragmentManager().getFragments().get(0))).getmViewModel());
-                                addressBottomSheet.show(getSupportFragmentManager(),"");
+                                addressBottomSheet.show(getSupportFragmentManager(),"addressBottomSheet");
 
                             }else {
 
@@ -171,7 +171,7 @@ implements
                                      * Shipping method not set
                                      */
 
-                                    shippingMethodBottomSheet.show(getSupportFragmentManager(),"");
+                                    shippingMethodBottomSheet.show(getSupportFragmentManager(),"shippingMethodBottomSheet");
 
                                 }else{
 
@@ -185,7 +185,7 @@ implements
                                      */
 
                                     addOrderConfirmBottomSheet = new AddOrderConfirmBottomSheet();
-                                    addOrderConfirmBottomSheet.show(getSupportFragmentManager(),"");
+                                    addOrderConfirmBottomSheet.show(getSupportFragmentManager(),"addOrderConfirmBottomSheet");
 
                                 }
                             }
@@ -203,6 +203,8 @@ implements
 
 
         }
+
+
     }
 
 

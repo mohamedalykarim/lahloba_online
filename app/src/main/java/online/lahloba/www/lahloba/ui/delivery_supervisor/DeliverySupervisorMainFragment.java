@@ -124,6 +124,7 @@ public class DeliverySupervisorMainFragment extends Fragment {
 
         mViewModel.getOrders().observe(this, orders -> {
             if (orders==null)return;
+            if (orders.size() == 0)return;
             if (citySpinnerIds == null)return;
 
             orderItems.clear();

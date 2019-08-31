@@ -106,8 +106,6 @@ public class CartFragment extends Fragment {
 
 
 
-
-
         loginViewModel.loginVMHelper.getIsLogged().observe(this,isLogged->{
             if (isLogged==null)return;
 

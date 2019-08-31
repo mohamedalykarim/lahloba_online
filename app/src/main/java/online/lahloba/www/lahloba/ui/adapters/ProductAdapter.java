@@ -168,6 +168,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
                                 if(null != dataSnapshot.getValue()){
                                     CartItem cartItem = dataSnapshot.getValue(CartItem.class);
+
                                     if(cartItem.getProductId().equals( productItemList.get(i).getId())){
                                         productItemList.get(i).setCount(cartItem.getCount());
                                     }

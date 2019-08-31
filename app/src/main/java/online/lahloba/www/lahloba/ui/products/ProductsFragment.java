@@ -1,6 +1,8 @@
 package online.lahloba.www.lahloba.ui.products;
 
 import androidx.lifecycle.ViewModelProviders;
+
+import android.content.DialogInterface;
 import android.content.Intent;
 import androidx.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -41,6 +43,9 @@ public class ProductsFragment extends Fragment {
     private UserItem currentUser;
     ResetCartBottomSheet resetCartBottomSheet;
     private String subId;
+    private boolean resetAlertApear;
+
+
 
 
     public static ProductsFragment newInstance(Bundle args) {
@@ -101,9 +106,19 @@ public class ProductsFragment extends Fragment {
             if (isOldFarProducts == null)return;
 
             if (isOldFarProducts){
-                resetCartBottomSheet.show(getFragmentManager(),"");
+                if (!resetAlertApear){
+
+                    resetCartBottomSheet.show(getFragmentManager(),"resetCartBottomSheet");
+                    resetCartBottomSheet.setCancelable(false);
+                    resetAlertApear = true;
+                }
+
             }
         });
+
+
+
+
 
 
         return view;
@@ -168,8 +183,10 @@ public class ProductsFragment extends Fragment {
         if (id== R.id.confirmBtn){
             mViewModel.startResetFirebaseCart();
             resetCartBottomSheet.dismiss();
+            resetAlertApear = false;
         }else if (id == R.id.cancelBtn){
             resetCartBottomSheet.dismiss();
+            resetAlertApear = false;
         }
     }
 }
