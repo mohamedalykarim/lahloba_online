@@ -117,6 +117,19 @@ public class AppRepository {
         networkDataHelper.startDeleteAllFromCart();
     }
 
+    public void startAddProductToFirebaseCart(ProductItem productItem) {
+        networkDataHelper.startAddProductToFirebaseCart(productItem);
+    }
+
+    public void startGetCartItemById(String productId) {
+        networkDataHelper.startGetCartItemById(productId);
+    }
+
+
+    public MutableLiveData<CartItem> getCartItem() {
+        return networkDataHelper.getCartItem();
+    }
+
 
     //############################### Login ############################//
     public void startLogin(String email, String password) {
@@ -383,4 +396,6 @@ public class AppRepository {
     public void startGetOrdersForDelivery() {
         networkDataHelper.startGetOrdersForDelivery();
     }
+
+
 }

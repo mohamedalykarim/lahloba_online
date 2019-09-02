@@ -104,4 +104,6 @@ public class Constants {
     public static final String DELIVERY_AREA_TYPE = "area_type";
     public static final String START_UPDATE_ORDER = "start_update_order";
     public static final String START_GET_ORDERS_FOR_DELIVERY = "start_get_orders_for_delivery";
+    public static final String START_ADD_PRODUCT_TO_FIREBASE_CART = "start_add_product_to_firebase_cart";
+    public static final String START_GET_CART_ITEM_BY_ID = "start_get_cart_item_by_id";
 }

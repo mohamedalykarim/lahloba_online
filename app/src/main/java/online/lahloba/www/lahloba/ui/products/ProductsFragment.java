@@ -38,9 +38,7 @@ public class ProductsFragment extends Fragment {
     private LoginViewModel loginViewModel;
     List<ProductItem> productItemList;
     ProductAdapter productAdapter;
-    RecyclerView productsRV;
     String userId;
-    private UserItem currentUser;
     ResetCartBottomSheet resetCartBottomSheet;
     private String subId;
     private boolean resetAlertApear;
@@ -65,14 +63,27 @@ public class ProductsFragment extends Fragment {
 
         resetCartBottomSheet = new ResetCartBottomSheet();
 
-        View view = binding.getRoot();
+
+        ViewModelProviderFactory factory = Injector.getVMFactory(this.getContext());
+        mViewModel = ViewModelProviders.of(this, factory).get(ProductsViewModel.class);
+
+        ViewModelProviderFactory loginFactory = Injector.getVMFactory(this.getContext());
+        loginViewModel = ViewModelProviders.of(this,loginFactory).get(LoginViewModel.class);
+
+
+        /**
+         * Recycler view
+         * adapter
+         */
+
         productItemList = new ArrayList<>();
-        productsRV = view.findViewById(R.id.productsRecyclerView);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+
         productAdapter = new ProductAdapter(getContext());
         productAdapter.setProductItemList(productItemList);
-        productsRV.setLayoutManager(linearLayoutManager);
-        productsRV.setAdapter(productAdapter);
+        productAdapter.setmViewModel(mViewModel);
+
+        binding.productsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.productsRecyclerView.setAdapter(productAdapter);
 
 
 
@@ -81,11 +92,6 @@ public class ProductsFragment extends Fragment {
         subId = bundle.getString(Constants.EXTRA_SUBTITLE_ID);
 
 
-        ViewModelProviderFactory factory = Injector.getVMFactory(this.getContext());
-        mViewModel = ViewModelProviders.of(this, factory).get(ProductsViewModel.class);
-
-        ViewModelProviderFactory loginFactory = Injector.getVMFactory(this.getContext());
-        loginViewModel = ViewModelProviders.of(this,loginFactory).get(LoginViewModel.class);
 
 
         binding.setProductViewModel(mViewModel);
@@ -96,10 +102,61 @@ public class ProductsFragment extends Fragment {
 
         floatButton(container);
 
-        productAdapter = new ProductAdapter(getContext());
-        productItemList = new ArrayList<>();
-        productAdapter.setProductItemList(productItemList);
-        productsRV.setAdapter(productAdapter);
+
+
+
+
+
+
+
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+
+        mViewModel.startProductsForCategory(subId);
+
+
+
+        loginViewModel.getCurrentUserDetails().observe(this,currentUser->{
+            if (null == currentUser)return;
+
+            if(FirebaseAuth.getInstance().getCurrentUser()!=null){
+                userId = currentUser.getId();
+                productAdapter.setUserId(userId);
+                mViewModel.startGetCartItems(userId);
+
+            }
+        });
+
+
+
+
+        mViewModel.getCartItems().observe(this, cartItems -> {
+            if(cartItems == null)return;
+            if (FirebaseAuth.getInstance().getCurrentUser() == null) return;
+
+            mViewModel.productVMHelper.setCartCount(cartItems.size());
+        });
+
+        mViewModel.getCartItemFromInternal().observe(this, cartItems->{
+            if (cartItems == null) return;
+            if (FirebaseAuth.getInstance().getCurrentUser() != null) return;
+
+            mViewModel.productVMHelper.setCartCount(cartItems.size());
+        });
+
+
+
+        mViewModel.getProductsForCategory().observe(this, products->{
+            productItemList.clear();
+            productItemList.addAll(products);
+            productAdapter.notifyDataSetChanged();
+
+        });
 
 
         productAdapter.getCartHasOLdFarProducts().observe(this, isOldFarProducts->{
@@ -120,52 +177,13 @@ public class ProductsFragment extends Fragment {
 
 
 
-
-        return view;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
 
-        mViewModel.startProductsForCategory(subId);
-
-
-        if (FirebaseAuth.getInstance().getCurrentUser() != null){
-            mViewModel.getCartItem().observe(this, cartItems -> {
-                mViewModel.productVMHelper.setCartCount(cartItems.size());
-            });
-        }else{
-            mViewModel.getCartItemFromInternal().observe(this, cartItems->{
-                mViewModel.productVMHelper.setCartCount(cartItems.size());
-            });
-        }
-
-
-
-        mViewModel.getProductsForCategory().observe(this, products->{
-            productItemList.clear();
-            productItemList.addAll(products);
-            productAdapter.notifyDataSetChanged();
-
-        });
-
-
-        loginViewModel.getCurrentUserDetails().observe(this,currentUser->{
-            if (null != currentUser){
-                if(FirebaseAuth.getInstance().getCurrentUser()!=null){
-                    this.currentUser = currentUser;
-                    userId = currentUser.getId();
-                    productAdapter.setUserId(userId);
-                }
-
-            }
-        });
-
-        if (currentUser!= null){
-            mViewModel.startGetCartItems(userId);
-        }
-    }
+    /**
+     * Cart Float item
+     * @param container
+     */
 
     public void floatButton(View container){
         binding.floatingToCart.setOnClickListener(new View.OnClickListener() {
@@ -177,6 +195,12 @@ public class ProductsFragment extends Fragment {
             }
         });
     }
+
+
+    /**
+     *  Reset Cart Items
+     * @param id
+     */
 
 
     public void onResetCartItemClicked(int id) {

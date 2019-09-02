@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -34,6 +35,7 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import online.lahloba.www.lahloba.data.model.AddressItem;
@@ -68,6 +70,7 @@ public class NetworkDataHelper {
     private MutableLiveData<List<MainMenuItem>> mainMenuItems;
     private MutableLiveData<List<SubMenuItem>> subMenuItems;
     private MutableLiveData<List<CartItem>> cartItems;
+    private MutableLiveData<CartItem> cartItem;
     private MutableLiveData<List<AddressItem>> addressItems;
     private MutableLiveData<Boolean> isLogged;
     private MutableLiveData<Boolean> isUserCreated;
@@ -105,6 +108,7 @@ public class NetworkDataHelper {
         productsItems = new MutableLiveData<>();
         addressItems = new MutableLiveData<>();
         cartItems = new MutableLiveData<>();
+        cartItem = new MutableLiveData<>();
         cities = new MutableLiveData<>();
         deliveryAreas = new MutableLiveData<>();
         governorates = new MutableLiveData<>();
@@ -798,6 +802,119 @@ public class NetworkDataHelper {
                 .removeValue();
     }
 
+    public void startAddProductToFirebaseCart(ProductItem productItem) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.START_ADD_PRODUCT_TO_FIREBASE_CART);
+        intent.putExtra(Constants.START_ADD_PRODUCT_TO_FIREBASE_CART, productItem);
+        mContext.startService(intent);
+
+    }
+
+    public void addProductToFirebaseCart(ProductItem productItem){
+        if (productItem == null )return;
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null) return;
+
+        CartItem cartItem = new CartItem();
+        cartItem.setId(productItem.getId());
+        cartItem.setCount(1);
+        cartItem.setProductId(productItem.getId());
+        cartItem.setImage(productItem.getImage());
+        cartItem.setPrice(productItem.getPrice());
+        cartItem.setProductName(productItem.getTitle());
+        cartItem.setMarketId(productItem.getMarketPlaceId());
+
+        firebaseRef.child("Cart").child(uid).child("CartLocation")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()){
+                            /**
+                             * Cart Location is set
+                             */
+                            Location cartLocation = new Location("");
+                            cartLocation.setLatitude(Double.parseDouble(dataSnapshot.child("lat").getValue().toString()));
+                            cartLocation.setLongitude(Double.parseDouble(dataSnapshot.child("lon").getValue().toString()));
+
+                            Location myLocation = new Location("");
+                            myLocation.setLatitude(Double.parseDouble(SharedPreferencesManager.getCurrentLocationLat(mContext)));
+                            myLocation.setLongitude(Double.parseDouble(SharedPreferencesManager.getCurrentLocationLan(mContext)));
+
+                            if (cartLocation.distanceTo(myLocation)/1000 < 30){
+                                firebaseRef.child("Cart").child(uid).child("CartItems").child(cartItem.getId())
+                                        .setValue(cartItem);
+
+                            }else{
+                                /**
+                                 * Old far Poducts exists
+                                 */
+
+                                // todo
+
+
+                            }
+
+
+                        }else {
+                            /**
+                             * Cart Location not set
+                             */
+                            firebaseRef.child("Cart").child(uid).child("CartItems").child(cartItem.getProductId())
+                                    .setValue(cartItem);
+
+                            HashMap<String,Object> newCartLocation = new HashMap<>();
+                            newCartLocation.put("lat", SharedPreferencesManager.getCurrentLocationLat(mContext));
+                            newCartLocation.put("lon", SharedPreferencesManager.getCurrentLocationLan(mContext));
+
+                            firebaseRef.child("Cart").child(uid).child("CartLocation").setValue(newCartLocation);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+    }
+
+
+    public void startGetCartItemById(String productId) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.START_GET_CART_ITEM_BY_ID);
+        intent.putExtra(Constants.START_GET_CART_ITEM_BY_ID, productId);
+        mContext.startService(intent);
+
+    }
+
+    public void getCartItemById(String productId){
+        if (productId == null)return;
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null) return;
+
+        firebaseRef.child("Cart").child(uid).child("CartItems").child(productId)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (!dataSnapshot.exists())return;
+
+                        try {
+                            cartItem.setValue(dataSnapshot.getValue(CartItem.class));
+                        }catch (ClassCastException e){
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    public MutableLiveData<CartItem> getCartItem() {
+        return cartItem;
+    }
 
     //############################### Login ############################//
     public void startLogin(String email, String password) {

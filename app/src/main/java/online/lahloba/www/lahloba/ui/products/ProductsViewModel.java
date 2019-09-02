@@ -29,7 +29,7 @@ public class ProductsViewModel extends ViewModel {
         return appRepository.getProductsForCategory();
     }
 
-    public MutableLiveData<List<CartItem>> getCartItem() {
+    public MutableLiveData<List<CartItem>> getCartItems() {
         return appRepository.getCartItems();
     }
 
@@ -53,5 +53,17 @@ public class ProductsViewModel extends ViewModel {
 
     public void startResetFirebaseCart() {
         appRepository.startResetFirebaseCart();
+    }
+
+    public void startAddProductToFirebaseCart(ProductItem productItem) {
+        appRepository.startAddProductToFirebaseCart(productItem);
+    }
+
+    public void startGetCartItemById(String productId) {
+        appRepository.startGetCartItemById(productId);
+    }
+
+    public MutableLiveData<CartItem> getCartItem() {
+        return appRepository.getCartItem();
     }
 }

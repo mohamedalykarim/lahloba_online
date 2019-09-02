@@ -36,6 +36,7 @@ import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.data.model.room_entity.CartItemRoom;
 import online.lahloba.www.lahloba.databinding.RowProductListBinding;
+import online.lahloba.www.lahloba.ui.products.ProductsViewModel;
 import online.lahloba.www.lahloba.utils.Injector;
 import online.lahloba.www.lahloba.utils.SharedPreferencesManager;
 
@@ -44,6 +45,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     List<ProductItem> productItemList;
     String userId ="userId";
     MutableLiveData<Boolean> cartHasOLdFarProducts;
+    private ProductsViewModel mViewModel;
+
 
     public ProductAdapter(Context context) {
         this.context = context;
@@ -55,25 +58,72 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
         RowProductListBinding binding = RowProductListBinding.inflate(inflater,viewGroup, false);
-        return new ProductViewHolder(binding);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull ProductViewHolder holder, int i) {
-        productItemList.get(i).setCount(0);
-        ProductItem item = productItemList.get(i);
-        holder.bind(item);
-        holder.clicks(i, item);
 
         if (FirebaseAuth.getInstance().getUid() != null){
             userId = FirebaseAuth.getInstance().getUid();
         }
 
+        return new ProductViewHolder(binding);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
+        holder.bind(productItemList.get(position));
+
+
+        if (FirebaseAuth.getInstance().getUid() == null){
+            /**
+             * Read cart item From internal
+             */
+        }else{
+            /**
+             * Read cart item From firebase
+             */
+
+
+            mViewModel.startGetCartItemById(productItemList.get(position).getId());
+
+        }
+
+
+
+
+
+        holder.binding.addContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (FirebaseAuth.getInstance().getUid() == null){
+
+                    /**
+                     * add the item to internal cart
+                     */
+
+                    // todo
+
+                }else {
+
+
+                    /**
+                     * add the item to fire base cart
+                     */
+                    mViewModel.startAddProductToFirebaseCart(productItemList.get(position));
+
+                }
+
+
+
+            }
+        });
+
+
+
+
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
 
 
-        storageRef.child(item.getImage())
+        storageRef.child(productItemList.get(position).getImage())
                 .getDownloadUrl()
                 .addOnCompleteListener(new OnCompleteListener<Uri>() {
                     @Override
@@ -88,7 +138,17 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                 });
 
 
-        favorites(holder, i, item);
+
+
+        mViewModel.getCartItem().observe((LifecycleOwner) context, cartItem -> {
+            if (cartItem == null)return;
+
+            if (cartItem.getId().equals(productItemList.get(position).getId())){
+                holder.binding.setCartItem(cartItem);
+            }
+        });
+
+
 
 
     }
@@ -157,31 +217,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
              * Read Count Value
              */
             if (FirebaseAuth.getInstance().getCurrentUser() != null){
-                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-                databaseReference.child("Cart")
-                        .child(userId)
-                        .child("CartItems")
-                        .child(item.getId())
-                        .addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                                if(null != dataSnapshot.getValue()){
-                                    CartItem cartItem = dataSnapshot.getValue(CartItem.class);
 
-                                    if(cartItem.getProductId().equals( productItemList.get(i).getId())){
-                                        productItemList.get(i).setCount(cartItem.getCount());
-                                    }
 
-                                }
 
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
             }else {
                 Injector.provideRepository(context).getSpecificCartItem(item.getId())
                 .observe((LifecycleOwner) context, cartItem -> {
@@ -261,7 +300,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                     productItemList.get(i).setCount(1);
 
                     if (FirebaseAuth.getInstance().getCurrentUser() != null){
-                        addItemTofirebase(item,i);
+
                     }else{
                         Injector.getExecuter().diskIO().execute(new Runnable() {
                             @Override
@@ -361,76 +400,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     }
 
 
-    public void addItemTofirebase(ProductItem item, int position){
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance()
-                .getReference().child("Cart");
 
-        CartItem cartItem = new CartItem();
-        cartItem.setId(item.getId());
-        cartItem.setCount(1);
-        cartItem.setProductId(item.getId());
-        cartItem.setImage(item.getImage());
-        cartItem.setPrice(item.getPrice());
-        cartItem.setProductName(item.getTitle());
-        cartItem.setMarketId(item.getMarketPlaceId());
-
-        databaseReference.child(userId).child("CartLocation")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                        if (dataSnapshot.hasChildren()){
-                            /**
-                             * Cart Location is set
-                             */
-                            Location cartLocation = new Location("");
-                            cartLocation.setLatitude(Double.parseDouble(dataSnapshot.child("lat").getValue().toString()));
-                            cartLocation.setLongitude(Double.parseDouble(dataSnapshot.child("lon").getValue().toString()));
-
-                            Location myLocation = new Location("");
-                            myLocation.setLatitude(Double.parseDouble(SharedPreferencesManager.getCurrentLocationLat(context)));
-                            myLocation.setLongitude(Double.parseDouble(SharedPreferencesManager.getCurrentLocationLan(context)));
-
-                            if (cartLocation.distanceTo(myLocation)/1000 < 30){
-                                databaseReference.child(userId).child("CartItems").child(cartItem.getId())
-                                        .setValue(cartItem);
-
-                            }else{
-                                /**
-                                 * Old far Poducts exists
-                                 */
-
-                                cartHasOLdFarProducts.setValue(true);
-                                cartHasOLdFarProducts.setValue(false);
-                                productItemList.get(position).setCount(0);
-
-
-                            }
-
-                        }else{
-                            /**
-                             * Cart Location not set
-                             */
-                            databaseReference.child(userId).child("CartItems").child(cartItem.getProductId())
-                                    .setValue(cartItem);
-
-                            HashMap<String,Object> newCartLocation = new HashMap<>();
-                            newCartLocation.put("lat", SharedPreferencesManager.getCurrentLocationLat(context));
-                            newCartLocation.put("lon", SharedPreferencesManager.getCurrentLocationLan(context));
-
-                            databaseReference.child(userId).child("CartLocation").setValue(newCartLocation);
-                        }
-
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-
-    }
 
     private void addItemToInternal(ProductItem item) {
         CartItemRoom cartItem = new CartItemRoom();
@@ -449,5 +419,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
     public MutableLiveData<Boolean> getCartHasOLdFarProducts() {
         return cartHasOLdFarProducts;
+    }
+
+    public void setmViewModel(ProductsViewModel mViewModel) {
+        this.mViewModel = mViewModel;
     }
 }

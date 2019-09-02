@@ -7,6 +7,11 @@
         <variable
             name="item"
             type="online.lahloba.www.lahloba.data.model.ProductItem"/>
+
+
+        <variable
+            name="cartItem"
+            type="online.lahloba.www.lahloba.data.model.CartItem" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -69,7 +74,7 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginBottom="8dp"
                     android:background="@color/colorPrimary"
-                    android:visibility="@{item.count == 0 ? View.GONE : View.VISIBLE}"
+                    android:visibility="@{cartItem.count == 0 ? View.GONE : View.VISIBLE}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/addContainer">
 
@@ -135,7 +140,7 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
                         android:layout_marginBottom="8dp"
-                        android:text='@{item.count+""}'
+                        android:text='@{cartItem.count+""}'
                         android:textColor="#000"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/plusContainer"
@@ -151,7 +156,7 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginBottom="8dp"
                     android:background="@color/colorAccent"
-                    android:visibility="@{item.count >= 1 ? View.GONE : View.VISIBLE}"
+                    android:visibility="@{cartItem.count >= 1 ? View.GONE : View.VISIBLE}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent">
 
@@ -263,11 +268,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/disabled" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <!--<View-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="1dp"-->
-        <!--android:background="#dadada" />-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
