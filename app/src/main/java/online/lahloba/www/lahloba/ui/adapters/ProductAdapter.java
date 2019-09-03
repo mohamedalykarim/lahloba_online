@@ -3,13 +3,10 @@ package online.lahloba.www.lahloba.ui.adapters;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
 import android.content.Context;
-import android.location.Location;
 import android.net.Uri;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,24 +18,19 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
-import java.util.HashMap;
 import java.util.List;
 
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
-import online.lahloba.www.lahloba.data.model.room_entity.CartItemRoom;
 import online.lahloba.www.lahloba.databinding.RowProductListBinding;
 import online.lahloba.www.lahloba.ui.products.ProductsViewModel;
 import online.lahloba.www.lahloba.utils.Injector;
-import online.lahloba.www.lahloba.utils.SharedPreferencesManager;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
     private final Context context;
@@ -68,17 +60,20 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
-        holder.bind(productItemList.get(position));
+        holder.binding.setItem(productItemList.get(position));
 
+        /**
+         * Read cart item
+         */
 
         if (FirebaseAuth.getInstance().getUid() == null){
-            /**
-             * Read cart item From internal
-             */
+
+            mViewModel.getSpecificCartItemFromInternal(productItemList.get(position).getId())
+                    .observe((LifecycleOwner) context, item -> {
+                        if (item == null) return;
+                            holder.binding.setCartItem(item);
+                    });
         }else{
-            /**
-             * Read cart item From firebase
-             */
 
 
             mViewModel.startGetCartItemById(productItemList.get(position).getId());
@@ -89,24 +84,35 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
 
 
+        /**
+         * add the item
+         */
+
+
         holder.binding.addContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 if (FirebaseAuth.getInstance().getUid() == null){
 
-                    /**
-                     * add the item to internal cart
-                     */
+                    CartItem cartItem = new CartItem();
+                    cartItem.setCount(1);
+                    cartItem.setProductId(productItemList.get(position).getId());
+                    cartItem.setImage(productItemList.get(position).getImage());
+                    cartItem.setPrice(productItemList.get(position).getPrice());
+                    cartItem.setProductName(productItemList.get(position).getTitle());
+                    cartItem.setCurrency("EGP");
+                    cartItem.setMarketId(productItemList.get(position).getMarketPlaceId());
 
-                    // todo
+                    mViewModel.insertCartItemToInternaldb(cartItem);
+
+
+
 
                 }else {
 
 
-                    /**
-                     * add the item to fire base cart
-                     */
+
                     mViewModel.startAddProductToFirebaseCart(productItemList.get(position));
 
                 }
@@ -115,6 +121,48 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
             }
         });
+
+
+        /**
+         * add to count
+         */
+
+        holder.binding.plusContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (FirebaseAuth.getInstance().getUid() == null){
+                    mViewModel.addToCartItemCountInternaldb(productItemList.get(position).getId());
+
+
+                }else{
+                    mViewModel.startAddToCartProductCount(productItemList.get(position).getId());
+                }
+            }
+        });
+
+
+
+            /**
+         * remove from count
+         */
+
+        holder.binding.minusContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (FirebaseAuth.getInstance().getUid() == null){
+
+                    mViewModel.removeFromCartItemCountInternaldb(productItemList.get(position).getId());
+
+                }else{
+                    mViewModel.startRemoveFromCartProductCount(productItemList.get(position).getId());
+                }
+            }
+        });
+
+
+
+
+
 
 
 
@@ -204,192 +252,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             this.binding = binding;
         }
 
-        public void bind(ProductItem item) {
-            binding.setItem(item);
-            binding.executePendingBindings();
-        }
-
-        public void clicks(int i, ProductItem item){
-
-
-
-            /**
-             * Read Count Value
-             */
-            if (FirebaseAuth.getInstance().getCurrentUser() != null){
-
-
-
-
-            }else {
-                Injector.provideRepository(context).getSpecificCartItem(item.getId())
-                .observe((LifecycleOwner) context, cartItem -> {
-                    if (cartItem == null) return;
-                    productItemList.get(i).setCount(cartItem.getCount());
-                });
-            }
-
-
-            /**
-             *  Minus Button
-             */
-
-            binding.minusContainer.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    if (!item.isStatus())return;
-
-
-                    if (FirebaseAuth.getInstance().getCurrentUser() != null){
-                        removeFromCountFirebase(item);
-                    }else {
-                        Injector.getExecuter().diskIO().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (item.getCount() >0){
-                                    if (item.getCount() == 1){
-                                        removeFromCountInternal(item);
-                                        Injector.provideRepository(context).deleteSpecificCartItem(item.getId());
-                                    }else {
-                                        removeFromCountInternal(item);
-                                    }
-
-                                }
-
-                            }
-                        });
-                    }
-                }
-            });
-
-
-            /**
-             * Plus Button
-             */
-            binding.plusContainer.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (!item.isStatus())return;
-
-
-                    if (FirebaseAuth.getInstance().getCurrentUser() != null){
-                        addToCountFirebase(item);
-                    }else{
-                        Injector.getExecuter().diskIO().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                addtiCountInternal(item);
-                            }
-                        });
-                    }
-                }
-            });
-
-
-            /**
-             * Add To Cart
-             */
-            binding.addContainer.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    if (!item.isStatus())return;
-
-
-                    productItemList.get(i).setCount(1);
-
-                    if (FirebaseAuth.getInstance().getCurrentUser() != null){
-
-                    }else{
-                        Injector.getExecuter().diskIO().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                addItemToInternal(item);
-                            }
-                        });
-                    }
-
-
-
-                }
-            });
-
-
-        }
     }
 
-    private void removeFromCountFirebase(ProductItem item) {
-        if(item.getCount()>0){
 
-            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-            databaseReference.child("Cart")
-                    .child(userId)
-                    .child("CartItems")
-                    .child(item.getId()).child("count")
-                    .runTransaction(new Transaction.Handler() {
-                        @NonNull
-                        @Override
-                        public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-                            Object count = mutableData.getValue();
-
-                            if(null == count ){
-                                return Transaction.success(mutableData);
-                            }else{
-                                int countInt = Integer.parseInt("0"+count);
-                                if(countInt > 0){
-                                    mutableData.setValue(countInt - 1);
-                                    return Transaction.success(mutableData);
-                                }
-
-                                return Transaction.success(mutableData);
-                            }
-
-                        }
-
-                        @Override
-                        public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-                        }
-                    });
-        }
-    }
-
-    private void removeFromCountInternal(ProductItem item){
-        Injector.provideRepository(context).changeCartItemCountInternaldb(item.getId(),item.getCount()-1);
-    }
-
-    private void addToCountFirebase(ProductItem item) {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        databaseReference.child("Cart")
-                .child(userId)
-                .child("CartItems")
-                .child(item.getId()).child("count")
-                .runTransaction(new Transaction.Handler() {
-                    @NonNull
-                    @Override
-                    public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-                        Object count = mutableData.getValue();
-
-                        if(null == count ){
-                            return Transaction.success(mutableData);
-                        }else {
-                            int countInt = Integer.parseInt("0"+count);
-                            mutableData.setValue(countInt + 1);
-
-                            return Transaction.success(mutableData);
-                        }
-
-                    }
-
-                    @Override
-                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-                    }
-                });
-    }
-
-    private void addtiCountInternal(ProductItem item) {
-        Injector.provideRepository(context).changeCartItemCountInternaldb(item.getId(),item.getCount()+1);
-    }
 
     public void setProductItemList(List<ProductItem> productItemList) {
         this.productItemList = productItemList;
@@ -400,22 +265,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     }
 
 
-
-
-    private void addItemToInternal(ProductItem item) {
-        CartItemRoom cartItem = new CartItemRoom();
-        cartItem.setCount(1);
-        cartItem.setProductId(item.getId());
-        cartItem.setImage(item.getImage());
-        cartItem.setPrice(item.getPrice());
-        cartItem.setProductName(item.getTitle());
-        cartItem.setCurrency("EGP");
-        cartItem.setMarketId(item.getMarketPlaceId());
-
-        Injector.provideRepository(context).insertCartItemToInternaldb(cartItem);
-
-
-    }
 
     public MutableLiveData<Boolean> getCartHasOLdFarProducts() {
         return cartHasOLdFarProducts;

@@ -50,7 +50,6 @@ import online.lahloba.www.lahloba.data.model.OrderItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.data.model.SubMenuItem;
 import online.lahloba.www.lahloba.data.model.UserItem;
-import online.lahloba.www.lahloba.data.model.room_entity.CartItemRoom;
 import online.lahloba.www.lahloba.data.services.LahlobaMainService;
 import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.LocalUtils;
@@ -745,24 +744,13 @@ public class NetworkDataHelper {
 
     }
 
-    public void addCartItemsToFireBase(List<CartItemRoom> cartItems, String userId) {
+    public void addCartItemsToFireBase(List<CartItem> cartItems, String userId) {
         for (int i=0; i< cartItems.size(); i++){
-
-            CartItem cartItem = new CartItem();
-            cartItem.setCurrency(cartItems.get(i).getCurrency());
-            cartItem.setProductName(cartItems.get(i).getProductName());
-            cartItem.setCount(cartItems.get(i).getCount());
-            cartItem.setProductId(cartItems.get(i).getProductId());
-            cartItem.setImage(cartItems.get(i).getImage());
-            cartItem.setPrice(cartItems.get(i).getPrice());
-
-
-
             firebaseRef
                     .child("Cart")
                     .child(userId)
                     .child("CartItems")
-                    .child(cartItem.getProductId())
+                    .child(cartItems.get(i).getProductId())
                     .setValue(cartItem);
         }
     }
@@ -914,6 +902,92 @@ public class NetworkDataHelper {
 
     public MutableLiveData<CartItem> getCartItem() {
         return cartItem;
+    }
+
+
+    public void startAddToCartProductCount(String productId){
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.START_ADD_TO_CART_PRODUCT_COUNT);
+        intent.putExtra(Constants.START_ADD_TO_CART_PRODUCT_COUNT, productId);
+        mContext.startService(intent);
+
+    }
+
+    public void addToCartProductCount(String productId){
+        if (productId == null)return;
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null)return;
+
+
+        firebaseRef.child("Cart")
+                .child(uid)
+                .child("CartItems")
+                .child(productId).child("count")
+                .runTransaction(new Transaction.Handler() {
+                    @NonNull
+                    @Override
+                    public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                        Object count = mutableData.getValue();
+
+                        if(null == count ){
+                            return Transaction.success(mutableData);
+                        }else {
+                            int countInt = Integer.parseInt("0"+count);
+                            mutableData.setValue(countInt + 1);
+
+                            return Transaction.success(mutableData);
+                        }
+
+                    }
+
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                    }
+                });
+    }
+
+    public void startRemoveFromCartProductCount(String productId){
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.START_REMOVE_FROM_CART_PRODUCT_COUNT);
+        intent.putExtra(Constants.START_REMOVE_FROM_CART_PRODUCT_COUNT, productId);
+        mContext.startService(intent);
+
+    }
+
+    public void removeFromCartProductCount(String productItem){
+        if (productItem == null)return;
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null)return;
+
+        firebaseRef.child("Cart")
+                .child(uid)
+                .child("CartItems")
+                .child(productItem).child("count")
+                .runTransaction(new Transaction.Handler() {
+                    @NonNull
+                    @Override
+                    public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                        Object count = mutableData.getValue();
+
+                        if(null == count ){
+                            return Transaction.success(mutableData);
+                        }else{
+                            int countInt = Integer.parseInt("0"+count);
+                            if(countInt > 0){
+                                mutableData.setValue(countInt - 1);
+                                return Transaction.success(mutableData);
+                            }
+
+                            return Transaction.success(mutableData);
+                        }
+
+                    }
+
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                    }
+                });
+
     }
 
     //############################### Login ############################//

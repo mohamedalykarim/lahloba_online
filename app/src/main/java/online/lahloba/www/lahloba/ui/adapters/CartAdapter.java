@@ -32,7 +32,6 @@ import java.util.List;
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
-import online.lahloba.www.lahloba.data.model.room_entity.CartItemRoom;
 import online.lahloba.www.lahloba.databinding.RowCartListBinding;
 import online.lahloba.www.lahloba.ui.cart.CartViewModel;
 import online.lahloba.www.lahloba.utils.Injector;
@@ -170,7 +169,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                             }
                         });
             }else {
-                Injector.provideRepository(context).getSpecificCartItem(item.getProductId())
+                Injector.provideRepository(context).getSpecificCartItemFromInternal(item.getProductId())
                         .observe((LifecycleOwner) context, cartItem -> {
                             if (cartItem!= null){
                                 cartItemList.get(i).setCount(cartItem.getCount());
@@ -433,7 +432,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     }
 
     private void removeFromCountInternal(CartItem item){
-        Injector.provideRepository(context).changeCartItemCountInternaldb(item.getProductId(),item.getCount()-1);
+        Injector.provideRepository(context).removeFromCartItemCountInternaldb(item.getProductId());
     }
 
     private void addToCountFirebase(CartItem item) {
@@ -466,7 +465,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     }
 
     private void addToCountInternal(CartItem item) {
-        Injector.provideRepository(context).changeCartItemCountInternaldb(item.getProductId(),item.getCount()+1);
+        Injector.provideRepository(context).addToCartItemCountInternaldb(item.getProductId());
     }
 
 
@@ -530,16 +529,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
 
     private void addItemToInternal(CartItem item) {
-        CartItemRoom cartItem = new CartItemRoom();
-        cartItem.setCount(1);
-        cartItem.setProductId(item.getProductId());
-        cartItem.setImage(item.getImage());
-        cartItem.setPrice(item.getPrice());
-        cartItem.setProductName(item.getProductName());
-        cartItem.setCurrency("EGP");
 
-
-        Injector.provideRepository(context).insertCartItemToInternaldb(cartItem);
+        Injector.provideRepository(context).insertCartItemToInternaldb(item);
 
 
     }

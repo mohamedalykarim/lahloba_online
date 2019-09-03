@@ -11,7 +11,6 @@ import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.MarketPlace;
 import online.lahloba.www.lahloba.data.model.OrderItem;
-import online.lahloba.www.lahloba.data.model.room_entity.CartItemRoom;
 import online.lahloba.www.lahloba.data.model.vm_helper.CartVMHelper;
 import online.lahloba.www.lahloba.utils.Injector;
 
@@ -31,7 +30,7 @@ public class CartViewModel extends ViewModel {
         return appRepository.getCartItems();
     }
 
-    public LiveData<List<CartItemRoom>> getCartItemsFromInternal() {
+    public LiveData<List<CartItem>> getCartItemsFromInternal() {
         return appRepository.getCartItemFromInternal();
     }
 

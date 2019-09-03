@@ -11,7 +11,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +27,6 @@ import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.MarketPlace;
-import online.lahloba.www.lahloba.data.model.room_entity.CartItemRoom;
 import online.lahloba.www.lahloba.databinding.FragmentCartBinding;
 import online.lahloba.www.lahloba.ui.adapters.CartAdapter;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
@@ -159,16 +157,8 @@ public class CartFragment extends Fragment {
                 cartItemList.clear();
                 cartAdapter.notifyDataSetChanged();
 
-                for (CartItemRoom cartChild : cartItems){
-                    CartItem cartItem = new CartItem();
-                    cartItem.setCount(cartChild.getCount());
-                    cartItem.setImage(cartChild.getImage());
-                    cartItem.setPrice(cartChild.getPrice());
-                    cartItem.setProductId(cartChild.getProductId());
-                    cartItem.setProductName(cartChild.getProductName());
-                    cartItem.setCurrency(cartChild.getCurrency());
-                    cartItem.setMarketId(cartChild.getMarketId());
-                    cartItemList.add(cartItem);
+                for (CartItem cartChild : cartItems){
+                    cartItemList.add(cartChild);
                 }
 
                 calculateTotal();

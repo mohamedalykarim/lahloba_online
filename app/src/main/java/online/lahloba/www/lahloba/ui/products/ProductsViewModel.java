@@ -9,7 +9,6 @@ import java.util.List;
 import online.lahloba.www.lahloba.data.repository.AppRepository;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
-import online.lahloba.www.lahloba.data.model.room_entity.CartItemRoom;
 import online.lahloba.www.lahloba.data.model.vm_helper.ProductVMHelper;
 import online.lahloba.www.lahloba.utils.Injector;
 
@@ -38,18 +37,10 @@ public class ProductsViewModel extends ViewModel {
 
     }
 
-    public LiveData<List<CartItemRoom>> getCartItemFromInternal() {
+    public LiveData<List<CartItem>> getCartItemFromInternal() {
         return appRepository.getCartItemFromInternal();
     }
 
-    public void deleteAllFromCartCount0() {
-        Injector.getExecuter().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                appRepository.deleteAllFromCartCount0();
-            }
-        });
-    }
 
     public void startResetFirebaseCart() {
         appRepository.startResetFirebaseCart();
@@ -65,5 +56,33 @@ public class ProductsViewModel extends ViewModel {
 
     public MutableLiveData<CartItem> getCartItem() {
         return appRepository.getCartItem();
+    }
+
+    public void startAddToCartProductCount(String productId) {
+        appRepository.startAddToCartProductCount(productId);
+    }
+
+    public void startRemoveFromCartProductCount(String productId) {
+        appRepository.startRemoveFromCartProductCount(productId);
+    }
+
+    public void insertCartItemToInternaldb(CartItem cartItem) {
+        appRepository.insertCartItemToInternaldb(cartItem);
+    }
+
+    public LiveData<CartItem> getSpecificCartItemFromInternal(String productId) {
+        return appRepository.getSpecificCartItemFromInternal(productId);
+    }
+
+    public void addToCartItemCountInternaldb(String productId) {
+        appRepository.addToCartItemCountInternaldb(productId);
+    }
+
+    public void removeFromCartItemCountInternaldb(String productId) {
+        appRepository.removeFromCartItemCountInternaldb(productId);
+    }
+
+    public void removeCartitemWith0CountFromInternal() {
+        appRepository.removeCartitemWith0CountFromInternal();
     }
 }

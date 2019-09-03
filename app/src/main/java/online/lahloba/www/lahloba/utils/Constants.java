@@ -106,4 +106,6 @@ public class Constants {
     public static final String START_GET_ORDERS_FOR_DELIVERY = "start_get_orders_for_delivery";
     public static final String START_ADD_PRODUCT_TO_FIREBASE_CART = "start_add_product_to_firebase_cart";
     public static final String START_GET_CART_ITEM_BY_ID = "start_get_cart_item_by_id";
+    public static final String START_ADD_TO_CART_PRODUCT_COUNT = "start_add_to_cart_product_count";
+    public static final String START_REMOVE_FROM_CART_PRODUCT_COUNT = "start_remove_from_cart_product_count";
 }

@@ -93,6 +93,12 @@ public class LahlobaMainService extends IntentService {
         }else if(intent.getAction().equals(Constants.START_GET_CART_ITEM_BY_ID)){
             String productId = intent.getStringExtra(Constants.START_GET_CART_ITEM_BY_ID);
             networkDataHelper.getCartItemById(productId);
+        }else if(intent.getAction().equals(Constants.START_ADD_TO_CART_PRODUCT_COUNT)){
+            String productId = intent.getStringExtra(Constants.START_ADD_TO_CART_PRODUCT_COUNT);
+            networkDataHelper.addToCartProductCount(productId);
+        }else if(intent.getAction().equals(Constants.START_REMOVE_FROM_CART_PRODUCT_COUNT)){
+            String productId = intent.getStringExtra(Constants.START_REMOVE_FROM_CART_PRODUCT_COUNT);
+            networkDataHelper.removeFromCartProductCount(productId);
         }
 
         /**

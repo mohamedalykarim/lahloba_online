@@ -96,17 +96,11 @@ public class ProductsFragment extends Fragment {
 
         binding.setProductViewModel(mViewModel);
 
-        mViewModel.deleteAllFromCartCount0();
+        mViewModel.removeCartitemWith0CountFromInternal();
 
 
 
         floatButton(container);
-
-
-
-
-
-
 
 
         return binding.getRoot();

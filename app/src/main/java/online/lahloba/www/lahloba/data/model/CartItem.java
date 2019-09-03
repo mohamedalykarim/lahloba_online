@@ -1,12 +1,24 @@
 package online.lahloba.www.lahloba.data.model;
 
+import androidx.annotation.NonNull;
+import androidx.databinding.BaseObservable;
+import androidx.databinding.Bindable;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import com.google.firebase.database.Exclude;
 
 import java.io.Serializable;
 
-public class CartItem implements Serializable {
+import online.lahloba.www.lahloba.BR;
+
+@Entity(tableName = "cart")
+public class CartItem extends BaseObservable implements Serializable {
     String id;
     int count;
+
+    @PrimaryKey
+    @NonNull
     String productId;
     String productName;
     String price;
@@ -23,6 +35,7 @@ public class CartItem implements Serializable {
         return id;
     }
 
+    @Bindable
     public int getCount() {
         return count;
     }
@@ -60,8 +73,10 @@ public class CartItem implements Serializable {
         this.id = id;
     }
 
+    @Bindable
     public void setCount(int count) {
         this.count = count;
+        notifyPropertyChanged(BR.count);
     }
 
     public void setProductId(String productId) {

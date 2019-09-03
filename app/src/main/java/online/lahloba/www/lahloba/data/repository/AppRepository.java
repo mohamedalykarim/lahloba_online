@@ -1,9 +1,9 @@
 package online.lahloba.www.lahloba.data.repository;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
-import com.google.firebase.database.DataSnapshot;
 
 import java.util.List;
 
@@ -20,7 +20,6 @@ import online.lahloba.www.lahloba.data.model.MarketPlace;
 import online.lahloba.www.lahloba.data.model.OrderItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.data.model.UserItem;
-import online.lahloba.www.lahloba.data.model.room_entity.CartItemRoom;
 import online.lahloba.www.lahloba.utils.Injector;
 
 public class AppRepository {
@@ -74,19 +73,45 @@ public class AppRepository {
         return networkDataHelper.getCartItems();
     }
 
-    public LiveData<List<CartItemRoom>> startgetCartItemsFromInternal() {
+    public LiveData<List<CartItem>> startgetCartItemsFromInternal() {
         return database.cartDao().getAll();
     }
 
-    public void insertCartItemToInternaldb(CartItemRoom cartItem){
-        database.cartDao().insert(cartItem);
+
+    /**
+     * Internal
+     * insert cart item to internal
+     * @param cartItem
+     */
+    public void insertCartItemToInternaldb(CartItem cartItem){
+        Injector.getExecuter().diskIO().execute(()->{
+            database.cartDao().insert(cartItem);
+        });
     }
 
-    public void changeCartItemCountInternaldb(String productId, int count){
-        database.cartDao().changeCount(productId,count);
+    /**
+     * Internal
+     * add To CartItem Count Internal db
+     */
+    public void addToCartItemCountInternaldb(String productId){
+        Injector.getExecuter().diskIO().execute(()-> {
+            int count  = database.cartDao().getSpecificCartItemNoObserve(productId).getCount();
+            database.cartDao().changeCount(productId, count + 1);
+        });
+
     }
 
-    public LiveData<CartItemRoom> getSpecificCartItem(String productId) {
+    public void removeFromCartItemCountInternaldb(String productId){
+        Injector.getExecuter().diskIO().execute(()-> {
+            int count  = database.cartDao().getSpecificCartItemNoObserve(productId).getCount();
+            if (count >0){
+                database.cartDao().changeCount(productId, count - 1);
+            }
+        });
+
+    }
+
+    public LiveData<CartItem> getSpecificCartItemFromInternal(String productId) {
         return database.cartDao().getSpecificCartItem(productId);
     }
 
@@ -96,12 +121,14 @@ public class AppRepository {
 
     }
 
-    public LiveData<List<CartItemRoom>> getCartItemFromInternal() {
+    public LiveData<List<CartItem>> getCartItemFromInternal() {
         return database.cartDao().getAll();
     }
 
-    public void deleteAllFromCartCount0() {
-        database.cartDao().deleteAllCount0();
+    public void removeCartitemWith0CountFromInternal() {
+        Injector.getExecuter().diskIO().execute(()->{
+            database.cartDao().deleteAllCount0();
+        });
     }
 
     public void deleteAllFromInternalCart() {
@@ -129,6 +156,31 @@ public class AppRepository {
     public MutableLiveData<CartItem> getCartItem() {
         return networkDataHelper.getCartItem();
     }
+
+    public void addCartItemsToFireBase(String userId) {
+        database.cartDao().getAllWithCount().observeForever(cartItems->{
+            if (cartItems!= null){
+                networkDataHelper.addCartItemsToFireBase(cartItems, userId);
+                Injector.getExecuter().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        database.cartDao().deleteAll();
+                    }
+                });
+            }
+        });
+
+    }
+
+    public void startAddToCartProductCount(String productId) {
+        networkDataHelper.startAddToCartProductCount(productId);
+    }
+
+    public void startRemoveFromCartProductCount(String productId) {
+        networkDataHelper.startRemoveFromCartProductCount(productId);
+    }
+
+
 
 
     //############################### Login ############################//
@@ -165,23 +217,8 @@ public class AppRepository {
     }
 
 
-    public void addCartItemsToFireBase(String userId) {
-        database.cartDao().getAllWithCount().observeForever(cartItems->{
-            if (cartItems!= null){
-                networkDataHelper.addCartItemsToFireBase(cartItems, userId);
-                Injector.getExecuter().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        database.cartDao().deleteAll();
-                    }
-                });
-            }
-        });
 
 
-
-
-    }
 
     //############################### Address ############################//
 
