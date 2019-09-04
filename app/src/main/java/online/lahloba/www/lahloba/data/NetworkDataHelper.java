@@ -43,6 +43,7 @@ import online.lahloba.www.lahloba.data.model.BannerItem;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.CityItem;
 import online.lahloba.www.lahloba.data.model.DeliveryArea;
+import online.lahloba.www.lahloba.data.model.FavoriteItem;
 import online.lahloba.www.lahloba.data.model.GovernorateItem;
 import online.lahloba.www.lahloba.data.model.MainMenuItem;
 import online.lahloba.www.lahloba.data.model.MarketPlace;
@@ -74,6 +75,8 @@ public class NetworkDataHelper {
     private MutableLiveData<Boolean> isLogged;
     private MutableLiveData<Boolean> isUserCreated;
     private MutableLiveData<Boolean> isAddressAdded;
+    private MutableLiveData<Boolean> oldFarProductExistsInCart;
+
     private MutableLiveData<UserItem> userDetails;
     private MutableLiveData<AddressItem> defaultAddress;
     private MutableLiveData<List<CityItem>> cities;
@@ -88,6 +91,7 @@ public class NetworkDataHelper {
 
     private MutableLiveData<List<ProductItem>> productsItems;
     private MutableLiveData<List<ProductItem>> favoritesItems;
+    private MutableLiveData<FavoriteItem> favoritesItem;
     private MutableLiveData<List<BannerItem>> bannerItems;
 
     private MutableLiveData<ProductItem> productItem;
@@ -115,6 +119,7 @@ public class NetworkDataHelper {
         marketPlace = new MutableLiveData<>();
         orderItems = new MutableLiveData<>();
         favoritesItems = new MutableLiveData<>();
+        favoritesItem = new MutableLiveData<>();
         bannerItems = new MutableLiveData<>();
 
         defaultAddress = new MutableLiveData<>();
@@ -124,6 +129,7 @@ public class NetworkDataHelper {
         isUserCreated = new MutableLiveData<>();
         isOrderAdded = new MutableLiveData<>();
         isAddressEdited = new MutableLiveData<>();
+        oldFarProductExistsInCart = new MutableLiveData<>();
 
         productItem = new MutableLiveData<>();
         enProductItemForEdit = new MutableLiveData<>();
@@ -837,7 +843,8 @@ public class NetworkDataHelper {
                                  * Old far Poducts exists
                                  */
 
-                                // todo
+                                oldFarProductExistsInCart.setValue(true);
+                                oldFarProductExistsInCart.setValue(false);
 
 
                             }
@@ -866,6 +873,9 @@ public class NetworkDataHelper {
 
     }
 
+    public MutableLiveData<Boolean> getOldFarProductExistsInCart() {
+        return oldFarProductExistsInCart;
+    }
 
     public void startGetCartItemById(String productId) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
@@ -1729,6 +1739,97 @@ public class NetworkDataHelper {
         return favoritesItems;
     }
 
+    public void startGetFavoriteItem(String productId) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.START_GET_FAVORITE_ITEM);
+        intent.putExtra(Constants.START_GET_FAVORITE_ITEM, productId);
+        mContext.startService(intent);
+    }
+
+    public void getFavoriteFromFirebase(String productId) {
+        if (productId == null)return;
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null)return;
+
+        firebaseRef.child("Favorites").child(uid).child(productId)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()){
+                            try {
+                                favoritesItem.setValue(dataSnapshot.getValue(FavoriteItem.class));
+                            }catch (ClassCastException e){
+
+                            }
+                        }else {
+                            favoritesItem.setValue(new FavoriteItem());
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    public MutableLiveData<FavoriteItem> getFavoritesItem() {
+        return favoritesItem;
+    }
+
+
+    public void startChangeFavoriteStatus(String productId) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.CHANGE_FAVORITE_STATUS);
+        intent.putExtra(Constants.CHANGE_FAVORITE_STATUS, productId);
+        mContext.startService(intent);
+
+    }
+
+    public void changeFavoriteStatus(String productId){
+        if (productItem == null)return;
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null)return;
+
+
+
+        firebaseRef.child("Favorites").child(uid).child(productId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                        if (dataSnapshot.exists()){
+                            try {
+
+
+                                FavoriteItem favoriteItem = dataSnapshot.getValue(FavoriteItem.class);
+                                boolean newValue = favoriteItem.isEnabled() ? false : true;
+
+                                firebaseRef.child("Favorites").child(uid).child(productId)
+                                        .child("enabled")
+                                        .setValue(newValue);
+
+
+                            }catch (ClassCastException e){
+
+                            }
+
+                        }else {
+                            FavoriteItem favoriteItem = new FavoriteItem();
+                            favoriteItem.setProductId(productId);
+                            favoriteItem.setEnabled(true);
+                            firebaseRef.child("Favorites").child(uid).child(productId)
+                                    .setValue(favoriteItem);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
 
     //############################### Banner ############################//
 
@@ -2037,5 +2138,8 @@ public class NetworkDataHelper {
     }
 
 
-
+    public void startResetProductListPage() {
+        productsItems.setValue(null);
+        cartItem.setValue(null);
+    }
 }

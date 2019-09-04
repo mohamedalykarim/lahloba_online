@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     <data>
         <import type="android.view.View" />
+        <import type="online.lahloba.www.lahloba.R" />
         <variable
             name="item"
             type="online.lahloba.www.lahloba.data.model.ProductItem"/>
@@ -12,6 +13,12 @@
         <variable
             name="cartItem"
             type="online.lahloba.www.lahloba.data.model.CartItem" />
+
+        <variable
+            name="favorite"
+            type="online.lahloba.www.lahloba.data.model.FavoriteItem" />
+
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -59,7 +66,9 @@
                     android:layout_marginBottom="8dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:srcCompat="@drawable/no_favorite_icon" />
+                    android:setFavoriteImage="@{favorite.enabled}" />
+
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout

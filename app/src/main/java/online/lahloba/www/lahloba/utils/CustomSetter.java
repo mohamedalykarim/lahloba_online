@@ -47,6 +47,16 @@ public static void setFont(View view, String font){
             Picasso.get().load(image).into(imageView);
     }
 
+    @BindingAdapter("android:setFavoriteImage")
+    public static void setFavoriteImage(ImageView imageView, boolean isFvorite){
+        if (isFvorite){
+            Picasso.get().load(R.drawable.favorite_icon).into(imageView);
+
+        }else {
+            Picasso.get().load(R.drawable.no_favorite_icon).into(imageView);
+        }
+    }
+
 
     @BindingAdapter("android:shippingIcon")
     public static void setShippingIcon(ImageView imageView, String shippingType){

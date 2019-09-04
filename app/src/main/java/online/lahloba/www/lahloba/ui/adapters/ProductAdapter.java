@@ -36,13 +36,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     private final Context context;
     List<ProductItem> productItemList;
     String userId ="userId";
-    MutableLiveData<Boolean> cartHasOLdFarProducts;
     private ProductsViewModel mViewModel;
 
 
     public ProductAdapter(Context context) {
         this.context = context;
-        cartHasOLdFarProducts = new MutableLiveData<>();
     }
 
     @NonNull
@@ -61,6 +59,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
         holder.binding.setItem(productItemList.get(position));
+        mViewModel.startGetFavoriteItem(productItemList.get(position).getId());
 
         /**
          * Read cart item
@@ -110,9 +109,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
 
                 }else {
-
-
-
                     mViewModel.startAddProductToFirebaseCart(productItemList.get(position));
 
                 }
@@ -142,7 +138,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
 
 
-            /**
+        /**
          * remove from count
          */
 
@@ -160,7 +156,18 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         });
 
 
+        /**
+         * remove from count
+         */
 
+        holder.binding.favoriteImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (FirebaseAuth.getInstance().getUid() != null){
+                    mViewModel.startChangeFavoriteStatus(productItemList.get(position).getId());
+                }
+            }
+        });
 
 
 
@@ -196,49 +203,19 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             }
         });
 
+        mViewModel.getFavoritesItem().observe((LifecycleOwner) context, favoriteItem -> {
+            if (productItemList == null) return;
+            if (productItemList.size() == 0)return;
+            if (favoriteItem.getProductId()==null)return;
 
-
-
-    }
-
-    private void favorites(@NonNull ProductViewHolder holder, int i, ProductItem item) {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        databaseReference.child("Favorites")
-                .child(userId)
-                .child(item.getId())
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.hasChildren()){
-                            Picasso.get().load(R.drawable.favorite_icon).into(holder.binding.favoriteImage);
-                            productItemList.get(i).setFavorite(true);
-                        }else{
-                            Picasso.get().load(R.drawable.no_favorite_icon).into(holder.binding.favoriteImage);
-                            productItemList.get(i).setFavorite(false);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-        });
-
-        holder.binding.favoriteImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (productItemList.get(i).isFavorite()){
-                    databaseReference.child("Favorites")
-                            .child(userId)
-                            .child(item.getId()).removeValue();
-                }else {
-                    databaseReference.child("Favorites")
-                            .child(userId)
-                            .child(item.getId()).setValue(item);
-                }
+            if (favoriteItem.getProductId().equals(productItemList.get(position).getId())){
+                holder.binding.setFavorite(favoriteItem);
             }
         });
+
+
     }
+
 
     @Override
     public int getItemCount() {
@@ -264,11 +241,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         this.userId = userId;
     }
 
-
-
-    public MutableLiveData<Boolean> getCartHasOLdFarProducts() {
-        return cartHasOLdFarProducts;
-    }
 
     public void setmViewModel(ProductsViewModel mViewModel) {
         this.mViewModel = mViewModel;

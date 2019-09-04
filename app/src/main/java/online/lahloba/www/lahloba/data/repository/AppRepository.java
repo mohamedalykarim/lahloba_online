@@ -14,6 +14,7 @@ import online.lahloba.www.lahloba.data.model.BannerItem;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.CityItem;
 import online.lahloba.www.lahloba.data.model.DeliveryArea;
+import online.lahloba.www.lahloba.data.model.FavoriteItem;
 import online.lahloba.www.lahloba.data.model.GovernorateItem;
 import online.lahloba.www.lahloba.data.model.MainMenuItem;
 import online.lahloba.www.lahloba.data.model.MarketPlace;
@@ -62,6 +63,10 @@ public class AppRepository {
 
     public MutableLiveData<List<ProductItem>> getProductsForCategory() {
         return networkDataHelper.getProducts();
+    }
+
+    public void startResetProductListPage() {
+        networkDataHelper.startResetProductListPage();
     }
 
     //############################### Cart ############################//
@@ -146,6 +151,10 @@ public class AppRepository {
 
     public void startAddProductToFirebaseCart(ProductItem productItem) {
         networkDataHelper.startAddProductToFirebaseCart(productItem);
+    }
+
+    public MutableLiveData<Boolean> getOldFarProductExistsInCart() {
+        return networkDataHelper.getOldFarProductExistsInCart();
     }
 
     public void startGetCartItemById(String productId) {
@@ -386,6 +395,19 @@ public class AppRepository {
         return networkDataHelper.getFavoritesItems();
     }
 
+    public void startGetFavoriteItem(String productId) {
+        networkDataHelper.startGetFavoriteItem(productId);
+    }
+
+    public MutableLiveData<FavoriteItem> getFavoritesItem() {
+        return networkDataHelper.getFavoritesItem();
+    }
+
+    public void startChangeFavoriteStatus(String productId) {
+        networkDataHelper.startChangeFavoriteStatus(productId);
+    }
+
+
 
     //############################### Banner ############################//
 
@@ -433,6 +455,7 @@ public class AppRepository {
     public void startGetOrdersForDelivery() {
         networkDataHelper.startGetOrdersForDelivery();
     }
+
 
 
 }

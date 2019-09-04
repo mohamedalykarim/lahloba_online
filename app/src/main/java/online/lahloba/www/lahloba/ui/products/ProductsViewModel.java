@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 import java.util.List;
 
+import online.lahloba.www.lahloba.data.model.FavoriteItem;
 import online.lahloba.www.lahloba.data.repository.AppRepository;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
@@ -50,6 +51,10 @@ public class ProductsViewModel extends ViewModel {
         appRepository.startAddProductToFirebaseCart(productItem);
     }
 
+    public MutableLiveData<Boolean> getOldFarProductExistsInCart() {
+        return appRepository.getOldFarProductExistsInCart();
+    }
+
     public void startGetCartItemById(String productId) {
         appRepository.startGetCartItemById(productId);
     }
@@ -84,5 +89,21 @@ public class ProductsViewModel extends ViewModel {
 
     public void removeCartitemWith0CountFromInternal() {
         appRepository.removeCartitemWith0CountFromInternal();
+    }
+
+    public void startResetProductListPage() {
+        appRepository.startResetProductListPage();
+    }
+
+    public void startGetFavoriteItem(String productId) {
+        appRepository.startGetFavoriteItem(productId);
+    }
+
+    public MutableLiveData<FavoriteItem> getFavoritesItem() {
+        return appRepository.getFavoritesItem();
+    }
+
+    public void startChangeFavoriteStatus(String productId) {
+        appRepository.startChangeFavoriteStatus(productId);
     }
 }

@@ -197,8 +197,17 @@ public class LahlobaMainService extends IntentService {
         }
 
 
+        /**
+         * Favorites
+         */
         else if(intent.getAction().equals(Constants.START_GET_FAVORITES)){
             networkDataHelper.getFavoritesFromFirebase();
+        }else if(intent.getAction().equals(Constants.START_GET_FAVORITE_ITEM)){
+            String productId = intent.getStringExtra(Constants.START_GET_FAVORITE_ITEM);
+            networkDataHelper.getFavoriteFromFirebase(productId);
+        }else if(intent.getAction().equals(Constants.CHANGE_FAVORITE_STATUS)){
+            String productId = intent.getStringExtra(Constants.CHANGE_FAVORITE_STATUS);
+            networkDataHelper.changeFavoriteStatus(productId);
         }
 
 

@@ -146,6 +146,7 @@ public class ProductsFragment extends Fragment {
 
 
         mViewModel.getProductsForCategory().observe(this, products->{
+            if (products == null)return;
             productItemList.clear();
             productItemList.addAll(products);
             productAdapter.notifyDataSetChanged();
@@ -153,26 +154,29 @@ public class ProductsFragment extends Fragment {
         });
 
 
-        productAdapter.getCartHasOLdFarProducts().observe(this, isOldFarProducts->{
-            if (isOldFarProducts == null)return;
 
-            if (isOldFarProducts){
+        mViewModel.getOldFarProductExistsInCart().observe(this, isOld->{
+            if (isOld == null)return;
+
+            if (isOld){
                 if (!resetAlertApear){
-
                     resetCartBottomSheet.show(getFragmentManager(),"resetCartBottomSheet");
                     resetCartBottomSheet.setCancelable(false);
                     resetAlertApear = true;
                 }
 
             }
+
         });
-
-
-
-
 
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        mViewModel.startResetProductListPage();
+    }
 
     /**
      * Cart Float item
