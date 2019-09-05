@@ -90,7 +90,7 @@ public class NetworkDataHelper {
 
 
     private MutableLiveData<List<ProductItem>> productsItems;
-    private MutableLiveData<List<ProductItem>> favoritesItems;
+    private MutableLiveData<List<FavoriteItem>> favoritesItems;
     private MutableLiveData<FavoriteItem> favoritesItem;
     private MutableLiveData<List<BannerItem>> bannerItems;
 
@@ -614,7 +614,7 @@ public class NetworkDataHelper {
     }
 
 
-    public void startGetProduct(String productId, String language) {
+    public void startGetProductById(String productId, String language) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
         intent.setAction(Constants.START_GET_PRODUCT);
         intent.putExtra(Constants.START_GET_PRODUCT, productId);
@@ -1712,12 +1712,13 @@ public class NetworkDataHelper {
         DatabaseReference mDatabase = firebaseRef;
 
         mDatabase.child("Favorites").child(userId)
+                .orderByChild("enabled").equalTo(true)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        List<ProductItem> productItemsList = new ArrayList<>();
+                        List<FavoriteItem> productItemsList = new ArrayList<>();
                         for (DataSnapshot item : dataSnapshot.getChildren()){
-                            productItemsList.add(item.getValue(ProductItem.class));
+                            productItemsList.add(item.getValue(FavoriteItem.class));
                         }
 
                         favoritesItems.setValue(productItemsList);
@@ -1729,13 +1730,10 @@ public class NetworkDataHelper {
                     }
                 });
 
-
-
-
     }
 
 
-    public MutableLiveData<List<ProductItem>> getFavoritesItems() {
+    public MutableLiveData<List<FavoriteItem>> getFavoritesItems() {
         return favoritesItems;
     }
 
@@ -2142,4 +2140,6 @@ public class NetworkDataHelper {
         productsItems.setValue(null);
         cartItem.setValue(null);
     }
+
+
 }

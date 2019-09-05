@@ -22,6 +22,7 @@ import online.lahloba.www.lahloba.data.model.OrderItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.data.model.UserItem;
 import online.lahloba.www.lahloba.utils.Injector;
+import online.lahloba.www.lahloba.utils.LocalUtils;
 
 public class AppRepository {
     private static final Object LOCK = new Object();
@@ -68,6 +69,15 @@ public class AppRepository {
     public void startResetProductListPage() {
         networkDataHelper.startResetProductListPage();
     }
+
+    public void startGetProductById(String productId) {
+        networkDataHelper.startGetProductById(productId, LocalUtils.getLangauge());
+    }
+
+    public MutableLiveData<ProductItem> getProductItem() {
+        return networkDataHelper.getProductItem();
+    }
+
 
     //############################### Cart ############################//
     public void startGetCartItems(String userId) {
@@ -391,7 +401,7 @@ public class AppRepository {
     }
 
 
-    public MutableLiveData<List<ProductItem>> getFavoritesItems() {
+    public MutableLiveData<List<FavoriteItem>> getFavoritesItems() {
         return networkDataHelper.getFavoritesItems();
     }
 

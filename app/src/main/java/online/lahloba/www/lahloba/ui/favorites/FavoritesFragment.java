@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
+import online.lahloba.www.lahloba.data.model.FavoriteItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.databinding.FragmentFavoritesBinding;
 import online.lahloba.www.lahloba.ui.adapters.FavoritesAdapter;
@@ -30,9 +31,8 @@ public class FavoritesFragment extends Fragment {
     public static FavoritesFragment newInstance() {
         return new FavoritesFragment();
     }
-    RecyclerView favoritesRV;
     FavoritesAdapter favoritesAdapter;
-    List<ProductItem> productItems;
+    List<FavoriteItem> favoriteItems;
     StaggeredGridLayoutManager staggeredGridLayoutManager;
 
     @Nullable
@@ -47,30 +47,24 @@ public class FavoritesFragment extends Fragment {
 
 
         if (FirebaseAuth.getInstance().getCurrentUser()!=null){
-            favoritesRV = binding.favoriteRV;
-            favoritesAdapter = new FavoritesAdapter();
-            favoritesRV.setHasFixedSize(true);
 
-            productItems = new ArrayList<>();
-            favoritesAdapter.setProductItems(productItems);
+            favoriteItems = new ArrayList<>();
+
+
+            favoritesAdapter = new FavoritesAdapter(getContext());
+            favoritesAdapter.setFavoriteItems(favoriteItems);
+            favoritesAdapter.setmViewModel(mViewModel);
+
 
             staggeredGridLayoutManager =  new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
-            favoritesRV.setLayoutManager(staggeredGridLayoutManager);
-            favoritesRV.setAdapter(favoritesAdapter);
+
+            binding.favoriteRV.setHasFixedSize(true);
+            binding.favoriteRV.setLayoutManager(staggeredGridLayoutManager);
+            binding.favoriteRV.setAdapter(favoritesAdapter);
 
             mViewModel.startGetFavoriteItems();
 
-            mViewModel.getFavoritesItems().observe(this, favorites->{
-                if (favorites==null) return;
 
-                productItems.clear();
-                favoritesAdapter.notifyDataSetChanged();
-
-                productItems.addAll(favorites);
-                favoritesAdapter.notifyDataSetChanged();
-
-                Toast.makeText(getContext(), ""+favoritesAdapter.getItemCount(), Toast.LENGTH_SHORT).show();
-            });
 
         }
 
@@ -78,9 +72,21 @@ public class FavoritesFragment extends Fragment {
         return binding.getRoot();
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        mViewModel.getFavoritesItems().observe(this, favorites->{
+            if (favorites==null) return;
+
+            favoriteItems.clear();
+            favoritesAdapter.notifyDataSetChanged();
+
+            favoriteItems.addAll(favorites);
+            favoritesAdapter.notifyDataSetChanged();
+
+            Toast.makeText(getContext(), ""+favoritesAdapter.getItemCount(), Toast.LENGTH_SHORT).show();
+        });
+    }
 }

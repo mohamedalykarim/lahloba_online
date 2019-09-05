@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel;
 
 import java.util.List;
 
+import online.lahloba.www.lahloba.data.model.FavoriteItem;
 import online.lahloba.www.lahloba.data.repository.AppRepository;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 
@@ -19,7 +20,15 @@ public class FavoritesViewModel extends ViewModel {
         appRepository.startGetFavoriteItems();
     }
 
-    public MutableLiveData<List<ProductItem>> getFavoritesItems() {
+    public MutableLiveData<List<FavoriteItem>> getFavoritesItems() {
         return appRepository.getFavoritesItems();
+    }
+
+    public void startGetProductById(String productId) {
+        appRepository.startGetProductById(productId);
+    }
+
+    public MutableLiveData<ProductItem> getProductItem() {
+        return appRepository.getProductItem();
     }
 }
