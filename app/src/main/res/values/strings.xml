@@ -37,5 +37,6 @@
     <string name="seller_Products">Products</string>
     <string name="delivery_supervisor">Delivery supervisor</string>
     <string name="delivery">Delivery</string>
+    <string name="points">Points</string>
 
 </resources>

@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     <data>
         <import type="android.view.View" />
+        <import type="online.lahloba.www.lahloba.utils.StatusUtils" />
 
         <variable
             name="order"
@@ -136,7 +137,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:text="Re-order Order"
-                android:visibility="@{order.orderStatus == 5 ? View.VISIBLE : View.INVISIBLE}"
+                android:visibility="@{order.orderStatus == StatusUtils.ORDER_STATUS_COMPLETED ? View.VISIBLE : View.INVISIBLE}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 

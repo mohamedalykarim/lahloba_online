@@ -227,7 +227,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:text="Re-order Order"
-                    android:visibility="@{viewModel.helper.orderItem.orderStatus == 5 ? View.VISIBLE : View.INVISIBLE}"
+                    android:visibility="@{viewModel.helper.orderItem.orderStatus == StatusUtils.ORDER_STATUS_COMPLETED ? View.VISIBLE : View.INVISIBLE}"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 

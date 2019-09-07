@@ -165,6 +165,13 @@ public class AccountFragment extends Fragment {
 
         defaultItems.add(
                 getMenuItem(
+                        "android.resource://online.lahloba.www.lahloba/drawable/points",
+                        getResources().getString(R.string.points)
+                )
+        );
+
+        defaultItems.add(
+                getMenuItem(
                         "android.resource://online.lahloba.www.lahloba/drawable/signout",
                         getResources().getString(R.string.sign_out)
                 )

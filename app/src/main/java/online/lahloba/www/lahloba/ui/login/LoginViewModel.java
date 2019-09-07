@@ -26,11 +26,7 @@ public class LoginViewModel extends ViewModel {
             }
         });
 
-//        getCurrentUserDetails().observeForever(currentUser->{
-//            if (null != currentUser){
-//                loginVMHelper.setCurrentUser(currentUser);
-//            }
-//        });
+
     }
 
 
@@ -64,4 +60,9 @@ public class LoginViewModel extends ViewModel {
         });
 
     }
+
+
+
+
+
 }

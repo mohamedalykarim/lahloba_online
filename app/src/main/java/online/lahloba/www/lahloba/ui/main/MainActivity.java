@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -17,14 +18,16 @@ import com.google.firebase.auth.FirebaseAuth;
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.databinding.ActivityMainBinding;
+import online.lahloba.www.lahloba.ui.adapters.AccountAdapter;
 import online.lahloba.www.lahloba.ui.favorites.FavoritesFragment;
 import online.lahloba.www.lahloba.ui.fragments.AccountFragment;
+import online.lahloba.www.lahloba.ui.fragments.PointsFragment;
 import online.lahloba.www.lahloba.ui.login.LoginFragment;
 import online.lahloba.www.lahloba.ui.city.CityActivity;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
 import online.lahloba.www.lahloba.utils.Injector;
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity implements AccountAdapter.AccountAdapterClickListener {
 
     BottomNavigationView bottomNavigationView;
     ActivityMainBinding binding;
@@ -192,4 +195,16 @@ public class MainActivity extends AppCompatActivity  {
     }
 
 
+    /**
+     *
+     * @param v
+     */
+    @Override
+    public void onAccountAdapterClickListener(View v) {
+        if (v.getId() == R.id.row_account){
+            PointsFragment pointsFragments = new PointsFragment();
+            pointsFragments.show(getSupportFragmentManager(),"PointsFragment");
+            pointsFragments.setLoginViewModel(loginViewModel);
+        }
+    }
 }

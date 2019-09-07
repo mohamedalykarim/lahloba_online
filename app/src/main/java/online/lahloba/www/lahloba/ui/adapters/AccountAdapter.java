@@ -27,6 +27,7 @@ import online.lahloba.www.lahloba.ui.seller.SellerProductsCategoryActivity;
 import online.lahloba.www.lahloba.ui.seller.SellerOrdersActivity;
 
 public class AccountAdapter extends BaseAdapter {
+    AccountAdapterClickListener accountAdapterClickListener;
     LoginViewModel loginViewModel;
     List<MainMenuItem> accountItemList;
     Context context;
@@ -34,6 +35,7 @@ public class AccountAdapter extends BaseAdapter {
     public AccountAdapter(Context context, LoginViewModel loginViewModel) {
         this.context = context;
         this.loginViewModel = loginViewModel;
+        accountAdapterClickListener = (AccountAdapterClickListener) context;
     }
 
     @Override
@@ -93,12 +95,11 @@ public class AccountAdapter extends BaseAdapter {
                 }else if (accountItemList.get(position).getTitle().equals(context.getResources().getString(R.string.delivery))){
                     Intent intent = new Intent(context, DeliveryMainActivity.class);
                     context.startActivity(intent);
+                }else if (accountItemList.get(position).getTitle().equals(context.getResources().getString(R.string.points))){
+                    accountAdapterClickListener.onAccountAdapterClickListener(v);
                 }
             }
         });
-
-
-
 
 
 
@@ -109,5 +110,10 @@ public class AccountAdapter extends BaseAdapter {
     public void setAccountItemList(List<MainMenuItem> accountItemList) {
         this.accountItemList = accountItemList;
         this.notifyDataSetChanged();
+    }
+
+
+    public interface AccountAdapterClickListener{
+        void onAccountAdapterClickListener(View v);
     }
 }
