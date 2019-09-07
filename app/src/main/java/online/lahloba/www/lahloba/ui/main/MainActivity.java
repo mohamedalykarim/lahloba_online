@@ -20,6 +20,7 @@ import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.databinding.ActivityMainBinding;
 import online.lahloba.www.lahloba.ui.adapters.AccountAdapter;
 import online.lahloba.www.lahloba.ui.favorites.FavoritesFragment;
+import online.lahloba.www.lahloba.ui.fragments.AccountDetailsFragment;
 import online.lahloba.www.lahloba.ui.fragments.AccountFragment;
 import online.lahloba.www.lahloba.ui.fragments.PointsFragment;
 import online.lahloba.www.lahloba.ui.login.LoginFragment;
@@ -197,14 +198,19 @@ public class MainActivity extends AppCompatActivity implements AccountAdapter.Ac
 
     /**
      *
-     * @param v
+     * @param string
      */
     @Override
-    public void onAccountAdapterClickListener(View v) {
-        if (v.getId() == R.id.row_account){
+    public void onAccountAdapterClickListener( String string) {
+        if (string.equals(getString(R.string.points))){
             PointsFragment pointsFragments = new PointsFragment();
             pointsFragments.show(getSupportFragmentManager(),"PointsFragment");
             pointsFragments.setLoginViewModel(loginViewModel);
+        }else if (string.equals(getString(R.string.account_details))){
+            AccountDetailsFragment detailsFragment = new AccountDetailsFragment();
+            detailsFragment.show(getSupportFragmentManager(), "AccountDetailsFragment");
+            detailsFragment.setLoginViewModel(loginViewModel);
+
         }
     }
 }

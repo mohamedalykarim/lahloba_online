@@ -1064,6 +1064,25 @@ public class NetworkDataHelper {
         return userDetails;
     }
 
+
+    public void startUpdateUserDetails(UserItem userDetails) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.START_UPDATE_USER_DETAILS);
+        intent.putExtra(Constants.USER_ITEM, userDetails);
+        mContext.startService(intent);
+    }
+
+    public void updateUserDetails(UserItem userItem){
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null)return;
+        if (!uid.equals(userItem.getId()))return;
+
+        firebaseRef.child("User")
+                .child(uid)
+                .setValue(userItem);
+
+    }
+
     //############################### Create New Account ############################//
 
     public void startCreateNewAccount(String firstName, String secondName,

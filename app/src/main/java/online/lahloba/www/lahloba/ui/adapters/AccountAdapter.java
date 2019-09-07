@@ -96,7 +96,9 @@ public class AccountAdapter extends BaseAdapter {
                     Intent intent = new Intent(context, DeliveryMainActivity.class);
                     context.startActivity(intent);
                 }else if (accountItemList.get(position).getTitle().equals(context.getResources().getString(R.string.points))){
-                    accountAdapterClickListener.onAccountAdapterClickListener(v);
+                    accountAdapterClickListener.onAccountAdapterClickListener(context.getResources().getString(R.string.points));
+                }else if (accountItemList.get(position).getTitle().equals(context.getResources().getString(R.string.account_details))){
+                    accountAdapterClickListener.onAccountAdapterClickListener(context.getResources().getString(R.string.account_details));
                 }
             }
         });
@@ -114,6 +116,6 @@ public class AccountAdapter extends BaseAdapter {
 
 
     public interface AccountAdapterClickListener{
-        void onAccountAdapterClickListener(View v);
+        void onAccountAdapterClickListener(String string);
     }
 }

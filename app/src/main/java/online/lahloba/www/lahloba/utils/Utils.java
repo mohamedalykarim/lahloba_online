@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.text.format.DateUtils;
+import android.util.TypedValue;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -93,6 +94,11 @@ public class Utils {
             width = (int) (height * bitmapRatio);
         }
         return Bitmap.createScaledBitmap(image, width, height, true);
+    }
+
+
+    public static int dpToPx(float dp, Context context) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
     }
 
 }

@@ -1,11 +1,14 @@
 package online.lahloba.www.lahloba.data.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 
 import online.lahloba.www.lahloba.BR;
 
-public class UserItem extends BaseObservable {
+public class UserItem extends BaseObservable implements Parcelable {
     String id;
     String firstName;
     String lastName;
@@ -22,6 +25,54 @@ public class UserItem extends BaseObservable {
 
     public UserItem() {
     }
+
+    protected UserItem(Parcel in) {
+        id = in.readString();
+        firstName = in.readString();
+        lastName = in.readString();
+        mobile = in.readString();
+        email = in.readString();
+        seller = in.readByte() != 0;
+        delivery = in.readByte() != 0;
+        deliverySupervisor = in.readByte() != 0;
+        status = in.readByte() != 0;
+        lat = in.readDouble();
+        lan = in.readDouble();
+        points = in.readInt();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(firstName);
+        dest.writeString(lastName);
+        dest.writeString(mobile);
+        dest.writeString(email);
+        dest.writeByte((byte) (seller ? 1 : 0));
+        dest.writeByte((byte) (delivery ? 1 : 0));
+        dest.writeByte((byte) (deliverySupervisor ? 1 : 0));
+        dest.writeByte((byte) (status ? 1 : 0));
+        dest.writeDouble(lat);
+        dest.writeDouble(lan);
+        dest.writeInt(points);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<UserItem> CREATOR = new Creator<UserItem>() {
+        @Override
+        public UserItem createFromParcel(Parcel in) {
+            return new UserItem(in);
+        }
+
+        @Override
+        public UserItem[] newArray(int size) {
+            return new UserItem[size];
+        }
+    };
 
     public String getId() {
         return id;

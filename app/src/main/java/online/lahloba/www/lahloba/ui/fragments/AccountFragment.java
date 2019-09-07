@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,30 +26,26 @@ import online.lahloba.www.lahloba.databinding.FragmentAccountBinding;
 import online.lahloba.www.lahloba.ui.adapters.AccountAdapter;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
 import online.lahloba.www.lahloba.utils.Injector;
+import online.lahloba.www.lahloba.utils.Utils;
 
 public class AccountFragment extends Fragment {
     private LoginViewModel loginViewModel;
 
-    GridView gridView;
     List<MainMenuItem> mainMenuItems;
     AccountAdapter accountAdapter;
+    private FragmentAccountBinding binding;
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        FragmentAccountBinding binding = DataBindingUtil.inflate(
-                inflater,
-                R.layout.fragment_account,
-                container,
-                false);
+        binding = FragmentAccountBinding.inflate(inflater, container, false);
 
         ViewModelProviderFactory loginFactory = Injector.getVMFactory(this.getContext());
         loginViewModel = ViewModelProviders.of(this,loginFactory).get(LoginViewModel.class);
         loginViewModel.startGetUserDetails(FirebaseAuth.getInstance().getUid());
 
 
-        gridView = binding.gridview;
 
         mainMenuItems = new ArrayList<>();
 
@@ -58,12 +55,11 @@ public class AccountFragment extends Fragment {
         accountAdapter.notifyDataSetChanged();
 
 
-        gridView.setAdapter(accountAdapter);
+        binding.gridview.setAdapter(accountAdapter);
 
 
 
-        View view = binding.getRoot();
-        return view;
+        return binding.getRoot();
     }
 
     @Override
@@ -117,6 +113,17 @@ public class AccountFragment extends Fragment {
             accountAdapter.notifyDataSetChanged();
 
 
+            double height = (double) mainMenuItems.size() / (double) 3;
+            height = Math.ceil(height);
+            height = height * 150 + 50;
+
+            ViewGroup.LayoutParams params = binding.gridview.getLayoutParams();
+            params.height = Utils.dpToPx((float) height, getContext());
+
+
+            binding.gridview.setLayoutParams(params);
+
+
         });
 
     }
@@ -167,6 +174,13 @@ public class AccountFragment extends Fragment {
                 getMenuItem(
                         "android.resource://online.lahloba.www.lahloba/drawable/points",
                         getResources().getString(R.string.points)
+                )
+        );
+
+        defaultItems.add(
+                getMenuItem(
+                        "android.resource://online.lahloba.www.lahloba/drawable/account_icon",
+                        getResources().getString(R.string.account_details)
                 )
         );
 

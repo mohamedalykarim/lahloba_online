@@ -236,7 +236,9 @@ public class AppRepository {
     }
 
 
-
+    public void startUpdateUserDetails(UserItem userDetails) {
+        networkDataHelper.startUpdateUserDetails(userDetails);
+    }
 
 
     //############################### Address ############################//
@@ -471,4 +473,6 @@ public class AppRepository {
     public void startAddPointsToUser(String userId, int points) {
         networkDataHelper.startAddPointsToUser(userId, points);
     }
+
+
 }

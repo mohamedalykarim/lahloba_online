@@ -38,5 +38,6 @@
     <string name="delivery_supervisor">Delivery supervisor</string>
     <string name="delivery">Delivery</string>
     <string name="points">Points</string>
+    <string name="account_details">Account details</string>
 
 </resources>

@@ -11,6 +11,7 @@ import online.lahloba.www.lahloba.data.NetworkDataHelper;
 import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.OrderItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
+import online.lahloba.www.lahloba.data.model.UserItem;
 import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.Injector;
 
@@ -119,6 +120,9 @@ public class LahlobaMainService extends IntentService {
         }else if(intent.getAction().equals(Constants.START_GET_CURRENT_USER_DETAILS)){
             String uid = intent.getStringExtra(Constants.START_GET_CURRENT_USER_DETAILS);
             networkDataHelper.fetchCurrentUserDetails(uid);
+        }else if(intent.getAction().equals(Constants.START_UPDATE_USER_DETAILS)){
+            UserItem userItem = intent.getParcelableExtra(Constants.USER_ITEM);
+            networkDataHelper.updateUserDetails(userItem);
         }
 
 

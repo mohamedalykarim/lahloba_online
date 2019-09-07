@@ -112,4 +112,6 @@ public class Constants {
     public static final String CHANGE_FAVORITE_STATUS = "change_favorite_status";
     public static final String ADD_POINTS_TO_USER = "add_points_to_user";
     public static final String POINTS = "points";
+    public static final String START_UPDATE_USER_DETAILS = "start_update_user_details";
+    public static final String USER_ITEM = "user_item";
 }

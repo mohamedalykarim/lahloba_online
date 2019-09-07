@@ -62,7 +62,7 @@ public class LoginViewModel extends ViewModel {
     }
 
 
-
-
-
+    public void startUpdateUserDetails(UserItem userDetails) {
+        appRepository.startUpdateUserDetails(userDetails);
+    }
 }
