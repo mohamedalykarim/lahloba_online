@@ -817,6 +817,7 @@ public class NetworkDataHelper {
         cartItem.setPrice(productItem.getPrice());
         cartItem.setProductName(productItem.getTitle());
         cartItem.setMarketId(productItem.getMarketPlaceId());
+        cartItem.setPoint(productItem.getPoint());
 
         firebaseRef.child("Cart").child(uid).child("CartLocation")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -1095,6 +1096,7 @@ public class NetworkDataHelper {
                             userItem.setMobile(phone);
                             userItem.setSeller(false);
                             userItem.setStatus(true);
+                            userItem.setPoints(0);
                             userItem.setDelivery(false);
                             userItem.setDeliverySupervisor(false);
 
@@ -1712,7 +1714,8 @@ public class NetworkDataHelper {
         DatabaseReference mDatabase = firebaseRef;
 
         mDatabase.child("Favorites").child(userId)
-                .orderByChild("enabled").equalTo(true)
+                .orderByChild("enabled").equalTo(true
+        )
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -2127,6 +2130,47 @@ public class NetworkDataHelper {
                 });
     }
 
+
+    //############################### Points ############################//
+    public void startAddPointsToUser(String userId, int points) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.ADD_POINTS_TO_USER);
+        intent.putExtra(Constants.EXTRA_USER_ID, userId);
+        intent.putExtra(Constants.POINTS, points);
+        mContext.startService(intent);
+
+    }
+
+    public void addPointsToUser(String userId, int points) {
+        firebaseRef.child("User")
+                .child(userId)
+                .child("points")
+                .runTransaction(new Transaction.Handler() {
+                    @NonNull
+                    @Override
+                    public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                        Object count = mutableData.getValue();
+
+                        if(null == count ){
+                            return Transaction.success(mutableData);
+                        }else {
+                            int countInt = Integer.parseInt("0"+count);
+                            mutableData.setValue(countInt + points);
+
+                            return Transaction.success(mutableData);
+                        }
+
+                    }
+
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                    }
+                });
+    }
+
+
+
+
     /*  ##################     RESET       #################   */
 
     public void resetEditPage() {
@@ -2140,6 +2184,7 @@ public class NetworkDataHelper {
         productsItems.setValue(null);
         cartItem.setValue(null);
     }
+
 
 
 }

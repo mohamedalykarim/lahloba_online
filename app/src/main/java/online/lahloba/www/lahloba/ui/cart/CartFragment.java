@@ -39,8 +39,7 @@ import online.lahloba.www.lahloba.utils.comparator.CartItemNameComparator;
 public class CartFragment extends Fragment {
     private CartViewModel mViewModel;
     FragmentCartBinding binding;
-    ExpandableHeightRecyclerView cartRecyclerView;
-    LinearLayoutManager linearLayoutManager;
+
     CartAdapter cartAdapter;
     List<CartItem> cartItemList;
     private Location userLocation;
@@ -77,23 +76,21 @@ public class CartFragment extends Fragment {
         mViewModel.cleerMarketPlaceForId();
         mViewModel.resetIsOrderAdded(false);
 
-        View view = binding.getRoot();
 
         /**
          *   Cart RecyclerView
          */
 
-        cartRecyclerView = binding.cartItemRecyclerView;
-        linearLayoutManager = new LinearLayoutManager(this.getContext());
+        cartItemList = new ArrayList<>();
+
         cartAdapter = new CartAdapter(getContext());
         cartAdapter.setCartViewModel(mViewModel);
-
-        cartItemList = new ArrayList<>();
         cartAdapter.setCartItemList(cartItemList);
-        cartRecyclerView.setAdapter(cartAdapter);
-        cartRecyclerView.setLayoutManager(linearLayoutManager);
 
-        return view;
+        binding.cartItemRecyclerView.setAdapter(cartAdapter);
+        binding.cartItemRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        return binding.getRoot();
     }
 
 

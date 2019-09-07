@@ -102,6 +102,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                     cartItem.setProductName(productItemList.get(position).getTitle());
                     cartItem.setCurrency("EGP");
                     cartItem.setMarketId(productItemList.get(position).getMarketPlaceId());
+                    cartItem.setPoint(productItemList.get(position).getPoint());
 
                     mViewModel.insertCartItemToInternaldb(cartItem);
 

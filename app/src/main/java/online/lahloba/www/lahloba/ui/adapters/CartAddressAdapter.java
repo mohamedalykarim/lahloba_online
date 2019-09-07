@@ -27,16 +27,7 @@ public class CartAddressAdapter extends RecyclerView.Adapter<CartAddressAdapter.
     public CartAddressViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         RowCartAddressBinding binding = RowCartAddressBinding.inflate(LayoutInflater.from(viewGroup.getContext()),viewGroup,false);
 
-        binding.nameTV.setText(addressItems.get(i).getName());
-        binding.addressTV.setText(
-                addressItems.get(i).getCountry()+"-"
-                        + addressItems.get(i).getCity()+"-"
-                        + addressItems.get(i).getZone()+"-"
-                        + addressItems.get(i).getStreet()+"-"
-                        + addressItems.get(i).getBuilding()+"-"
-                        + addressItems.get(i).getFloor()+"-"
-                        + addressItems.get(i).getFlatNumber()
-        );
+
 
         binding.getRoot().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,7 +40,8 @@ public class CartAddressAdapter extends RecyclerView.Adapter<CartAddressAdapter.
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CartAddressViewHolder cartAddressViewHolder, int i) {
+    public void onBindViewHolder(@NonNull CartAddressViewHolder holder, int position) {
+        holder.binding.setAddress(addressItems.get(position));
 
     }
 

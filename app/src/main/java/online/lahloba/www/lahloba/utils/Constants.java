@@ -110,4 +110,6 @@ public class Constants {
     public static final String START_REMOVE_FROM_CART_PRODUCT_COUNT = "start_remove_from_cart_product_count";
     public static final String START_GET_FAVORITE_ITEM = "start_get_favorite_item";
     public static final String CHANGE_FAVORITE_STATUS = "change_favorite_status";
+    public static final String ADD_POINTS_TO_USER = "add_points_to_user";
+    public static final String POINTS = "points";
 }

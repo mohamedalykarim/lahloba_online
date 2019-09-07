@@ -24,6 +24,7 @@ public class ProductItem extends BaseObservable implements Parcelable {
     private String sellerId;
     private String parentIdMarketPlaceId;
     private String parentIdSellerId;
+    int point;
 
 
     @Exclude
@@ -55,6 +56,7 @@ public class ProductItem extends BaseObservable implements Parcelable {
         isFavorite = in.readByte() != 0;
         parentIdMarketPlaceId = in.readString();
         parentIdSellerId = in.readString();
+        point = in.readInt();
     }
 
     @Override
@@ -74,6 +76,7 @@ public class ProductItem extends BaseObservable implements Parcelable {
         dest.writeByte((byte) (isFavorite ? 1 : 0));
         dest.writeString(parentIdMarketPlaceId);
         dest.writeString(parentIdSellerId);
+        dest.writeInt(point);
     }
 
     @Override
@@ -248,5 +251,14 @@ public class ProductItem extends BaseObservable implements Parcelable {
 
     public void setParentIdSellerId(String parentIdSellerId) {
         this.parentIdSellerId = parentIdSellerId;
+    }
+
+
+    public int getPoint() {
+        return point;
+    }
+
+    public void setPoint(int point) {
+        this.point = point;
     }
 }

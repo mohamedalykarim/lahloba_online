@@ -246,6 +246,17 @@ public class LahlobaMainService extends IntentService {
             networkDataHelper.getOrdersForDelivery();
         }
 
+        /**
+         * Points
+         */
+
+        else if(intent.getAction().equals(Constants.ADD_POINTS_TO_USER)){
+            String userId = intent.getStringExtra(Constants.EXTRA_USER_ID);
+            int points = intent.getIntExtra(Constants.POINTS,0);
+
+            networkDataHelper.addPointsToUser(userId, points);
+        }
+
 
     }
 }

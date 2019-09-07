@@ -2,7 +2,11 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <data></data>
+    <data>
+        <variable
+            name="address"
+            type="online.lahloba.www.lahloba.data.model.AddressItem" />
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -16,6 +20,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:textColor="@color/black"
+            android:text='@{address.country +", "+address.governorate +", "+address.city +", "+address.zone +", "+address.street +", "+address.building +", "+address.floor +", "+address.flatNumber}'
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/nameTV" />
@@ -36,6 +41,7 @@
             android:layout_marginEnd="8dp"
             android:textColor="@color/black"
             android:textStyle="bold"
+            android:text="@{address.name}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

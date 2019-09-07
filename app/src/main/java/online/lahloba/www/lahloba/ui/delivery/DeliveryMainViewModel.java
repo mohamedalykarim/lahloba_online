@@ -35,4 +35,8 @@ public class DeliveryMainViewModel extends ViewModel {
     public void changeOrderStatus(String orderId, String cityId, int status) {
         appRepository.startChangeOrderStatus(orderId, cityId, status);
     }
+
+    public void startAddPointsToUser(String userId, int points) {
+        appRepository.startAddPointsToUser(userId, points);
+    }
 }

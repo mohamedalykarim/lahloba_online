@@ -17,6 +17,7 @@ public class UserItem extends BaseObservable {
     boolean status;
     double lat;
     double lan;
+    int points;
 
 
     public UserItem() {
@@ -114,5 +115,13 @@ public class UserItem extends BaseObservable {
 
     public void setLan(double lan) {
         this.lan = lan;
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int point) {
+        this.points = point;
     }
 }

@@ -2,6 +2,7 @@ package online.lahloba.www.lahloba.ui.adapters;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.OrderItem;
+import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.databinding.DeliveryRowOrderBinding;
 import online.lahloba.www.lahloba.ui.delivery.DeliveryMainViewModel;
 import online.lahloba.www.lahloba.utils.StatusUtils;
@@ -95,6 +98,15 @@ public class DeliveryOrdersAdapter extends RecyclerView.Adapter<DeliveryOrdersAd
                                         orderItems.get(position).getCityId(),
                                         StatusUtils.ORDER_STATUS_COMPLETED
                                 );
+
+                                int points = 0;
+                                for (CartItem productItem : orderItems.get(position).getProducts().values()){
+                                    points += productItem.getPoint();
+                                }
+
+                                mViewModel.startAddPointsToUser(orderItems.get(position).getUserId(), points);
+
+
 
                             }
                         })

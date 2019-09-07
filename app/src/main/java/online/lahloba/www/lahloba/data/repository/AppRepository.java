@@ -467,5 +467,8 @@ public class AppRepository {
     }
 
 
-
+    //############################### Points ############################//
+    public void startAddPointsToUser(String userId, int points) {
+        networkDataHelper.startAddPointsToUser(userId, points);
+    }
 }

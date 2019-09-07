@@ -212,7 +212,7 @@ public class SellerAddProductFragment extends Fragment {
     public void pickImage(Image image){
         Bitmap myBitmap = BitmapFactory.decodeFile(image.getPath());
 
-        myBitmap = Utils.getResizedBitmap(myBitmap, 200);
+        myBitmap = Utils.getResizedBitmap(myBitmap, 400);
 
         binding.fImage.setImageBitmap(myBitmap);
         mViewModel.helper.setMyBitmap(myBitmap);

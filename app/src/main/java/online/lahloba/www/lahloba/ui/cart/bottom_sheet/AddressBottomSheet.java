@@ -45,6 +45,9 @@ public class AddressBottomSheet extends BottomSheetDialogFragment
         addressRv.setLayoutManager(new LinearLayoutManager(getContext()));
         addressRv.setAdapter(cartAddressAdapter);
 
+        cartViewModel.startGetAddress(FirebaseAuth.getInstance().getUid());
+
+
 
         return binding.getRoot();
     }
@@ -54,9 +57,10 @@ public class AddressBottomSheet extends BottomSheetDialogFragment
     public void onResume() {
         super.onResume();
 
-        cartViewModel.startGetAddress(FirebaseAuth.getInstance().getUid());
 
         cartViewModel.getAddresses().observe(getActivity(), addresses->{
+            if (addresses==null)return;
+
             setAddresses(addresses);
 
         });

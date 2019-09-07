@@ -25,6 +25,7 @@ public class CartItem extends BaseObservable implements Serializable {
     String image;
     String currency;
     String marketId;
+    int point;
 
     @Exclude
     boolean isFavorite;
@@ -106,5 +107,13 @@ public class CartItem extends BaseObservable implements Serializable {
     @Exclude
     public void setFavorite(boolean favorite) {
         isFavorite = favorite;
+    }
+
+    public int getPoint() {
+        return point;
+    }
+
+    public void setPoint(int point) {
+        this.point = point;
     }
 }
