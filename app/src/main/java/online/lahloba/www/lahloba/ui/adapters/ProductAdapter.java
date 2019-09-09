@@ -3,6 +3,7 @@ package online.lahloba.www.lahloba.ui.adapters;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,7 +30,9 @@ import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.databinding.RowProductListBinding;
+import online.lahloba.www.lahloba.ui.products.ProductDetailsActivity;
 import online.lahloba.www.lahloba.ui.products.ProductsViewModel;
+import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.Injector;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
@@ -170,6 +173,15 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             }
         });
 
+
+        holder.binding.getRoot().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(holder.binding.getRoot().getContext(), ProductDetailsActivity.class);
+                intent.putExtra(Constants.PRODUCT_ID, productItemList.get(position).getId());
+                holder.binding.getRoot().getContext().startActivity(intent);
+            }
+        });
 
 
 
