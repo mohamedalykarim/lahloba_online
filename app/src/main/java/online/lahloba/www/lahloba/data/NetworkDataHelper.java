@@ -49,6 +49,7 @@ import online.lahloba.www.lahloba.data.model.MainMenuItem;
 import online.lahloba.www.lahloba.data.model.MarketPlace;
 import online.lahloba.www.lahloba.data.model.OrderItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
+import online.lahloba.www.lahloba.data.model.ProductOption;
 import online.lahloba.www.lahloba.data.model.SubMenuItem;
 import online.lahloba.www.lahloba.data.model.UserItem;
 import online.lahloba.www.lahloba.data.services.LahlobaMainService;
@@ -90,11 +91,14 @@ public class NetworkDataHelper {
 
 
     private MutableLiveData<List<ProductItem>> productsItems;
+    private MutableLiveData<ProductItem> productItem;
+    private MutableLiveData<DataSnapshot> productOptions;
+
+
     private MutableLiveData<List<FavoriteItem>> favoritesItems;
     private MutableLiveData<FavoriteItem> favoritesItem;
     private MutableLiveData<List<BannerItem>> bannerItems;
 
-    private MutableLiveData<ProductItem> productItem;
     private MutableLiveData<ProductItem> enProductItemForEdit;
     private MutableLiveData<ProductItem> arProductItemForEdit;
 
@@ -108,7 +112,6 @@ public class NetworkDataHelper {
         mContext = applicationContext;
         mainMenuItems = new MutableLiveData<>();
         subMenuItems = new MutableLiveData<>();
-        productsItems = new MutableLiveData<>();
         addressItems = new MutableLiveData<>();
         cartItems = new MutableLiveData<>();
         cartItem = new MutableLiveData<>();
@@ -131,9 +134,12 @@ public class NetworkDataHelper {
         isAddressEdited = new MutableLiveData<>();
         oldFarProductExistsInCart = new MutableLiveData<>();
 
+
+        productsItems = new MutableLiveData<>();
         productItem = new MutableLiveData<>();
         enProductItemForEdit = new MutableLiveData<>();
         arProductItemForEdit = new MutableLiveData<>();
+        productOptions = new MutableLiveData<>();
 
         userForOrder = new MutableLiveData<>();
         orderItem = new MutableLiveData<>();
@@ -703,6 +709,56 @@ public class NetworkDataHelper {
         return arProductItemForEdit;
     }
 
+
+    public void startGetProductOptions(String productId) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.START_GET_PRODUCT_OPTIONS);
+        intent.putExtra(Constants.START_GET_PRODUCT_OPTIONS, productId);
+        mContext.startService(intent);
+
+    }
+
+    public void getProductOptionsFromFirebase(String productId) {
+        firebaseRef.child("ProductOptions").child(productId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (!dataSnapshot.exists())return;
+
+                        productOptions.setValue(dataSnapshot);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    };
+
+    public MutableLiveData<DataSnapshot> getProductOptions() {
+        return productOptions;
+    }
+
+    public void startAddOptionToCartItem(String productId, ProductOption productOption) {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.START_ADD_OPTION_TO_CART_ITEM);
+        intent.putExtra(Constants.START_ADD_OPTION_TO_CART_ITEM, productOption);
+        intent.putExtra(Constants.PRODUCT_ID, productId);
+        mContext.startService(intent);
+    }
+
+    public void addOptionToCartItem(String productId, ProductOption productOption){
+        if (productOption == null)return;
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null)return;
+
+        Log.v("sss", productId + " productID " + productOption.getOptionId() + " " + productOption.getOptionKey()+ " "+productOption.getOptionValue());
+
+
+        firebaseRef.child("Cart").child(uid).child("CartItems").child(productId)
+                .child("Options").child(productOption.getOptionId()).setValue(productOption);
+    }
+
     //############################### Cart ############################//
 
     public void startGetCartItems(String userId) {
@@ -896,7 +952,6 @@ public class NetworkDataHelper {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (!dataSnapshot.exists())return;
-
                         try {
                             cartItem.setValue(dataSnapshot.getValue(CartItem.class));
                         }catch (ClassCastException e){

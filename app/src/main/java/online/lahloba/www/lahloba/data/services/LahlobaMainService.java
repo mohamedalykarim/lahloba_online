@@ -11,6 +11,7 @@ import online.lahloba.www.lahloba.data.NetworkDataHelper;
 import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.OrderItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
+import online.lahloba.www.lahloba.data.model.ProductOption;
 import online.lahloba.www.lahloba.data.model.UserItem;
 import online.lahloba.www.lahloba.utils.Constants;
 import online.lahloba.www.lahloba.utils.Injector;
@@ -73,6 +74,13 @@ public class LahlobaMainService extends IntentService {
         }else if(intent.getAction().equals(Constants.START_GET_PRODUCT_FOR_EDIT)){
             String productId = intent.getStringExtra(Constants.START_GET_PRODUCT_FOR_EDIT);
             networkDataHelper.getProductForEdit(productId);
+        }else if(intent.getAction().equals(Constants.START_GET_PRODUCT_OPTIONS)){
+            String productId = intent.getStringExtra(Constants.START_GET_PRODUCT_OPTIONS);
+            networkDataHelper.getProductOptionsFromFirebase(productId);
+        }else if(intent.getAction().equals(Constants.START_ADD_OPTION_TO_CART_ITEM)){
+            String productId = intent.getStringExtra(Constants.PRODUCT_ID);
+            ProductOption productOption = intent.getParcelableExtra(Constants.START_ADD_OPTION_TO_CART_ITEM);
+            networkDataHelper.addOptionToCartItem(productId, productOption);
         }
 
 

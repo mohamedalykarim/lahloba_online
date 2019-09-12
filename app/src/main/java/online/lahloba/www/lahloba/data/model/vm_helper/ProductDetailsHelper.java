@@ -3,6 +3,7 @@ package online.lahloba.www.lahloba.data.model.vm_helper;
 import androidx.databinding.BaseObservable;
 
 import online.lahloba.www.lahloba.data.model.CartItem;
+import online.lahloba.www.lahloba.data.model.FavoriteItem;
 import online.lahloba.www.lahloba.data.model.MarketPlace;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.data.model.UserItem;
@@ -12,6 +13,7 @@ public class ProductDetailsHelper extends BaseObservable {
     MarketPlace marketPlace;
     UserItem sellerItem;
     CartItem cartItem;
+    FavoriteItem favoriteItem;
 
 
     public ProductItem getProductItem() {
@@ -44,5 +46,13 @@ public class ProductDetailsHelper extends BaseObservable {
 
     public void setCartItem(CartItem cartItem) {
         this.cartItem = cartItem;
+    }
+
+    public FavoriteItem getFavoriteItem() {
+        return favoriteItem;
+    }
+
+    public void setFavoriteItem(FavoriteItem favoriteItem) {
+        this.favoriteItem = favoriteItem;
     }
 }

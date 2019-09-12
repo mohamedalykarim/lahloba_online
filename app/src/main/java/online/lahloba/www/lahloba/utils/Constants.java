@@ -114,4 +114,6 @@ public class Constants {
     public static final String POINTS = "points";
     public static final String START_UPDATE_USER_DETAILS = "start_update_user_details";
     public static final String USER_ITEM = "user_item";
+    public static final String START_GET_PRODUCT_OPTIONS = "start_get_product_options";
+    public static final String START_ADD_OPTION_TO_CART_ITEM = "start_add_option_to_cart_item";
 }

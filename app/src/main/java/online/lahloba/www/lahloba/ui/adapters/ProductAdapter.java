@@ -211,6 +211,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         mViewModel.getCartItem().observe((LifecycleOwner) context, cartItem -> {
             if (cartItem == null)return;
 
+
             if (cartItem.getId().equals(productItemList.get(position).getId())){
                 holder.binding.setCartItem(cartItem);
             }

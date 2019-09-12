@@ -5,6 +5,8 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.firebase.database.DataSnapshot;
+
 import java.util.List;
 
 import online.lahloba.www.lahloba.data.NetworkDataHelper;
@@ -20,6 +22,7 @@ import online.lahloba.www.lahloba.data.model.MainMenuItem;
 import online.lahloba.www.lahloba.data.model.MarketPlace;
 import online.lahloba.www.lahloba.data.model.OrderItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
+import online.lahloba.www.lahloba.data.model.ProductOption;
 import online.lahloba.www.lahloba.data.model.UserItem;
 import online.lahloba.www.lahloba.utils.Injector;
 import online.lahloba.www.lahloba.utils.LocalUtils;
@@ -76,6 +79,18 @@ public class AppRepository {
 
     public MutableLiveData<ProductItem> getProductItem() {
         return networkDataHelper.getProductItem();
+    }
+
+    public void startGetProductOptions(String productId) {
+        networkDataHelper.startGetProductOptions(productId);
+    }
+
+    public MutableLiveData<DataSnapshot> getProductOptions() {
+        return networkDataHelper.getProductOptions();
+    }
+
+    public void startAddOptionToCartItem(String productId, ProductOption productOption) {
+        networkDataHelper.startAddOptionToCartItem(productId, productOption);
     }
 
 
@@ -473,6 +488,7 @@ public class AppRepository {
     public void startAddPointsToUser(String userId, int points) {
         networkDataHelper.startAddPointsToUser(userId, points);
     }
+
 
 
 }

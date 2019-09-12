@@ -7,6 +7,7 @@
 
 
     <data>
+        <import type="android.view.View" />
         <variable
             name="product"
             type="online.lahloba.www.lahloba.data.model.ProductItem" />
@@ -23,6 +24,10 @@
         <variable
             name="cartItem"
             type="online.lahloba.www.lahloba.data.model.CartItem" />
+
+        <variable
+            name="favoriteItem"
+            type="online.lahloba.www.lahloba.data.model.FavoriteItem" />
     </data>
 
     <androidx.core.widget.NestedScrollView
@@ -41,12 +46,23 @@
 
                 <ImageView
                     android:id="@+id/thumb"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="200dp"
-                    android:scaleType="centerInside"
+                    android:scaleType="fitCenter"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/favoriteImage"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginBottom="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:setFavoriteImage="@{favoriteItem.enabled}" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
@@ -56,127 +72,157 @@
                 android:orientation="horizontal"
                 android:paddingBottom="16dp">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/addContainer"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_weight="1"
-                    android:background="@color/colorAccent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent">
+                    android:layout_weight="1">
 
-                    <ImageView
-                        android:id="@+id/imageView9"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="8dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/textView4"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/shopping_car" />
 
-                    <TextView
-                        android:id="@+id/textView4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:text="@string/add_to_cart"
-                        android:textColor="#fff"
-                        android:textSize="14sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/plusMinusContainer"
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_weight="1"
-                    android:background="@color/colorPrimary"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/addContainer">
+                    android:orientation="horizontal"
+                    android:layout_weight="1">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/plusContainer"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="8dp"
+                        android:id="@+id/addContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="8dp"
                         android:layout_marginBottom="8dp"
-                        android:background="#313131"
+                        android:visibility="@{cartItem.count > 0 ? View.GONE: View.VISIBLE}"
+                        android:background="@color/colorAccent"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
+                        app:layout_constraintStart_toStartOf="parent">
 
+                        <ImageView
+                            android:id="@+id/imageView9"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginBottom="8dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/textView4"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:srcCompat="@drawable/shopping_car" />
+
+                        <TextView
+                            android:id="@+id/textView4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:text="@string/add_to_cart"
+                            android:textColor="#fff"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/minusContainer"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
+                        android:id="@+id/plusMinusContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
                         android:layout_marginBottom="8dp"
-                        android:background="#313131"
+                        android:visibility="@{cartItem.count > 0 ? View.VISIBLE : View.GONE}"
+                        android:background="@color/colorPrimary"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
+                        app:layout_constraintStart_toEndOf="@+id/addContainer">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/plusContainer"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:background="#313131"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/minusContainer"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:background="#313131"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <TextView
+                            android:id="@+id/textView6"
+                            android:layout_width="wrap_content"
+                            android:layout_height="24dp"
+                            android:text="+"
+                            android:textAlignment="center"
+                            android:textColor="#fff"
+                            android:textSize="18sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="@+id/plusContainer"
+                            app:layout_constraintStart_toStartOf="@+id/plusContainer"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/textView5"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textAlignment="center"
+                            android:textColor="#fff"
+                            android:textSize="18sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="@+id/minusContainer"
+                            app:layout_constraintStart_toStartOf="@+id/minusContainer"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/countTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:textColor="#000"
+                            android:text='@{cartItem.count + ""}'
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/plusContainer"
+                            app:layout_constraintStart_toEndOf="@+id/minusContainer"
+                            app:layout_constraintTop_toTopOf="parent" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <TextView
-                        android:id="@+id/textView6"
-                        android:layout_width="wrap_content"
-                        android:layout_height="24dp"
-                        android:text="+"
-                        android:textAlignment="center"
-                        android:textColor="#fff"
-                        android:textSize="18sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="@+id/plusContainer"
-                        app:layout_constraintStart_toStartOf="@+id/plusContainer"
-                        app:layout_constraintTop_toTopOf="parent" />
 
-                    <TextView
-                        android:id="@+id/textView5"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="-"
-                        android:textAlignment="center"
-                        android:textColor="#fff"
-                        android:textSize="18sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="@+id/minusContainer"
-                        app:layout_constraintStart_toStartOf="@+id/minusContainer"
-                        app:layout_constraintTop_toTopOf="parent" />
+                </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/countTV"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:textColor="#000"
-                        android:text='@{cartItem.count + ""}'
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/plusContainer"
-                        app:layout_constraintStart_toEndOf="@+id/minusContainer"
-                        app:layout_constraintTop_toTopOf="parent" />
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+
+                </LinearLayout>
+
+
             </LinearLayout>
 
             <View

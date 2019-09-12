@@ -3,9 +3,13 @@ package online.lahloba.www.lahloba.ui.products;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.google.firebase.database.DataSnapshot;
+
 import online.lahloba.www.lahloba.data.model.CartItem;
+import online.lahloba.www.lahloba.data.model.FavoriteItem;
 import online.lahloba.www.lahloba.data.model.MarketPlace;
 import online.lahloba.www.lahloba.data.model.ProductItem;
+import online.lahloba.www.lahloba.data.model.ProductOption;
 import online.lahloba.www.lahloba.data.model.UserItem;
 import online.lahloba.www.lahloba.data.model.vm_helper.ProductDetailsHelper;
 import online.lahloba.www.lahloba.data.repository.AppRepository;
@@ -51,5 +55,41 @@ public class ProductDetailsViewModel extends ViewModel {
 
     public MutableLiveData<CartItem> getCartItem(){
         return appRepository.getCartItem();
+    }
+
+    public void startAddItemToCart(ProductItem productItem) {
+        appRepository.startAddProductToFirebaseCart(productItem);
+    }
+
+    public void startAddtoCartCount(String productId) {
+        appRepository.startAddToCartProductCount(productId);
+    }
+
+    public void startRemoveFromCartCount(String productId) {
+        appRepository.startRemoveFromCartProductCount(productId);
+    }
+
+    public void startChangeFavoriteStatus(String productId){
+        appRepository.startChangeFavoriteStatus(productId);
+    }
+
+    public MutableLiveData<FavoriteItem> getFavoritesItem(){
+        return appRepository.getFavoritesItem();
+    }
+
+    public void startGetFavoriteItem(String productId) {
+        appRepository.startGetFavoriteItem(productId);
+    }
+
+    public void startGetProductOptions(String productId) {
+        appRepository.startGetProductOptions(productId);
+    }
+
+    public MutableLiveData<DataSnapshot> getProductOptions() {
+        return appRepository.getProductOptions();
+    }
+
+    public void startAddOptionToCartItem(String productId, ProductOption productOption) {
+        appRepository.startAddOptionToCartItem(productId, productOption);
     }
 }
