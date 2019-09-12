@@ -67,6 +67,7 @@ public class ProductDetailsFragment extends Fragment {
         ViewModelProviderFactory factory = Injector.getVMFactory(getContext());
         mViewModel = ViewModelProviders.of(this, factory).get(ProductDetailsViewModel.class);
 
+        mViewModel.startResetProductOptions();
 
 
         mViewModel.startGetProductItem(productId);
@@ -198,7 +199,10 @@ public class ProductDetailsFragment extends Fragment {
                 binding.optionsContainer.setVisibility(View.GONE);
                 return;
             }
+
+            binding.optionsContainer.setVisibility(View.VISIBLE);
             binding.optionsContainer.removeAllViews();
+
 
 
 

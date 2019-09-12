@@ -93,6 +93,9 @@ public class AppRepository {
         networkDataHelper.startAddOptionToCartItem(productId, productOption);
     }
 
+    public void startResetProductOptions() {
+        networkDataHelper.startResetProductOptions();
+    }
 
     //############################### Cart ############################//
     public void startGetCartItems(String userId) {

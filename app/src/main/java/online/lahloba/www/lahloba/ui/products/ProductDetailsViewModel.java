@@ -92,4 +92,8 @@ public class ProductDetailsViewModel extends ViewModel {
     public void startAddOptionToCartItem(String productId, ProductOption productOption) {
         appRepository.startAddOptionToCartItem(productId, productOption);
     }
+
+    public void startResetProductOptions() {
+        appRepository.startResetProductOptions();
+    }
 }

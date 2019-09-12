@@ -720,7 +720,7 @@ public class NetworkDataHelper {
 
     public void getProductOptionsFromFirebase(String productId) {
         firebaseRef.child("ProductOptions").child(productId)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (!dataSnapshot.exists())return;
@@ -2257,6 +2257,10 @@ public class NetworkDataHelper {
     public void startResetProductListPage() {
         productsItems.setValue(null);
         cartItem.setValue(null);
+    }
+
+    public void startResetProductOptions() {
+        productOptions.setValue(null);
     }
 
 
