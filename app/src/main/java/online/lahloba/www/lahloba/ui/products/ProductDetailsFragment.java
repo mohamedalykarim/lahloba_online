@@ -4,7 +4,6 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -12,17 +11,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -38,15 +32,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.ProductOption;
 import online.lahloba.www.lahloba.databinding.FragmentProductDetailsBinding;
-import online.lahloba.www.lahloba.utils.Constants;
+import online.lahloba.www.lahloba.ui.adapters.SpinnerProductDetailsAdapter;
 import online.lahloba.www.lahloba.utils.Injector;
-import online.lahloba.www.lahloba.utils.Utils;
 import online.lahloba.www.lahloba.utils.comparator.ProductOptionComperatorByValue;
 
 public class ProductDetailsFragment extends Fragment {
@@ -66,21 +58,22 @@ public class ProductDetailsFragment extends Fragment {
 
         ViewModelProviderFactory factory = Injector.getVMFactory(getContext());
         mViewModel = ViewModelProviders.of(this, factory).get(ProductDetailsViewModel.class);
+        binding.setViewModel(mViewModel);
 
         mViewModel.startResetProductOptions();
 
 
-        mViewModel.startGetProductItem(productId);
-        mViewModel.startGetCartItemForProduct(productId);
-        mViewModel.startGetFavoriteItem(productId);
         mViewModel.startGetProductOptions(productId);
+        mViewModel.startGetProductItem(productId);
+        mViewModel.startGetFavoriteItem(productId);
 
 
 
         binding.addContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mViewModel.startAddItemToCart(mViewModel.helper.getProductItem());
+                mViewModel.startAddItemToCart(mViewModel.helper.getProductItem(),getProductOptionsSelectedByUser());
+
             }
         });
 
@@ -88,14 +81,14 @@ public class ProductDetailsFragment extends Fragment {
         binding.plusContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mViewModel.startAddtoCartCount(productId);
+                mViewModel.startAddtoCartCount(productId, getProductOptionsSelectedByUser());
             }
         });
 
         binding.minusContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mViewModel.startRemoveFromCartCount(productId);
+                mViewModel.startRemoveFromCartCount(productId, getProductOptionsSelectedByUser());
             }
         });
 
@@ -113,10 +106,99 @@ public class ProductDetailsFragment extends Fragment {
         return binding.getRoot();
     }
 
+    private HashMap<String, ProductOption> getProductOptionsSelectedByUser() {
+        /**
+         * Add options from spinner too
+         */
+
+        HashMap<String, ProductOption> productOptionHashMap = new HashMap<>();
+
+        int count = binding.optionsContainer.getChildCount();
+        for(int i=0; i < count; i++){
+            SpinnerProductDetailsAdapter adapter = (SpinnerProductDetailsAdapter) ((Spinner)binding.optionsContainer.getChildAt(i)).getAdapter();
+            String key = adapter.getKeys().get(((Spinner)binding.optionsContainer.getChildAt(i)).getSelectedItemPosition());
+            String value = adapter.getValues().get(((Spinner)binding.optionsContainer.getChildAt(i)).getSelectedItemPosition());
+
+            ProductOption productOption = new ProductOption();
+            productOption.setOptionId(((Spinner)binding.optionsContainer.getChildAt(i)).getTag().toString());
+            productOption.setOptionKey(key);
+            productOption.setOptionValue(value);
+
+            productOptionHashMap.put(productOption.getOptionId(), productOption);
+
+        }
+
+        return productOptionHashMap;
+    }
+
     @Override
     public void onResume() {
         super.onResume();
 
+        mViewModel.getProductOptions().observe((LifecycleOwner) getContext(), productOptions->{
+            if (productOptions == null){
+                binding.optionsContainer.setVisibility(View.GONE);
+                return;
+            }
+
+            binding.optionsContainer.setVisibility(View.VISIBLE);
+            binding.optionsContainer.removeAllViews();
+
+
+
+
+            for (DataSnapshot option : productOptions.getChildren()){
+
+                Spinner spinner = new Spinner(getContext());
+                spinner.setTag(option.getKey());
+
+
+                HashMap<String, String> optionItems = new HashMap<>();
+
+                for (DataSnapshot optionNode : option.getChildren()){
+                    optionItems.put(
+                            optionNode.getKey(),
+                            optionNode.getValue().toString()
+                    );
+                }
+
+                ProductOptionComperatorByValue comperatorByValue = new ProductOptionComperatorByValue(optionItems);
+                TreeMap<String, String> sortedOptionItems = new TreeMap<String, String>(comperatorByValue);
+                sortedOptionItems.putAll(optionItems);
+
+                List<String> titles = new ArrayList<>();
+                List<String> keys = new ArrayList<>();
+                List<String> values = new ArrayList<>();
+                Iterator it = sortedOptionItems.entrySet().iterator();
+                while (it.hasNext()){
+                    Map.Entry pair = (Map.Entry)it.next();
+                    titles.add(pair.getKey().toString() + " | " + pair.getValue().toString() + " " +"EGP");
+                    keys.add(pair.getKey().toString());
+                    values.add(pair.getValue().toString());
+                    it.remove();
+                }
+
+
+
+                spinner.setBackgroundResource(R.drawable.btn_bg_2);
+                spinner.setPaddingRelative(5,5,5,5);
+
+                SpinnerProductDetailsAdapter arrayAdapter = new SpinnerProductDetailsAdapter(getContext(), android.R.layout.simple_spinner_dropdown_item, titles);
+                arrayAdapter.setKeys(keys);
+                arrayAdapter.setValues(values);
+
+                spinner.setAdapter(arrayAdapter);
+                binding.optionsContainer.addView(spinner);
+
+                ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) spinner.getLayoutParams();
+                marginLayoutParams.setMargins(50,10,50,0);
+
+                mViewModel.startGetCartItemForProduct(productId);
+
+
+            }
+
+        });
 
         mViewModel.getProduct().observe((LifecycleOwner) getContext(), productItem -> {
             if (productItem == null)return;
@@ -184,6 +266,23 @@ public class ProductDetailsFragment extends Fragment {
                 mViewModel.helper.setCartItem(cartItem);
                 binding.setCartItem(cartItem);
             }
+
+            try {
+                Iterator it = cartItem.getOptions().entrySet().iterator();
+                while (it.hasNext()){
+                    Map.Entry pair = (Map.Entry)it.next();
+                    ProductOption option = (ProductOption) pair.getValue();
+                    SpinnerProductDetailsAdapter adapter = ((SpinnerProductDetailsAdapter)((Spinner) binding.getRoot().findViewWithTag(option.getOptionId())).getAdapter());
+                    int index = adapter.getValues().indexOf(option.getOptionValue());
+                    ((Spinner) binding.getRoot().findViewWithTag(option.getOptionId())).setSelection(index);
+                    it.remove();
+                }
+
+
+
+            }catch (Exception e){
+
+            }
         });
 
         mViewModel.getFavoritesItem().observe((LifecycleOwner) getContext(), favoriteItem -> {
@@ -194,86 +293,7 @@ public class ProductDetailsFragment extends Fragment {
         });
 
 
-        mViewModel.getProductOptions().observe((LifecycleOwner) getContext(), productOptions->{
-            if (productOptions == null){
-                binding.optionsContainer.setVisibility(View.GONE);
-                return;
-            }
 
-            binding.optionsContainer.setVisibility(View.VISIBLE);
-            binding.optionsContainer.removeAllViews();
-
-
-
-
-            for (DataSnapshot option : productOptions.getChildren()){
-
-                Spinner spinner = new Spinner(getContext());
-                spinner.setTag(option.getKey());
-
-
-                HashMap<String, String> optionItems = new HashMap<>();
-
-                for (DataSnapshot optionNode : option.getChildren()){
-                    optionItems.put(
-                            optionNode.getKey(),
-                            optionNode.getValue().toString()
-                    );
-                }
-
-                ProductOptionComperatorByValue comperatorByValue = new ProductOptionComperatorByValue(optionItems);
-                TreeMap<String, String> sortedOptionItems = new TreeMap<String, String>(comperatorByValue);
-                sortedOptionItems.putAll(optionItems);
-
-                List<String> titles = new ArrayList<>();
-                List<String> keys = new ArrayList<>();
-                List<String> values = new ArrayList<>();
-                Iterator it = sortedOptionItems.entrySet().iterator();
-                while (it.hasNext()){
-                    Map.Entry pair = (Map.Entry)it.next();
-                    titles.add(pair.getKey().toString() + " | " + pair.getValue().toString() + " " +"EGP");
-                    keys.add(pair.getKey().toString());
-                    values.add(pair.getValue().toString());
-                    it.remove();
-                }
-
-
-
-                spinner.setBackgroundResource(R.drawable.btn_bg_2);
-                spinner.setPaddingRelative(5,5,5,5);
-
-                spinner.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item, titles));
-                binding.optionsContainer.addView(spinner);
-
-                ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) spinner.getLayoutParams();
-                marginLayoutParams.setMargins(50,10,50,0);
-
-
-
-                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                        if (mViewModel.helper.getCartItem() == null)return;
-                        ProductOption productOption = new ProductOption();
-                        productOption.setOptionId(spinner.getTag().toString());
-                        productOption.setOptionKey(keys.get(position));
-                        productOption.setOptionValue(values.get(position));
-                        mViewModel.startAddOptionToCartItem(productId, productOption);
-
-
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-
-                    }
-                });
-
-
-            }
-
-        });
 
 
 

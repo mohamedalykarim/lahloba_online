@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.database.DataSnapshot;
 
+import java.util.HashMap;
+
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.FavoriteItem;
 import online.lahloba.www.lahloba.data.model.MarketPlace;
@@ -57,16 +59,16 @@ public class ProductDetailsViewModel extends ViewModel {
         return appRepository.getCartItem();
     }
 
-    public void startAddItemToCart(ProductItem productItem) {
-        appRepository.startAddProductToFirebaseCart(productItem);
+    public void startAddItemToCart(ProductItem productItem, HashMap<String, ProductOption> productOptions) {
+        appRepository.startAddProductToFirebaseCart(productItem, productOptions);
     }
 
-    public void startAddtoCartCount(String productId) {
-        appRepository.startAddToCartProductCount(productId);
+    public void startAddtoCartCount(String productId, HashMap<String, ProductOption> productOptions) {
+        appRepository.startAddToCartProductCount(productId, productOptions);
     }
 
-    public void startRemoveFromCartCount(String productId) {
-        appRepository.startRemoveFromCartProductCount(productId);
+    public void startRemoveFromCartCount(String productId, HashMap<String, ProductOption> optionHashMap) {
+        appRepository.startRemoveFromCartProductCount(productId, optionHashMap);
     }
 
     public void startChangeFavoriteStatus(String productId){

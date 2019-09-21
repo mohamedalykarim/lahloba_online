@@ -1,12 +1,11 @@
 package online.lahloba.www.lahloba.data.repository;
 
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.database.DataSnapshot;
 
+import java.util.HashMap;
 import java.util.List;
 
 import online.lahloba.www.lahloba.data.NetworkDataHelper;
@@ -177,8 +176,8 @@ public class AppRepository {
         networkDataHelper.startDeleteAllFromCart();
     }
 
-    public void startAddProductToFirebaseCart(ProductItem productItem) {
-        networkDataHelper.startAddProductToFirebaseCart(productItem);
+    public void startAddProductToFirebaseCart(ProductItem productItem, HashMap<String, ProductOption> productOptions) {
+        networkDataHelper.startAddProductToFirebaseCart(productItem, productOptions);
     }
 
     public MutableLiveData<Boolean> getOldFarProductExistsInCart() {
@@ -209,12 +208,12 @@ public class AppRepository {
 
     }
 
-    public void startAddToCartProductCount(String productId) {
-        networkDataHelper.startAddToCartProductCount(productId);
+    public void startAddToCartProductCount(String productId, HashMap<String, ProductOption> productOptions) {
+        networkDataHelper.startAddToCartProductCount(productId, productOptions);
     }
 
-    public void startRemoveFromCartProductCount(String productId) {
-        networkDataHelper.startRemoveFromCartProductCount(productId);
+    public void startRemoveFromCartProductCount(String productId, HashMap<String, ProductOption> optionHashMap) {
+        networkDataHelper.startRemoveFromCartProductCount(productId, optionHashMap);
     }
 
 
@@ -232,6 +231,12 @@ public class AppRepository {
 
     public void startLogout() {
         networkDataHelper.startLogOut();
+    }
+
+
+
+    public void startUpdateMessagingToken() {
+        networkDataHelper.startUpdateMessagingToken();
     }
 
     //############################### New Account ############################//
@@ -491,7 +496,5 @@ public class AppRepository {
     public void startAddPointsToUser(String userId, int points) {
         networkDataHelper.startAddPointsToUser(userId, points);
     }
-
-
 
 }

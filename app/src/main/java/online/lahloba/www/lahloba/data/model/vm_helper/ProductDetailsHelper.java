@@ -14,6 +14,7 @@ public class ProductDetailsHelper extends BaseObservable {
     UserItem sellerItem;
     CartItem cartItem;
     FavoriteItem favoriteItem;
+    double addedPrice;
 
 
     public ProductItem getProductItem() {
@@ -54,5 +55,13 @@ public class ProductDetailsHelper extends BaseObservable {
 
     public void setFavoriteItem(FavoriteItem favoriteItem) {
         this.favoriteItem = favoriteItem;
+    }
+
+    public double getAddedPrice() {
+        return addedPrice;
+    }
+
+    public void setAddedPrice(double addedPrice) {
+        this.addedPrice = addedPrice;
     }
 }

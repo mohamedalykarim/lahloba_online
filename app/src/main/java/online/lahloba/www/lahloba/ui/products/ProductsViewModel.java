@@ -11,7 +11,6 @@ import online.lahloba.www.lahloba.data.repository.AppRepository;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.data.model.vm_helper.ProductVMHelper;
-import online.lahloba.www.lahloba.utils.Injector;
 
 public class ProductsViewModel extends ViewModel {
     AppRepository appRepository;
@@ -48,7 +47,7 @@ public class ProductsViewModel extends ViewModel {
     }
 
     public void startAddProductToFirebaseCart(ProductItem productItem) {
-        appRepository.startAddProductToFirebaseCart(productItem);
+        appRepository.startAddProductToFirebaseCart(productItem, null);
     }
 
     public MutableLiveData<Boolean> getOldFarProductExistsInCart() {
@@ -64,11 +63,11 @@ public class ProductsViewModel extends ViewModel {
     }
 
     public void startAddToCartProductCount(String productId) {
-        appRepository.startAddToCartProductCount(productId);
+        appRepository.startAddToCartProductCount(productId, null);
     }
 
     public void startRemoveFromCartProductCount(String productId) {
-        appRepository.startRemoveFromCartProductCount(productId);
+        appRepository.startRemoveFromCartProductCount(productId, null);
     }
 
     public void insertCartItemToInternaldb(CartItem cartItem) {

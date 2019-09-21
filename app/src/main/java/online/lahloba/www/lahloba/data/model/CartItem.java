@@ -4,11 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.google.firebase.database.Exclude;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 import online.lahloba.www.lahloba.BR;
 
@@ -27,10 +29,14 @@ public class CartItem extends BaseObservable implements Serializable {
     String marketId;
     int point;
 
+    @Ignore
+    HashMap<String, ProductOption> options;
+
     @Exclude
     boolean isFavorite;
 
-
+    public CartItem() {
+    }
 
     public String getId() {
         return id;
@@ -115,5 +121,15 @@ public class CartItem extends BaseObservable implements Serializable {
 
     public void setPoint(int point) {
         this.point = point;
+    }
+
+    @Ignore
+    public HashMap<String, ProductOption> getOptions() {
+        return options;
+    }
+
+    @Ignore
+    public void setOptions(HashMap<String, ProductOption> options) {
+        this.options = options;
     }
 }

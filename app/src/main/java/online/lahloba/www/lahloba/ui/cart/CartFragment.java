@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,18 +21,21 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.MarketPlace;
+import online.lahloba.www.lahloba.data.model.ProductOption;
 import online.lahloba.www.lahloba.databinding.FragmentCartBinding;
 import online.lahloba.www.lahloba.ui.adapters.CartAdapter;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
 import online.lahloba.www.lahloba.ui.order.OrdersActivity;
-import online.lahloba.www.lahloba.utils.ExpandableHeightRecyclerView;
 import online.lahloba.www.lahloba.utils.Injector;
 import online.lahloba.www.lahloba.utils.Utils;
 import online.lahloba.www.lahloba.utils.comparator.CartItemNameComparator;
@@ -77,6 +81,7 @@ public class CartFragment extends Fragment {
         mViewModel.resetIsOrderAdded(false);
 
 
+
         /**
          *   Cart RecyclerView
          */
@@ -84,7 +89,7 @@ public class CartFragment extends Fragment {
         cartItemList = new ArrayList<>();
 
         cartAdapter = new CartAdapter(getContext());
-        cartAdapter.setCartViewModel(mViewModel);
+        cartAdapter.setmViewModel(mViewModel);
         cartAdapter.setCartItemList(cartItemList);
 
         binding.cartItemRecyclerView.setAdapter(cartAdapter);
@@ -98,6 +103,11 @@ public class CartFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        if (FirebaseAuth.getInstance().getUid() != null){
+            mViewModel.startGetCartItems(FirebaseAuth.getInstance().getUid());
+            mViewModel.startGetAddress(FirebaseAuth.getInstance().getUid());
+        }
 
 
 
@@ -128,14 +138,7 @@ public class CartFragment extends Fragment {
              */
 
 
-            Collections.sort(cartItems, new CartItemNameComparator());
-
-
-            cartItemList.clear();
-            cartAdapter.notifyDataSetChanged();
-
-            cartItemList.addAll(cartItems);
-            cartAdapter.notifyDataSetChanged();
+           cartAdapter.setCartItemList(cartItems);
 
             calculateTotal();
 
@@ -282,12 +285,31 @@ public class CartFragment extends Fragment {
     public void calculateTotal(){
 
         double total = 0;
+        double price = 0;
 
         for (int i=0; i < cartItemList.size(); i++){
-            double price = 0;
-            price = Double.parseDouble(cartItemList.get(i).getPrice()) * cartItemList.get(i).getCount();
-            total = total+price;
+            price = Double.parseDouble(cartItemList.get(i).getPrice());
+
+            if (cartItemList.get(i).getOptions() != null){
+                HashMap<String, ProductOption> optionHashMap = cartItemList.get(i).getOptions();
+                Iterator it = optionHashMap.entrySet().iterator();
+                double optionPrice = 0;
+                while (it.hasNext()){
+                    Map.Entry pair = (Map.Entry) it.next();
+                    optionPrice += Double.valueOf(((ProductOption)pair.getValue()).getOptionValue());
+                    it.remove();
+                }
+
+                price = price + optionPrice;
+
+            }
+
+            price = price * cartItemList.get(i).getCount();
+
         }
+
+        total = total+price;
+
 
 
         mViewModel.cartVMHelper.setTotal(total);

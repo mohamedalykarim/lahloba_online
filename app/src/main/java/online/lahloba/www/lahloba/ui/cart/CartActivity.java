@@ -31,13 +31,16 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.OrderItem;
+import online.lahloba.www.lahloba.data.model.ProductOption;
 import online.lahloba.www.lahloba.data.model.UserItem;
 import online.lahloba.www.lahloba.data.model.vm_helper.CartVMHelper;
 import online.lahloba.www.lahloba.databinding.CartActivityBinding;
@@ -357,10 +360,30 @@ implements
                         orderItem.setHyperlocalCost(hyperlocalCost);
 
                         double total  = 0;
+                        double price = 0;
 
-                        for(CartItem product: products.values()){
-                            if (product!=null){
-                                total+= Double.parseDouble(product.getPrice());
+                        for(CartItem cartItem: products.values()){
+                            if (cartItem!=null){
+                                price += Double.parseDouble(cartItem.getPrice());
+
+                                if (cartItem.getOptions() != null){
+                                    HashMap<String, ProductOption> optionHashMap = cartItem.getOptions();
+                                    Iterator it = optionHashMap.entrySet().iterator();
+                                    double optionPrice = 0;
+                                    while (it.hasNext()){
+                                        Map.Entry pair = (Map.Entry) it.next();
+                                        optionPrice += Double.valueOf(((ProductOption)pair.getValue()).getOptionValue());
+                                        it.remove();
+                                    }
+
+                                    price = price + optionPrice;
+
+                                    Toast.makeText(this, "options price : "+ optionPrice, Toast.LENGTH_SHORT).show();
+
+                                }
+
+                                price = price * cartItem.getCount();
+                                total += price;
                             }
                         }
 
@@ -376,6 +399,9 @@ implements
                         orderItem.setOrderStatus(StatusUtils.ORDER_STATUS_PENDING);
                         orderItem.setCityId(marketPlace.getAddressSelected().getCityId());
                         orderItem.setCityIdStatus(marketPlace.getAddressSelected().getCityId()+"-"+ StatusUtils.ORDER_STATUS_PENDING);
+
+
+
 
 
                         ((CartFragment)getSupportFragmentManager().getFragments().get(0))
@@ -430,7 +456,6 @@ implements
 
                 } catch (ApiException e) {
                     // Google Sign In failed, update UI appropriately
-                    Log.w("mmm", "Google sign in failed", e);
                     // [START_EXCLUDE]
                 }
             }

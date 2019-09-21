@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements AccountAdapter.Ac
         ViewModelProviderFactory factory = Injector.getVMFactory(this);
         loginViewModel = ViewModelProviders.of(this, factory).get(LoginViewModel.class);
 
+
         Fragment fragment = new ShoppingFragment();
         loadFragment(fragment);
 
@@ -84,6 +85,9 @@ public class MainActivity extends AppCompatActivity implements AccountAdapter.Ac
     @Override
     protected void onResume() {
         super.onResume();
+
+        loginViewModel.startUpdateMessagingToken();
+
 
         if (FirebaseAuth.getInstance().getUid() != null){
             loginViewModel.loginVMHelper.setLogged(true);

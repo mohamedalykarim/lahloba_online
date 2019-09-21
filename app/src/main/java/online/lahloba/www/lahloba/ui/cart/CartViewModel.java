@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel;
 
 import java.util.List;
 
+import online.lahloba.www.lahloba.data.model.FavoriteItem;
+import online.lahloba.www.lahloba.data.model.ProductItem;
 import online.lahloba.www.lahloba.data.repository.AppRepository;
 import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.CartItem;
@@ -93,4 +95,45 @@ public class CartViewModel extends ViewModel {
             }
         });
     }
+
+    public void startGetFavoriteItem(String productId) {
+        appRepository.startGetFavoriteItem(productId);
+    }
+
+    public MutableLiveData<FavoriteItem> getFavoritesItem() {
+        return appRepository.getFavoritesItem();
+    }
+
+    public void startChangeFavoriteStatus(String productId) {
+        appRepository.startChangeFavoriteStatus(productId);
+    }
+
+    public void startRemoveFromCartProductCount(String productId) {
+        appRepository.startRemoveFromCartProductCount(productId, null);
+    }
+
+    public void removeFromCartItemCountInternaldb(String productId) {
+        appRepository.removeFromCartItemCountInternaldb(productId);
+    }
+
+    public void startAddToCartProductCount(String productId) {
+        appRepository.startAddToCartProductCount(productId, null);
+    }
+
+    public void addToCartItemCountInternaldb(String productId) {
+        appRepository.addToCartItemCountInternaldb(productId);
+    }
+
+    public LiveData<CartItem> getSpecificCartItemFromInternal(String productId) {
+        return appRepository.getSpecificCartItemFromInternal(productId);
+    }
+
+    public void startGetProductItem(String productId) {
+        appRepository.startGetProductById(productId);
+    }
+
+    public MutableLiveData<ProductItem> getProductItem() {
+        return appRepository.getProductItem();
+    }
+
 }

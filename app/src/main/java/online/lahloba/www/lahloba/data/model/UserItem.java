@@ -21,6 +21,7 @@ public class UserItem extends BaseObservable implements Parcelable {
     double lat;
     double lan;
     int points;
+    String notificationToken;
 
 
     public UserItem() {
@@ -39,6 +40,7 @@ public class UserItem extends BaseObservable implements Parcelable {
         lat = in.readDouble();
         lan = in.readDouble();
         points = in.readInt();
+        notificationToken = in.readString();
     }
 
     @Override
@@ -55,6 +57,7 @@ public class UserItem extends BaseObservable implements Parcelable {
         dest.writeDouble(lat);
         dest.writeDouble(lan);
         dest.writeInt(points);
+        dest.writeString(notificationToken);
     }
 
     @Override
@@ -174,5 +177,13 @@ public class UserItem extends BaseObservable implements Parcelable {
 
     public void setPoints(int point) {
         this.points = point;
+    }
+
+    public String getNotificationToken() {
+        return notificationToken;
+    }
+
+    public void setNotificationToken(String notificationToken) {
+        this.notificationToken = notificationToken;
     }
 }

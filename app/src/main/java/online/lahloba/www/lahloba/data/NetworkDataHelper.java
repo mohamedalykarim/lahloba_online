@@ -28,6 +28,8 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -852,15 +854,16 @@ public class NetworkDataHelper {
                 .removeValue();
     }
 
-    public void startAddProductToFirebaseCart(ProductItem productItem) {
+    public void startAddProductToFirebaseCart(ProductItem productItem, HashMap<String, ProductOption> productOptions) {
         Intent intent = new Intent(mContext, LahlobaMainService.class);
         intent.setAction(Constants.START_ADD_PRODUCT_TO_FIREBASE_CART);
         intent.putExtra(Constants.START_ADD_PRODUCT_TO_FIREBASE_CART, productItem);
+        intent.putExtra(Constants.PRODUCT_OPTIONS, productOptions);
         mContext.startService(intent);
 
     }
 
-    public void addProductToFirebaseCart(ProductItem productItem){
+    public void addProductToFirebaseCart(ProductItem productItem, HashMap<String, ProductOption> productOptionHashMap){
         if (productItem == null )return;
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null) return;
@@ -874,6 +877,11 @@ public class NetworkDataHelper {
         cartItem.setProductName(productItem.getTitle());
         cartItem.setMarketId(productItem.getMarketPlaceId());
         cartItem.setPoint(productItem.getPoint());
+
+        if (productOptionHashMap != null){
+            cartItem.setOptions(productOptionHashMap);
+        }
+
 
         firebaseRef.child("Cart").child(uid).child("CartLocation")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -971,15 +979,16 @@ public class NetworkDataHelper {
     }
 
 
-    public void startAddToCartProductCount(String productId){
+    public void startAddToCartProductCount(String productId, HashMap<String, ProductOption> productOptions){
         Intent intent = new Intent(mContext, LahlobaMainService.class);
         intent.setAction(Constants.START_ADD_TO_CART_PRODUCT_COUNT);
         intent.putExtra(Constants.START_ADD_TO_CART_PRODUCT_COUNT, productId);
+        intent.putExtra(Constants.PRODUCT_OPTIONS, productOptions);
         mContext.startService(intent);
 
     }
 
-    public void addToCartProductCount(String productId){
+    public void addToCartProductCount(String productId, HashMap<String, ProductOption> productOptionHashMap){
         if (productId == null)return;
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null)return;
@@ -1010,17 +1019,26 @@ public class NetworkDataHelper {
                     public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
                     }
                 });
+
+        if (productOptionHashMap != null){
+            firebaseRef.child("Cart")
+                    .child(uid)
+                    .child("CartItems")
+                    .child(productId).child("options")
+                    .setValue(productOptionHashMap);
+        }
     }
 
-    public void startRemoveFromCartProductCount(String productId){
+    public void startRemoveFromCartProductCount(String productId, HashMap<String, ProductOption> productOptions){
         Intent intent = new Intent(mContext, LahlobaMainService.class);
         intent.setAction(Constants.START_REMOVE_FROM_CART_PRODUCT_COUNT);
         intent.putExtra(Constants.START_REMOVE_FROM_CART_PRODUCT_COUNT, productId);
+        intent.putExtra(Constants.PRODUCT_OPTIONS, productOptions);
         mContext.startService(intent);
 
     }
 
-    public void removeFromCartProductCount(String productItem){
+    public void removeFromCartProductCount(String productId, HashMap<String, ProductOption> productOptionHashMap){
         if (productItem == null)return;
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null)return;
@@ -1028,7 +1046,7 @@ public class NetworkDataHelper {
         firebaseRef.child("Cart")
                 .child(uid)
                 .child("CartItems")
-                .child(productItem).child("count")
+                .child(productId).child("count")
                 .runTransaction(new Transaction.Handler() {
                     @NonNull
                     @Override
@@ -1053,6 +1071,14 @@ public class NetworkDataHelper {
                     public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
                     }
                 });
+
+        if (productOptionHashMap != null){
+            firebaseRef.child("Cart")
+                    .child(uid)
+                    .child("CartItems")
+                    .child(productId).child("options")
+                    .setValue(productOptionHashMap);
+        }
 
     }
 
@@ -1135,6 +1161,44 @@ public class NetworkDataHelper {
         firebaseRef.child("User")
                 .child(uid)
                 .setValue(userItem);
+
+    }
+
+
+    public void startUpdateMessagingToken() {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.START_UPDATE_MESSAGING_TOKEN);
+        mContext.startService(intent);
+
+    }
+
+    public void updateMessagingToken() {
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null)return;
+
+
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        String token = task.getResult().getToken();
+
+                        FirebaseDatabase.getInstance().getReference()
+                                .child("User")
+                                .child(FirebaseAuth.getInstance().getUid())
+                                .child("notificationToken")
+                                .setValue(token);
+
+                    }
+                });
+
+
+
 
     }
 

@@ -7,6 +7,8 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import java.util.HashMap;
+
 import online.lahloba.www.lahloba.data.NetworkDataHelper;
 import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.OrderItem;
@@ -98,16 +100,19 @@ public class LahlobaMainService extends IntentService {
             networkDataHelper.deleteAllFromCart();
         }else if(intent.getAction().equals(Constants.START_ADD_PRODUCT_TO_FIREBASE_CART)){
             ProductItem product = intent.getParcelableExtra(Constants.START_ADD_PRODUCT_TO_FIREBASE_CART);
-            networkDataHelper.addProductToFirebaseCart(product);
+            HashMap<String, ProductOption> productOptionHashMap = (HashMap<String, ProductOption>) intent.getSerializableExtra(Constants.PRODUCT_OPTIONS);
+            networkDataHelper.addProductToFirebaseCart(product, productOptionHashMap);
         }else if(intent.getAction().equals(Constants.START_GET_CART_ITEM_BY_ID)){
             String productId = intent.getStringExtra(Constants.START_GET_CART_ITEM_BY_ID);
             networkDataHelper.getCartItemById(productId);
         }else if(intent.getAction().equals(Constants.START_ADD_TO_CART_PRODUCT_COUNT)){
             String productId = intent.getStringExtra(Constants.START_ADD_TO_CART_PRODUCT_COUNT);
-            networkDataHelper.addToCartProductCount(productId);
+            HashMap<String, ProductOption> productOptionHashMap = (HashMap<String, ProductOption>) intent.getSerializableExtra(Constants.PRODUCT_OPTIONS);
+            networkDataHelper.addToCartProductCount(productId, productOptionHashMap);
         }else if(intent.getAction().equals(Constants.START_REMOVE_FROM_CART_PRODUCT_COUNT)){
             String productId = intent.getStringExtra(Constants.START_REMOVE_FROM_CART_PRODUCT_COUNT);
-            networkDataHelper.removeFromCartProductCount(productId);
+            HashMap<String, ProductOption> productOptionHashMap = (HashMap<String, ProductOption>) intent.getSerializableExtra(Constants.PRODUCT_OPTIONS);
+            networkDataHelper.removeFromCartProductCount(productId, productOptionHashMap);
         }
 
         /**
@@ -131,6 +136,8 @@ public class LahlobaMainService extends IntentService {
         }else if(intent.getAction().equals(Constants.START_UPDATE_USER_DETAILS)){
             UserItem userItem = intent.getParcelableExtra(Constants.USER_ITEM);
             networkDataHelper.updateUserDetails(userItem);
+        }else if(intent.getAction().equals(Constants.START_UPDATE_MESSAGING_TOKEN)){
+            networkDataHelper.updateMessagingToken();
         }
 
 
