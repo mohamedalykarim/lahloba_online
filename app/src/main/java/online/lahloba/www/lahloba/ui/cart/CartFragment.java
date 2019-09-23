@@ -17,10 +17,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -31,30 +46,57 @@ import online.lahloba.www.lahloba.ViewModelProviderFactory;
 import online.lahloba.www.lahloba.data.model.AddressItem;
 import online.lahloba.www.lahloba.data.model.CartItem;
 import online.lahloba.www.lahloba.data.model.MarketPlace;
+import online.lahloba.www.lahloba.data.model.OrderItem;
 import online.lahloba.www.lahloba.data.model.ProductOption;
+import online.lahloba.www.lahloba.data.model.UserItem;
+import online.lahloba.www.lahloba.data.model.vm_helper.CartVMHelper;
 import online.lahloba.www.lahloba.databinding.FragmentCartBinding;
 import online.lahloba.www.lahloba.ui.adapters.CartAdapter;
+import online.lahloba.www.lahloba.ui.cart.bottom_sheet.AddOrderConfirmBottomSheet;
+import online.lahloba.www.lahloba.ui.cart.bottom_sheet.AddressBottomSheet;
+import online.lahloba.www.lahloba.ui.cart.bottom_sheet.LogginBottomSheet;
+import online.lahloba.www.lahloba.ui.cart.bottom_sheet.ShippingMethodBottomSheet;
+import online.lahloba.www.lahloba.ui.login.LoginActivity;
 import online.lahloba.www.lahloba.ui.login.LoginViewModel;
 import online.lahloba.www.lahloba.ui.order.OrdersActivity;
 import online.lahloba.www.lahloba.utils.Injector;
+import online.lahloba.www.lahloba.utils.StatusUtils;
 import online.lahloba.www.lahloba.utils.Utils;
-import online.lahloba.www.lahloba.utils.comparator.CartItemNameComparator;
+
+import static android.app.Activity.RESULT_OK;
 
 public class CartFragment extends Fragment {
+    private static final int RC_SIGN_IN = 1;
+    private FirebaseAuth mAuth;
+    private GoogleSignInClient mGoogleSignInClient;
+
+
     private CartViewModel mViewModel;
-    FragmentCartBinding binding;
+    private LoginViewModel loginViewModel;
+    private FragmentCartBinding binding;
 
-    CartAdapter cartAdapter;
-    List<CartItem> cartItemList;
+    private CartAdapter cartAdapter;
+    private List<CartItem> cartItemList;
     private Location userLocation;
-    AddressesToActivityFromCart addressesToActivityFromCart;
-    List<String> marketIds;
-    double nonFinalHyperLocalCost;
+    private List<String> marketIds;
+    private double nonFinalHyperLocalCost;
 
-    int orderAddedCount = 0;
-    int orderInCart = 0;
+    private int orderAddedCount = 0;
+    private int orderInCart = 0;
+    private boolean isStartAddingNewOrder;
 
-    LoginViewModel loginViewModel;
+
+    private LogginBottomSheet logginBottomSheet;
+    private ShippingMethodBottomSheet shippingMethodBottomSheet;
+    private AddressBottomSheet addressBottomSheet;
+    private AddOrderConfirmBottomSheet addOrderConfirmBottomSheet;
+
+
+
+
+
+
+
 
     public static CartFragment newInstance(Bundle args) {
         CartFragment fragment = new CartFragment();
@@ -81,6 +123,26 @@ public class CartFragment extends Fragment {
         mViewModel.resetIsOrderAdded(false);
 
 
+        /**
+         * Google Sign in
+         */
+
+
+        // Configure Google Sign In
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getResources().getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
+
+
+        // ...
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+
+
+
 
         /**
          *   Cart RecyclerView
@@ -94,6 +156,79 @@ public class CartFragment extends Fragment {
 
         binding.cartItemRecyclerView.setAdapter(cartAdapter);
         binding.cartItemRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+
+        logginBottomSheet = new LogginBottomSheet();
+        shippingMethodBottomSheet = new ShippingMethodBottomSheet();
+        addressBottomSheet = new AddressBottomSheet();
+
+
+        binding.cartContinueBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (null == FirebaseAuth.getInstance().getCurrentUser()){
+                    /*
+                     * If not logged in ask user for login
+                     */
+
+                    logginBottomSheet.show(getActivity().getSupportFragmentManager(),"logginBottomSheet");
+                }else{
+                    /*
+                     * user is log in
+                     */
+
+
+
+                    if (mViewModel.cartVMHelper.getAddressSelected() == null){
+
+                        addressBottomSheet.setCartViewModel(mViewModel);
+                        addressBottomSheet.show(getActivity().getSupportFragmentManager(),"addressBottomSheet");
+
+                    }else {
+
+                        if (cartItemList.size() < 1){
+                            Toast.makeText(getActivity(), "Add products first", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        /*
+                         * address selected then choose shipping method
+                         */
+
+                        if (mViewModel.cartVMHelper.getShippingMethodSelected() == null){
+                            /*
+                             * Shipping method not set
+                             */
+
+                            shippingMethodBottomSheet.show(getActivity().getSupportFragmentManager(),"shippingMethodBottomSheet");
+
+                        }else{
+
+                            if (cartItemList.size() < 1){
+                                Toast.makeText(getActivity(), "Add products first", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+
+                            /*
+                             * Start the order
+                             */
+
+                            addOrderConfirmBottomSheet = new AddOrderConfirmBottomSheet();
+                            addOrderConfirmBottomSheet.show(getActivity().getSupportFragmentManager(),"addOrderConfirmBottomSheet");
+
+                        }
+                    }
+
+
+
+
+
+
+                }
+            }
+        });
+
+
 
         return binding.getRoot();
     }
@@ -137,11 +272,12 @@ public class CartFragment extends Fragment {
              * Get cart items from firebase
              */
 
+            cartItemList.clear();
 
-           cartAdapter.setCartItemList(cartItems);
+            cartItemList.addAll(cartItems);
+            cartAdapter.notifyDataSetChanged();
 
             calculateTotal();
-
             calculateDistance();
             setHyperlocalData();
 
@@ -182,29 +318,6 @@ public class CartFragment extends Fragment {
 
         });
 
-
-        /**
-         * Order Added
-         */
-
-        mViewModel.getIsOrderAdded().observe(this, isOrderAdded->{
-            if (null == isOrderAdded) return;
-
-            if (isOrderAdded){
-                orderAddedCount++;
-
-                if (orderInCart == orderAddedCount && orderInCart != 0){
-                    mViewModel.deleteCartItems();
-                    getActivity().finish();
-                    startActivity(new Intent(getContext(), OrdersActivity.class));
-                    Toast.makeText(getContext(), "Order added", Toast.LENGTH_SHORT).show();
-
-                }
-
-
-            }
-
-        });
 
 
         /**
@@ -260,9 +373,123 @@ public class CartFragment extends Fragment {
                 });
 
 
+
+        /*******************************************************************
+         *                         ORDER ADDED
+         ******************************************************************/
+
+        mViewModel.getIsOrderAdded().observe(this, isOrderAdded->{
+            if (null == isOrderAdded) return;
+
+            if (isOrderAdded){
+                orderAddedCount++;
+
+                if (orderInCart == orderAddedCount && orderInCart != 0){
+                    mViewModel.deleteCartItems();
+                    getActivity().finish();
+                    startActivity(new Intent(getContext(), OrdersActivity.class));
+                    Toast.makeText(getContext(), "Order added", Toast.LENGTH_SHORT).show();
+
+                }
+
+
+            }
+
+        });
+
+
     }
 
 
+
+
+
+    /*******************************************************************
+     *               LOG IN
+     ******************************************************************/
+    public void onLoginSheetItemClicked(int id) {
+        if (id == R.id.loginBtn){
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            startActivity(intent);
+
+            logginBottomSheet.dismiss();
+        }else if (id == R.id.googleLoginBtn){
+            signIn();
+
+            logginBottomSheet.dismiss();
+        }
+    }
+
+
+
+
+
+
+    /*******************************************************************
+     *               SELECT ADDRESS
+     ******************************************************************/
+    public void onSendAddressToCart(AddressItem addressItems) {
+        mViewModel.cartVMHelper.setAddressSelected(addressItems);
+
+        mViewModel.startGetCartItems(FirebaseAuth.getInstance().getUid());
+
+        if (addressBottomSheet !=null)
+            addressBottomSheet.dismiss();
+
+
+
+        /**
+         *   Choose hyperlocal automatically
+         */
+
+        mViewModel.cartVMHelper.setShippingMethodSelected(CartVMHelper.HYPERLOCAL_SHIPPING);
+
+        mViewModel.cartVMHelper.setHyperlocalCost(nonFinalHyperLocalCost);
+
+    }
+
+
+
+
+
+
+    /*******************************************************************
+     *                      SHIPPING METHOD
+     ******************************************************************/
+    public void onShippingMethodClicked(int id) {
+        if (id == R.id.freeShippingBtn){
+            mViewModel.cartVMHelper.setShippingMethodSelected(CartVMHelper.FREE_SHIPPING);
+            shippingMethodBottomSheet.dismiss();
+        }else if (id == R.id.hyperLocalShippingBtn3){
+
+            mViewModel.cartVMHelper.setShippingMethodSelected(CartVMHelper.HYPERLOCAL_SHIPPING);
+
+            mViewModel.cartVMHelper.setHyperlocalCost(nonFinalHyperLocalCost);
+
+            shippingMethodBottomSheet.dismiss();
+        }
+    }
+
+
+
+
+
+    /******************************************************************
+     *               HYPERLOCAL
+     ******************************************************************/
+
+    /**
+     *  finish the calculations of hyper local and show in the screen
+     */
+    public void setHyperlocalData(){
+           if (mViewModel.cartVMHelper.getAddressSelected() != null){
+
+               userLocation = new Location("");
+               userLocation.setLatitude(mViewModel.cartVMHelper.getAddressSelected().getLat());
+               userLocation.setLongitude(mViewModel.cartVMHelper.getAddressSelected().getLat());
+           }
+
+    }
 
     void calculateDistance(){
 
@@ -282,6 +509,14 @@ public class CartFragment extends Fragment {
 
 
 
+
+
+    /*******************************************************************
+     *
+     *               TOTAL
+     *
+     ******************************************************************/
+
     public void calculateTotal(){
 
         double total = 0;
@@ -292,12 +527,9 @@ public class CartFragment extends Fragment {
 
             if (cartItemList.get(i).getOptions() != null){
                 HashMap<String, ProductOption> optionHashMap = cartItemList.get(i).getOptions();
-                Iterator it = optionHashMap.entrySet().iterator();
                 double optionPrice = 0;
-                while (it.hasNext()){
-                    Map.Entry pair = (Map.Entry) it.next();
-                    optionPrice += Double.valueOf(((ProductOption)pair.getValue()).getOptionValue());
-                    it.remove();
+                for (ProductOption option : optionHashMap.values()){
+                    optionPrice += Double.valueOf(option.getOptionValue());
                 }
 
                 price = price + optionPrice;
@@ -305,6 +537,7 @@ public class CartFragment extends Fragment {
             }
 
             price = price * cartItemList.get(i).getCount();
+
 
         }
 
@@ -316,42 +549,259 @@ public class CartFragment extends Fragment {
 
     }
 
-    public CartViewModel getmViewModel() {
-        return mViewModel;
+
+
+
+
+
+
+    /*******************************************************************
+     *
+     *               confirm adding THE ORDER FROM THE CURRENT CART
+     *
+     ******************************************************************/
+
+
+    public void onClickConfirmItem(int id) {
+        if (id== R.id.confirmBtn){
+            /**
+             * Confirm adding order
+             */
+
+            orderAddedCount = 0;
+
+            if (!isStartAddingNewOrder){
+                if (cartItemList.size() < 1){
+                    Toast.makeText(getActivity(), "Add products first", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+
+                List<String> marketIds = new ArrayList<>();
+
+                for (int i=0; i<cartItemList.size();i++){
+                    if(marketIds.indexOf(cartItemList.get(i).getMarketId()) > -1){
+                    }else{
+                        marketIds.add(cartItemList.get(i).getMarketId());
+                    }
+
+                }
+
+                orderInCart = marketIds.size();
+
+
+                for (String marketId : marketIds){
+
+                    OrderItem orderItem = new OrderItem();
+                    HashMap<String, CartItem> products = new HashMap<>();
+                    for (CartItem item : cartItemList){
+                        if (item.getMarketId().equals(marketId)){
+                            products.put(item.getId(), item);
+                        }
+                    }
+
+                    orderItem.setProducts(products);
+                    mViewModel.cartVMHelper.getAddressSelected();
+                    mViewModel.cartVMHelper.getPay_method();
+                    mViewModel.cartVMHelper.getShippingMethodSelected();
+
+
+                    mViewModel.getMarketPlaceFromInternal(marketId).observe(this, marketPlace->{
+                        if (marketPlace == null)return;
+
+                        Location userLocation = new Location("");
+                        mViewModel.cartVMHelper.getAddressSelected().getLat();
+                        mViewModel.cartVMHelper.getAddressSelected().getLat();
+
+                        Location marketplaceLocation = new Location("");
+                        marketplaceLocation.setLatitude(marketPlace.getLat());
+                        marketplaceLocation.setLongitude(marketPlace.getLan());
+                        double distance = marketplaceLocation.distanceTo(userLocation)/1000;
+                        double hyperlocalCost = Utils.getCostByDistance(distance);
+                        orderItem.setHyperlocalCost(hyperlocalCost);
+
+                        double total  = 0;
+                        double price = 0;
+
+                        for(CartItem cartItem: products.values()){
+                            if (cartItem!=null){
+                                price += Double.parseDouble(cartItem.getPrice());
+
+                                if (cartItem.getOptions() != null){
+                                    HashMap<String, ProductOption> optionHashMap = cartItem.getOptions();
+                                    Iterator it = optionHashMap.entrySet().iterator();
+                                    double optionPrice = 0;
+                                    while (it.hasNext()){
+                                        Map.Entry pair = (Map.Entry) it.next();
+                                        optionPrice += Double.valueOf(((ProductOption)pair.getValue()).getOptionValue());
+                                        it.remove();
+                                    }
+
+                                    price = price + optionPrice;
+
+                                    Toast.makeText(getContext(), "options price : "+ optionPrice, Toast.LENGTH_SHORT).show();
+
+                                }
+
+                                price = price * cartItem.getCount();
+                                total += price;
+                            }
+                        }
+
+                        orderItem.setTotal(total);
+                        orderItem.setOrderTotal(
+                                orderItem.getHyperlocalCost()
+                                        +orderItem.getTotal()
+                        );
+
+                        orderItem.setMarketplaceId(marketId);
+                        orderItem.setUserId(FirebaseAuth.getInstance().getUid());
+
+                        orderItem.setOrderStatus(StatusUtils.ORDER_STATUS_PENDING);
+                        orderItem.setCityId(marketPlace.getAddressSelected().getCityId());
+                        orderItem.setCityIdStatus(marketPlace.getAddressSelected().getCityId()+"-"+ StatusUtils.ORDER_STATUS_PENDING);
+
+
+
+
+
+                        mViewModel.startNewOrder(orderItem);
+
+
+                    });
+
+
+
+
+                }
+
+                isStartAddingNewOrder = true;
+
+
+
+
+
+
+            }
+
+
+
+        }else if (id == R.id.cancelBtn){
+            addOrderConfirmBottomSheet.dismiss();
+        }
     }
 
-    public interface AddressesToActivityFromCart{
-        void onAddressesToActivityFromCart(List<AddressItem> addresses);
+
+
+
+
+
+
+    /*******************************************************************
+     *               GOOGLE LOG IN
+     ******************************************************************/
+
+    private void signIn() {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            if (resultCode == RESULT_OK){
+                Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+                try {
+                    // Google Sign In was successful, authenticate with Firebase
+                    GoogleSignInAccount account = task.getResult(ApiException.class);
+                    firebaseAuthWithGoogle(account);
+
+
+
+                } catch (ApiException e) {
+                    // Google Sign In failed, update UI appropriately
+                    // [START_EXCLUDE]
+                }
+            }
+        }
+    }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("", "signInWithCredential:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+
+
+                            cartAdapter.setUserId(user.getUid());
+
+                            loginViewModel.loginVMHelper.setLogged(true);
+
+
+                            String familyName = acct.getFamilyName();
+                            String firstName = user.getDisplayName().replace(familyName,"");
+
+                            UserItem userItem = new UserItem();
+                            userItem.setEmail(user.getEmail());
+                            userItem.setFirstName(firstName);
+                            userItem.setLastName(familyName);
+                            userItem.setId(FirebaseAuth.getInstance().getUid());
+                            userItem.setSeller(false);
+                            userItem.setStatus(true);
+                            userItem.setDelivery(false);
+                            userItem.setDeliverySupervisor(false);
+
+                            DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
+                            mRef.child("User").child(FirebaseAuth.getInstance().getUid())
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            if (!dataSnapshot.exists()){
+                                                mRef.child("User").child(userItem.getId()).setValue(userItem);
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
+
+                            Toast.makeText(getContext(), ""+loginViewModel.loginVMHelper.getIsLogged().getValue(), Toast.LENGTH_SHORT).show();
+
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w("", "signInWithCredential:failure", task.getException());
+
+                        }
+
+                        // ...
+                    }
+                });
     }
 
 
-    /**
-     *  finish the calculations of hyper local and show in the screen
-     */
-    public void setHyperlocalData(){
-           if (mViewModel.cartVMHelper.getAddressSelected() != null){
-
-               userLocation = new Location("");
-               userLocation.setLatitude(mViewModel.cartVMHelper.getAddressSelected().getLat());
-               userLocation.setLongitude(mViewModel.cartVMHelper.getAddressSelected().getLat());
-           }
-
-    }
 
 
-    public void startRetrieveCartItemsAfterSelectAddress(){
-        mViewModel.startGetCartItems(FirebaseAuth.getInstance().getUid());
-    }
 
-    public double getNonFinalHyperLocalCost() {
-        return nonFinalHyperLocalCost;
-    }
 
-    public List<CartItem> getCartItemList() {
-        return cartItemList;
-    }
+
+    /*******************************************************************
+     *
+     *               Setter
+     *
+     ******************************************************************/
 
     public void setLoginViewModel(LoginViewModel loginViewModel) {
         this.loginViewModel = loginViewModel;
     }
+
 }

@@ -220,6 +220,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         mViewModel.getFavoritesItem().observe((LifecycleOwner) context, favoriteItem -> {
             if (productItemList == null) return;
             if (productItemList.size() == 0)return;
+            if (productItemList.size() == position)return;
             if (favoriteItem.getProductId()==null)return;
 
             if (favoriteItem.getProductId().equals(productItemList.get(position).getId())){

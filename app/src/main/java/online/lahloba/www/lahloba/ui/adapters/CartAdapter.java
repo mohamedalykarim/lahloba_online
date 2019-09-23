@@ -23,6 +23,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +49,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
     public CartAdapter(Context context) {
         this.context = context;
+        cartItemList = new ArrayList<>();
     }
 
     @NonNull
@@ -59,8 +61,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         if (FirebaseAuth.getInstance().getUid() != null){
             userId = FirebaseAuth.getInstance().getUid();
         }
-
-
 
 
 
@@ -87,7 +87,13 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                 textView.setLayoutParams(params);
 
 
-                textView.setText(((ProductOption)entry.getValue()).getOptionKey());
+                textView.setText(
+                        ((ProductOption)entry.getValue()).getOptionKey()
+                        + " "
+                        +((ProductOption)entry.getValue()).getOptionValue()
+                        + " "+ "EGP"
+
+                );
 
 
                 holder.binding.optionsContainer.addView(textView);
@@ -237,10 +243,15 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     }
 
 
+    public List<CartItem> getCartItemList() {
+        return cartItemList;
+    }
+
     public void setCartItemList(List<CartItem> cartItemList) {
         this.cartItemList = cartItemList;
-        notifyDataSetChanged();
     }
+
+
 
     public void setUserId(String userId) {
         this.userId = userId;

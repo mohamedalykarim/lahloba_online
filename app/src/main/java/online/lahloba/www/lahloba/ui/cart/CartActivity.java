@@ -65,19 +65,8 @@ implements
 
 {
 
-    private static final int RC_SIGN_IN = 1;
-    private FirebaseAuth mAuth;
-
-
-
-    LogginBottomSheet logginBottomSheet;
-    ShippingMethodBottomSheet shippingMethodBottomSheet;
-    AddressBottomSheet addressBottomSheet;
-    AddOrderConfirmBottomSheet addOrderConfirmBottomSheet;
 
     private LoginViewModel loginViewModel;
-    private boolean isStartAddingNewOrder;
-    private GoogleSignInClient mGoogleSignInClient;
 
 
     @Override
@@ -85,29 +74,6 @@ implements
         super.onCreate(savedInstanceState);
         CartActivityBinding binding = DataBindingUtil.setContentView(this,R.layout.cart_activity);
         binding.setLifecycleOwner(this);
-
-        logginBottomSheet = new LogginBottomSheet();
-        shippingMethodBottomSheet = new ShippingMethodBottomSheet();
-        addressBottomSheet = new AddressBottomSheet();
-
-
-        /**
-         * Google Sign in
-         */
-
-
-        // Configure Google Sign In
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getResources().getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
-
-        // ...
-        // Initialize Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
 
 
         /***
@@ -135,72 +101,6 @@ implements
                 ((CartFragment)getSupportFragmentManager().getFragments().get(0)).setLoginViewModel(loginViewModel);
 
 
-                binding.cartContinueBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (null == FirebaseAuth.getInstance().getCurrentUser()){
-                            /**
-                             * If not logged in ask user for login
-                             */
-                            
-                            logginBottomSheet.show(getSupportFragmentManager(),"logginBottomSheet");
-                        }else{
-                            /**
-                             * user is log in
-                             */
-
-
-
-                            if (((CartFragment)getSupportFragmentManager().getFragments().get(0))
-                                    .getmViewModel().cartVMHelper.getAddressSelected() == null){
-
-                                addressBottomSheet.setCartViewModel(((CartFragment)((CartFragment) getSupportFragmentManager().getFragments().get(0))).getmViewModel());
-                                addressBottomSheet.show(getSupportFragmentManager(),"addressBottomSheet");
-
-                            }else {
-
-                                if (((CartFragment)getSupportFragmentManager().getFragments().get(0)).getCartItemList().size() < 1){
-                                    Toast.makeText(CartActivity.this, "Add products first", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-
-                                  /**
-                                   * address selected then choose shipping method
-                                   */
-
-                                if (((CartFragment)getSupportFragmentManager().getFragments().get(0))
-                                        .getmViewModel().cartVMHelper.getShippingMethodSelected() == null){
-                                    /**
-                                     * Shipping method not set
-                                     */
-
-                                    shippingMethodBottomSheet.show(getSupportFragmentManager(),"shippingMethodBottomSheet");
-
-                                }else{
-
-                                    if (((CartFragment)getSupportFragmentManager().getFragments().get(0)).getCartItemList().size() < 1){
-                                        Toast.makeText(CartActivity.this, "Add products first", Toast.LENGTH_SHORT).show();
-                                        return;
-                                    }
-
-                                    /*
-                                     * Start the order
-                                     */
-
-                                    addOrderConfirmBottomSheet = new AddOrderConfirmBottomSheet();
-                                    addOrderConfirmBottomSheet.show(getSupportFragmentManager(),"addOrderConfirmBottomSheet");
-
-                                }
-                            }
-
-
-
-                            
-                            
-
-                        }
-                    }
-                });
             }
 
 
@@ -219,16 +119,8 @@ implements
 
     @Override
     public void onLoginSheetItemClicked(int id) {
-        if (id == R.id.loginBtn){
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-
-            logginBottomSheet.dismiss();
-        }else if (id == R.id.googleLoginBtn){
-            signIn();
-
-            logginBottomSheet.dismiss();
-        }
+        ((CartFragment)getSupportFragmentManager().getFragments().get(0))
+                .onLoginSheetItemClicked(id);
     }
 
 
@@ -239,22 +131,9 @@ implements
 
     @Override
     public void onShippingMethodClicked(int id) {
-        if (id == R.id.freeShippingBtn){
-            ((CartFragment)getSupportFragmentManager().getFragments().get(0))
-                    .getmViewModel()
-                    .cartVMHelper.setShippingMethodSelected(CartVMHelper.FREE_SHIPPING);
-            shippingMethodBottomSheet.dismiss();
-        }else if (id == R.id.hyperLocalShippingBtn3){
 
-            ((CartFragment)getSupportFragmentManager().getFragments().get(0))
-                    .getmViewModel().cartVMHelper.setShippingMethodSelected(CartVMHelper.HYPERLOCAL_SHIPPING);
-
-            ((CartFragment)getSupportFragmentManager().getFragments().get(0))
-                    .getmViewModel().cartVMHelper
-                    .setHyperlocalCost(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getNonFinalHyperLocalCost());
-
-            shippingMethodBottomSheet.dismiss();
-        }
+        ((CartFragment)getSupportFragmentManager().getFragments().get(0))
+                .onShippingMethodClicked(id);
     }
 
 
@@ -269,259 +148,23 @@ implements
     @Override
     public void onSendAddressToCart(AddressItem addressItems) {
         ((CartFragment)getSupportFragmentManager().getFragments().get(0))
-                .getmViewModel().cartVMHelper.setAddressSelected(addressItems);
-
-        ((CartFragment)getSupportFragmentManager().getFragments().get(0))
-                .startRetrieveCartItemsAfterSelectAddress();
-
-        if (addressBottomSheet !=null)
-            addressBottomSheet.dismiss();
-
-
-
-        /**
-         *   Choose hyperlocal automatically
-         *
-         *
-         */
-
-        ((CartFragment)getSupportFragmentManager().getFragments().get(0))
-                .getmViewModel().cartVMHelper.setShippingMethodSelected(CartVMHelper.HYPERLOCAL_SHIPPING);
-
-        ((CartFragment)getSupportFragmentManager().getFragments().get(0))
-                .getmViewModel().cartVMHelper
-                .setHyperlocalCost(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getNonFinalHyperLocalCost());
-
-
+                .onSendAddressToCart(addressItems);
     }
 
 
 
     @Override
     public void onClickConfirmItem(int id) {
-        if (id== R.id.confirmBtn){
-            /**
-             * Confirm adding order
-             */
 
-            ((CartFragment)getSupportFragmentManager().getFragments().get(0)).orderAddedCount = 0;
+        ((CartFragment)getSupportFragmentManager().getFragments().get(0))
+                .onClickConfirmItem(id);
 
-            if (!isStartAddingNewOrder){
-                if (((CartFragment)getSupportFragmentManager().getFragments().get(0)).getCartItemList().size() < 1){
-                    Toast.makeText(CartActivity.this, "Add products first", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-
-                List<String> marketIds = new ArrayList<>();
-
-                for (int i=0; i<((CartFragment)getSupportFragmentManager().getFragments().get(0)).getCartItemList().size();i++){
-                    if(marketIds.indexOf(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getCartItemList().get(i).getMarketId()) > -1){
-                    }else{
-                        marketIds.add(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getCartItemList().get(i).getMarketId());
-                    }
-
-                }
-
-                ((CartFragment)getSupportFragmentManager().getFragments().get(0)).orderInCart = marketIds.size();
-
-
-                for (String marketId : marketIds){
-
-                    OrderItem orderItem = new OrderItem();
-                    HashMap<String, CartItem> products = new HashMap<>();
-                    for (CartItem item : ((CartFragment)getSupportFragmentManager().getFragments().get(0)).getCartItemList()){
-                        if (item.getMarketId().equals(marketId)){
-                            products.put(item.getId(), item);
-                        }
-                    }
-
-                    orderItem.setProducts(products);
-                    orderItem.setAddressSelected(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getAddressSelected());
-                    orderItem.setPay_method(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getPay_method());
-                    orderItem.setShippingMethodSelected(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel().cartVMHelper.getShippingMethodSelected());
-
-
-                    ((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel()
-                            .getMarketPlaceFromInternal(marketId).observe(this, marketPlace->{
-                                if (marketPlace == null)return;
-
-                        Location userLocation = new Location("");
-                        userLocation.setLatitude(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel()
-                                .cartVMHelper.getAddressSelected().getLat());
-                        userLocation.setLongitude(((CartFragment)getSupportFragmentManager().getFragments().get(0)).getmViewModel()
-                                .cartVMHelper.getAddressSelected().getLat());
-
-                        Location marketplaceLocation = new Location("");
-                        marketplaceLocation.setLatitude(marketPlace.getLat());
-                        marketplaceLocation.setLongitude(marketPlace.getLan());
-                        double distance = marketplaceLocation.distanceTo(userLocation)/1000;
-                        double hyperlocalCost = Utils.getCostByDistance(distance);
-                        orderItem.setHyperlocalCost(hyperlocalCost);
-
-                        double total  = 0;
-                        double price = 0;
-
-                        for(CartItem cartItem: products.values()){
-                            if (cartItem!=null){
-                                price += Double.parseDouble(cartItem.getPrice());
-
-                                if (cartItem.getOptions() != null){
-                                    HashMap<String, ProductOption> optionHashMap = cartItem.getOptions();
-                                    Iterator it = optionHashMap.entrySet().iterator();
-                                    double optionPrice = 0;
-                                    while (it.hasNext()){
-                                        Map.Entry pair = (Map.Entry) it.next();
-                                        optionPrice += Double.valueOf(((ProductOption)pair.getValue()).getOptionValue());
-                                        it.remove();
-                                    }
-
-                                    price = price + optionPrice;
-
-                                    Toast.makeText(this, "options price : "+ optionPrice, Toast.LENGTH_SHORT).show();
-
-                                }
-
-                                price = price * cartItem.getCount();
-                                total += price;
-                            }
-                        }
-
-                        orderItem.setTotal(total);
-                        orderItem.setOrderTotal(
-                                orderItem.getHyperlocalCost()
-                                        +orderItem.getTotal()
-                        );
-
-                        orderItem.setMarketplaceId(marketId);
-                        orderItem.setUserId(FirebaseAuth.getInstance().getUid());
-
-                        orderItem.setOrderStatus(StatusUtils.ORDER_STATUS_PENDING);
-                        orderItem.setCityId(marketPlace.getAddressSelected().getCityId());
-                        orderItem.setCityIdStatus(marketPlace.getAddressSelected().getCityId()+"-"+ StatusUtils.ORDER_STATUS_PENDING);
-
-
-
-
-
-                        ((CartFragment)getSupportFragmentManager().getFragments().get(0))
-                                .getmViewModel()
-                                .startNewOrder(orderItem);
-
-
-                    });
-
-
-
-
-                }
-
-                isStartAddingNewOrder = true;
-
-
-
-
-
-
-            }
-
-
-
-        }else if (id == R.id.cancelBtn){
-            addOrderConfirmBottomSheet.dismiss();
-        }
     }
 
 
-    private void signIn() {
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
-            if (resultCode == RESULT_OK){
-                Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-                try {
-                    // Google Sign In was successful, authenticate with Firebase
-                    GoogleSignInAccount account = task.getResult(ApiException.class);
-                    firebaseAuthWithGoogle(account);
 
 
 
-                } catch (ApiException e) {
-                    // Google Sign In failed, update UI appropriately
-                    // [START_EXCLUDE]
-                }
-            }
-        }
-    }
-
-
-    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d("", "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-
-
-                            ((CartFragment)getSupportFragmentManager().getFragments().get(0))
-                                    .cartAdapter.setUserId(user.getUid());
-
-                            loginViewModel.loginVMHelper.setLogged(true);
-
-
-                            String familyName = acct.getFamilyName();
-                            String firstName = user.getDisplayName().replace(familyName,"");
-
-                            UserItem userItem = new UserItem();
-                            userItem.setEmail(user.getEmail());
-                            userItem.setFirstName(firstName);
-                            userItem.setLastName(familyName);
-                            userItem.setId(FirebaseAuth.getInstance().getUid());
-                            userItem.setSeller(false);
-                            userItem.setStatus(true);
-                            userItem.setDelivery(false);
-                            userItem.setDeliverySupervisor(false);
-
-                            DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
-                            mRef.child("User").child(FirebaseAuth.getInstance().getUid())
-                                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                            if (!dataSnapshot.exists()){
-                                                mRef.child("User").child(userItem.getId()).setValue(userItem);
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                        }
-                                    });
-
-                            Toast.makeText(CartActivity.this, ""+loginViewModel.loginVMHelper.getIsLogged().getValue(), Toast.LENGTH_SHORT).show();
-
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w("", "signInWithCredential:failure", task.getException());
-
-                        }
-
-                        // ...
-                    }
-                });
-    }
 
 
 }
