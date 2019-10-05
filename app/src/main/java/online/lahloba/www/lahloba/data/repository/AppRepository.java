@@ -351,8 +351,7 @@ public class AppRepository {
         return database.marketPlaceDao().getSpecificMarketPlaces(ids);
     }
 
-    public LiveData<MarketPlace> getMarketPlaceFromInternal(String id) {
-
+    public MarketPlace getMarketPlaceFromInternal(String id) {
         return database.marketPlaceDao().getSpecificMarketPlace(id);
     }
 

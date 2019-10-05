@@ -1,5 +1,6 @@
 package online.lahloba.www.lahloba.ui.cart;
 
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
@@ -163,9 +164,13 @@ public class CartFragment extends Fragment {
         addressBottomSheet = new AddressBottomSheet();
 
 
+
+
         binding.cartContinueBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
                 if (null == FirebaseAuth.getInstance().getCurrentUser()){
                     /*
                      * If not logged in ask user for login
@@ -181,18 +186,23 @@ public class CartFragment extends Fragment {
 
                     if (mViewModel.cartVMHelper.getAddressSelected() == null){
 
+
+
                         addressBottomSheet.setCartViewModel(mViewModel);
                         addressBottomSheet.show(getActivity().getSupportFragmentManager(),"addressBottomSheet");
 
                     }else {
+
+
 
                         if (cartItemList.size() < 1){
                             Toast.makeText(getActivity(), "Add products first", Toast.LENGTH_SHORT).show();
                             return;
                         }
 
+
                         /*
-                         * address selected then choose shipping method
+                         * address selected, choose shipping method
                          */
 
                         if (mViewModel.cartVMHelper.getShippingMethodSelected() == null){
@@ -213,8 +223,12 @@ public class CartFragment extends Fragment {
                              * Start the order
                              */
 
+
+
                             addOrderConfirmBottomSheet = new AddOrderConfirmBottomSheet();
                             addOrderConfirmBottomSheet.show(getActivity().getSupportFragmentManager(),"addOrderConfirmBottomSheet");
+
+
 
                         }
                     }
@@ -240,6 +254,8 @@ public class CartFragment extends Fragment {
         super.onResume();
 
         if (FirebaseAuth.getInstance().getUid() != null){
+            cartItemList.clear();
+            cartAdapter.notifyDataSetChanged();
             mViewModel.startGetCartItems(FirebaseAuth.getInstance().getUid());
             mViewModel.startGetAddress(FirebaseAuth.getInstance().getUid());
         }
@@ -276,6 +292,8 @@ public class CartFragment extends Fragment {
 
             cartItemList.addAll(cartItems);
             cartAdapter.notifyDataSetChanged();
+
+
 
             calculateTotal();
             calculateDistance();
@@ -339,7 +357,6 @@ public class CartFragment extends Fragment {
 
                         for (CartItem cartItem : cartItemList){
                             if (cartItem.getMarketId().equals(marketPlace.getId())){
-
                                 if (!uniqueMarketPlaces.contains(marketPlace)){
                                     uniqueMarketPlaces.add(marketPlace);
                                 }
@@ -482,7 +499,9 @@ public class CartFragment extends Fragment {
      *  finish the calculations of hyper local and show in the screen
      */
     public void setHyperlocalData(){
-           if (mViewModel.cartVMHelper.getAddressSelected() != null){
+
+
+        if (mViewModel.cartVMHelper.getAddressSelected() != null){
 
                userLocation = new Location("");
                userLocation.setLatitude(mViewModel.cartVMHelper.getAddressSelected().getLat());
@@ -539,6 +558,7 @@ public class CartFragment extends Fragment {
             price = price * cartItemList.get(i).getCount();
 
 
+
         }
 
         total = total+price;
@@ -563,10 +583,12 @@ public class CartFragment extends Fragment {
 
 
     public void onClickConfirmItem(int id) {
+
         if (id== R.id.confirmBtn){
             /**
              * Confirm adding order
              */
+
 
             orderAddedCount = 0;
 
@@ -590,28 +612,31 @@ public class CartFragment extends Fragment {
                 orderInCart = marketIds.size();
 
 
+
+
                 for (String marketId : marketIds){
 
                     OrderItem orderItem = new OrderItem();
-                    HashMap<String, CartItem> products = new HashMap<>();
+                    HashMap<String, CartItem> cartItems = new HashMap<>();
                     for (CartItem item : cartItemList){
                         if (item.getMarketId().equals(marketId)){
-                            products.put(item.getId(), item);
+                            cartItems.put(item.getId(), item);
                         }
                     }
 
-                    orderItem.setProducts(products);
-                    mViewModel.cartVMHelper.getAddressSelected();
-                    mViewModel.cartVMHelper.getPay_method();
-                    mViewModel.cartVMHelper.getShippingMethodSelected();
+                    orderItem.setProducts(cartItems);
 
 
-                    mViewModel.getMarketPlaceFromInternal(marketId).observe(this, marketPlace->{
+                    Injector.getExecuter().diskIO().execute(()->{
+
+                        MarketPlace marketPlace = mViewModel.getMarketPlaceFromInternal(marketId);
+
                         if (marketPlace == null)return;
 
+
                         Location userLocation = new Location("");
-                        mViewModel.cartVMHelper.getAddressSelected().getLat();
-                        mViewModel.cartVMHelper.getAddressSelected().getLat();
+                        userLocation.setLongitude(mViewModel.cartVMHelper.getAddressSelected().getLat());
+                        userLocation.setLatitude(mViewModel.cartVMHelper.getAddressSelected().getLat());
 
                         Location marketplaceLocation = new Location("");
                         marketplaceLocation.setLatitude(marketPlace.getLat());
@@ -623,29 +648,25 @@ public class CartFragment extends Fragment {
                         double total  = 0;
                         double price = 0;
 
-                        for(CartItem cartItem: products.values()){
-                            if (cartItem!=null){
-                                price += Double.parseDouble(cartItem.getPrice());
+                        for(CartItem cartItem: cartItems.values()){
+                            if (cartItem==null)return;
+                            price += Double.parseDouble(cartItem.getPrice());
 
-                                if (cartItem.getOptions() != null){
-                                    HashMap<String, ProductOption> optionHashMap = cartItem.getOptions();
-                                    Iterator it = optionHashMap.entrySet().iterator();
-                                    double optionPrice = 0;
-                                    while (it.hasNext()){
-                                        Map.Entry pair = (Map.Entry) it.next();
-                                        optionPrice += Double.valueOf(((ProductOption)pair.getValue()).getOptionValue());
-                                        it.remove();
-                                    }
+                            if (cartItem.getOptions() != null){
+                                HashMap<String, ProductOption> optionHashMap = cartItem.getOptions();
 
-                                    price = price + optionPrice;
-
-                                    Toast.makeText(getContext(), "options price : "+ optionPrice, Toast.LENGTH_SHORT).show();
-
+                                double optionPrice = 0;
+                                for (ProductOption option : optionHashMap.values()){
+                                    optionPrice += Double.valueOf(option.getOptionValue());
                                 }
 
-                                price = price * cartItem.getCount();
-                                total += price;
+                                price = price + optionPrice;
+
+
                             }
+
+                            price = price * cartItem.getCount();
+                            total += price;
                         }
 
                         orderItem.setTotal(total);
@@ -665,13 +686,13 @@ public class CartFragment extends Fragment {
 
 
 
+
+
                         mViewModel.startNewOrder(orderItem);
 
 
+
                     });
-
-
-
 
                 }
 
@@ -766,6 +787,7 @@ public class CartFragment extends Fragment {
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                             if (!dataSnapshot.exists()){
                                                 mRef.child("User").child(userItem.getId()).setValue(userItem);
+                                                loginViewModel.startUpdateMessagingToken();
                                             }
                                         }
 
@@ -775,7 +797,7 @@ public class CartFragment extends Fragment {
                                         }
                                     });
 
-                            Toast.makeText(getContext(), ""+loginViewModel.loginVMHelper.getIsLogged().getValue(), Toast.LENGTH_SHORT).show();
+
 
                         } else {
                             // If sign in fails, display a message to the user.

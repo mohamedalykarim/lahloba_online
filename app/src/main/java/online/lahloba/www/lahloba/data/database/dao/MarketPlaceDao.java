@@ -29,5 +29,5 @@ public interface MarketPlaceDao {
     LiveData<List<MarketPlace>> getSpecificMarketPlaces(List<String> ids);
 
     @Query("SELECT * from market_places WHERE id = :id")
-    LiveData<MarketPlace> getSpecificMarketPlace(String id);
+    MarketPlace getSpecificMarketPlace(String id);
 }

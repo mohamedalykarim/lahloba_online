@@ -130,10 +130,6 @@ public class DeliverySupervisorMainFragment extends Fragment {
             orderItems.clear();
 
 
-            if (!orders.get(0).getCityId().equals(citySpinnerIds.get(binding.citiesSpinner.getSelectedItemPosition())))
-                return;
-
-
             orderItems.addAll(orders);
             adapter.notifyDataSetChanged();
         });

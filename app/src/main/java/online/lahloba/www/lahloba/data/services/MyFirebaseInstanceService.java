@@ -1,14 +1,22 @@
 package online.lahloba.www.lahloba.data.services;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
+
+import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.iid.FirebaseInstanceIdReceiver;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+
+import online.lahloba.www.lahloba.R;
+import online.lahloba.www.lahloba.data.repository.AppRepository;
+import online.lahloba.www.lahloba.utils.Injector;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
@@ -16,33 +24,61 @@ public class MyFirebaseInstanceService extends FirebaseMessagingService  {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        // ...
 
-        // TODO(developer): Handle FCM messages here.
-        // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
-        Log.d(TAG, "From: " + remoteMessage.getFrom());
-
-        // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+            String type = remoteMessage.getData().get("type");
 
-            if (/* Check if data needs to be processed by long running job */ true) {
-                // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
-
-            } else {
-                // Handle message within 10 seconds
-
+            if (type.equals("seller_new_order")){
+                makeNotification(
+                        R.drawable.order_pending_icon,
+                        "Lahloba : New Order No. "+ remoteMessage.getData().get("orderNumber"),
+                        "You have new Order Click to go"
+                );
+            }else if (type.equals("customer_order_recieved")){
+                makeNotification(
+                        R.drawable.order_recieved_icon,
+                        "Lahloba : Order No. "+ remoteMessage.getData().get("orderNumber") + " has recieved",
+                        "Seller has recieved your order and he is preparing it"
+                );
+            }else if (type.equals("delivery_supervisor_order_prepared")){
+                makeNotification(
+                        R.drawable.order_processed_icon,
+                        "Lahloba : Order No. "+ remoteMessage.getData().get("orderNumber") + " has prepared",
+                        "Seller has prepared new order"
+                );
+            }else if (type.equals("delivery_order_allocated")){
+                makeNotification(
+                        R.drawable.order_shipped_icon,
+                        "Lahloba : Order No. "+ remoteMessage.getData().get("orderNumber") + " has allocated to you",
+                        "Delivery supervisor allocated new order to you"
+                );
+            }else if (type.equals("customer_order_shipped")){
+                makeNotification(
+                        R.drawable.order_shipped_icon,
+                        "Lahloba : Order No. "+ remoteMessage.getData().get("orderNumber") + " has shipped",
+                        "Seller has shipped your order"
+                );
             }
 
+
         }
 
-        // Check if message contains a notification payload.
-        if (remoteMessage.getNotification() != null) {
-            Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
-        }
+     }
 
-        // Also if you intend on generating your own notifications as a result of a received FCM
-        // message, here is where that should be initiated. See sendNotification method below.
+    private void makeNotification(int icon, String title, String message) {
+        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "Seller")
+                .setSmallIcon(icon)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setSound(alarmSound)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(0, builder.build());
+
     }
 
 
@@ -53,9 +89,9 @@ public class MyFirebaseInstanceService extends FirebaseMessagingService  {
      */
     @Override
     public void onNewToken(String token) {
-
         if (FirebaseAuth.getInstance().getUid() == null) return;
-
+        AppRepository appRepository = Injector.provideRepository(this);
+        appRepository.startUpdateMessagingToken();
 
     }
 
