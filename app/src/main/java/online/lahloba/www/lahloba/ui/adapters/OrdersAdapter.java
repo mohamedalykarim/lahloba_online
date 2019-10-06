@@ -51,7 +51,6 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             public void onClick(View v) {
                 Intent intent = new Intent(holder.binding.getRoot().getContext(), OrderDetailsActivity.class);
                 intent.putExtra(Constants.ORDER_ID, orderItem.getId());
-                intent.putExtra(Constants.ORDER_ITEM, orderItem);
 
                 holder.binding.getRoot().getContext().startActivity(intent);
             }

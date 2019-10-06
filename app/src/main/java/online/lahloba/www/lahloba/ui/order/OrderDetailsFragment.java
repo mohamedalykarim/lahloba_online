@@ -7,10 +7,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -25,6 +27,7 @@ import online.lahloba.www.lahloba.ui.login.LoginViewModel;
 import online.lahloba.www.lahloba.utils.Injector;
 import online.lahloba.www.lahloba.utils.StatusUtils;
 
+import static online.lahloba.www.lahloba.utils.Constants.ORDER_ID;
 import static online.lahloba.www.lahloba.utils.Constants.ORDER_ITEM;
 
 public class OrderDetailsFragment extends Fragment {
@@ -54,40 +57,20 @@ public class OrderDetailsFragment extends Fragment {
 
 
         Intent oldIntent = getActivity().getIntent();
-        if (oldIntent == null || !oldIntent.hasExtra(ORDER_ITEM)){
+        if (oldIntent == null  || !oldIntent.hasExtra(ORDER_ID)){
             getActivity().finish();
         }
 
-        oldOrderItem = oldIntent.getParcelableExtra(ORDER_ITEM);
 
-        mViewModel.startGetOrderById(oldOrderItem.getId());
-        mViewModel.startGetUserForOrder(oldOrderItem.getUserId());
-        mViewModel.startGetMarketPlaceForOrder(oldOrderItem.getMarketplaceId());
-
-
-
-        /*
-         * Add Products to view
-         */
-        HashMap<String, CartItem> products = oldOrderItem.getProducts();
-
-        binding.productsContainer.removeAllViews();
-        for(CartItem product: products.values()){
-
-            if (product!=null){
-                View view = inflater.inflate(R.layout.row_order_list_product,null,false);
-                TextView nameTv = view.findViewById(R.id.productNameTv);
-                TextView quantityTv = view.findViewById(R.id.productQuantityTv);
-                TextView priceTv = view.findViewById(R.id.producPriceTv);
-
-                nameTv.setText(product.getProductName());
-                quantityTv.setText("Qty: "+product.getCount());
-                priceTv.setText(product.getPrice()+" " + "EGP");
-
-
-                binding.productsContainer.addView(view);
-            }
+        if (oldIntent.hasExtra(ORDER_ID)){
+            mViewModel.startGetOrderById(oldIntent.getStringExtra(ORDER_ID));
         }
+
+
+
+
+
+
 
 
         binding.reorderBtn.setOnClickListener(new View.OnClickListener() {
@@ -125,7 +108,38 @@ public class OrderDetailsFragment extends Fragment {
 
         mViewModel.getOrderItem().observe(this, orderItem -> {
             if (orderItem == null)return;
+            oldOrderItem = orderItem;
             mViewModel.helper.setOrderItem(orderItem);
+            mViewModel.startGetUserForOrder(orderItem.getUserId());
+            mViewModel.startGetMarketPlaceForOrder(orderItem.getMarketplaceId());
+
+            /*
+             * Add Products to view
+             */
+            HashMap<String, CartItem> products = orderItem.getProducts();
+
+            binding.productsContainer.removeAllViews();
+            for(CartItem product: products.values()){
+
+                if (product!=null){
+                    LayoutInflater inflater = LayoutInflater.from(getContext());
+                    View view = inflater.inflate(R.layout.row_order_list_product,null,false);
+                    TextView nameTv = view.findViewById(R.id.productNameTv);
+                    TextView quantityTv = view.findViewById(R.id.productQuantityTv);
+                    TextView priceTv = view.findViewById(R.id.producPriceTv);
+
+                    nameTv.setText(product.getProductName());
+                    quantityTv.setText("Qty: "+product.getCount());
+                    priceTv.setText(product.getPrice()+" " + "EGP");
+
+
+                    binding.productsContainer.addView(view);
+                }
+            }
+
+
+
+
         });
 
         loginViewModel.getCurrentUserDetails().observe(this, userItem -> {
@@ -142,8 +156,11 @@ public class OrderDetailsFragment extends Fragment {
 
         mViewModel.getMarketplace().observe(this, marketPlace -> {
             if (marketPlace == null) return;
+            if (oldOrderItem == null)return;
 
             binding.setMarketPlace(marketPlace);
+
+
 
             if ( marketPlace.getId().equals(oldOrderItem.getMarketplaceId())
                     && marketPlace.getSellerId().equals(FirebaseAuth.getInstance().getUid())){

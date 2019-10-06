@@ -37,6 +37,7 @@ public class PointsFragment extends DialogFragment {
 
 
         loginViewModel.getCurrentUserDetails().observe((LifecycleOwner) getContext(), userItem -> {
+            if (userItem == null)return;
             binding.setPoint(userItem.getPoints()+"");
         });
 
