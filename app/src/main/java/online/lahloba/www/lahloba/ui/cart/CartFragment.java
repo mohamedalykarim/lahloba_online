@@ -38,9 +38,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import online.lahloba.www.lahloba.R;
 import online.lahloba.www.lahloba.ViewModelProviderFactory;
@@ -252,6 +250,11 @@ public class CartFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        if (cartItemList.size() > 0){
+            Log.v("sss",  "Options : " + cartItemList.get(0).getOptions());
+
+        }
 
         if (FirebaseAuth.getInstance().getUid() != null){
             cartItemList.clear();
@@ -584,6 +587,8 @@ public class CartFragment extends Fragment {
 
     public void onClickConfirmItem(int id) {
 
+
+
         if (id== R.id.confirmBtn){
             /**
              * Confirm adding order
@@ -618,6 +623,7 @@ public class CartFragment extends Fragment {
 
                     OrderItem orderItem = new OrderItem();
                     HashMap<String, CartItem> cartItems = new HashMap<>();
+
                     for (CartItem item : cartItemList){
                         if (item.getMarketId().equals(marketId)){
                             cartItems.put(item.getId(), item);
@@ -681,7 +687,7 @@ public class CartFragment extends Fragment {
                         orderItem.setOrderStatus(StatusUtils.ORDER_STATUS_PENDING);
                         orderItem.setCityId(marketPlace.getAddressSelected().getCityId());
                         orderItem.setCityIdStatus(marketPlace.getAddressSelected().getCityId()+"-"+ StatusUtils.ORDER_STATUS_PENDING);
-
+                        orderItem.setAddressSelected(mViewModel.cartVMHelper.getAddressSelected());
 
 
 

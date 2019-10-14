@@ -1107,8 +1107,13 @@ public class NetworkDataHelper {
         return isLogged;
     }
 
+    public void setIsLogged(boolean isLogged) {
+        this.isLogged.setValue(isLogged);
+    }
+
     public void startLogOut() {
         FirebaseAuth.getInstance().signOut();
+
         userDetails.setValue(null);
         isLogged.setValue(false);
     }
@@ -1200,6 +1205,60 @@ public class NetworkDataHelper {
 
 
 
+    }
+
+    public void startLoggedByPhone() {
+        Intent intent = new Intent(mContext, LahlobaMainService.class);
+        intent.setAction(Constants.START_LOGGED_BY_PHONE);
+        mContext.startService(intent);
+    }
+
+    public void loggedByPhone() {
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null)return;
+
+        firebaseRef.child("User")
+                .child(uid)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()){
+                            updateMessagingToken();
+                        }else {
+                            UserItem userItem = new UserItem();
+                            userItem.setId(uid);
+                            userItem.setFirstName("");
+                            userItem.setLastName("");
+                            userItem.setMobile("");
+                            userItem.setEmail("");
+                            userItem.setSeller(false);
+                            userItem.setDeliverySupervisor(false);
+                            userItem.setDelivery(false);
+                            userItem.setStatus(true);
+                            userItem.setLat(0);
+                            userItem.setLan(0);
+                            userItem.setPoints(0);
+                            userItem.setNotificationToken("");
+
+                            firebaseRef.child("User")
+                                    .child(uid)
+                                    .setValue(userItem)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                           updateMessagingToken();
+                                        }
+                                    });
+
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     //############################### Create New Account ############################//

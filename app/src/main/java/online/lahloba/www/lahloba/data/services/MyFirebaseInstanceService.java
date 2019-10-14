@@ -1,8 +1,6 @@
 package online.lahloba.www.lahloba.data.services;
 
-import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -96,16 +94,14 @@ public class MyFirebaseInstanceService extends FirebaseMessagingService  {
      }
 
     private void makeNotification(int icon, String title, String message, Intent intent) {
-        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, (int) Math.random(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "Lahloba")
                 .setSmallIcon(icon)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setAutoCancel(false)
-                .setSound(alarmSound)
+                .setAutoCancel(true)
+                .setSound(Uri.parse("android.resource://"+this.getPackageName()+"/"+R.raw.definite))
                 .setContentIntent(pendingIntent);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);

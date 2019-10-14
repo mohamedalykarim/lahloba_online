@@ -118,4 +118,5 @@ public class Constants {
     public static final String START_ADD_OPTION_TO_CART_ITEM = "start_add_option_to_cart_item";
     public static final String PRODUCT_OPTIONS = "product_options";
     public static final String START_UPDATE_MESSAGING_TOKEN = "start_update_messaging_token";
+    public static final String START_LOGGED_BY_PHONE = "start_logged_by_phone";
 }

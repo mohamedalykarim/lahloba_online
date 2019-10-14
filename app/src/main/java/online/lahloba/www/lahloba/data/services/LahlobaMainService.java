@@ -138,6 +138,8 @@ public class LahlobaMainService extends IntentService {
             networkDataHelper.updateUserDetails(userItem);
         }else if(intent.getAction().equals(Constants.START_UPDATE_MESSAGING_TOKEN)){
             networkDataHelper.updateMessagingToken();
+        }else if(intent.getAction().equals(Constants.START_LOGGED_BY_PHONE)){
+            networkDataHelper.loggedByPhone();
         }
 
 

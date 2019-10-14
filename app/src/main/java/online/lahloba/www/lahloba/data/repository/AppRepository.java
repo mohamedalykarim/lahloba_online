@@ -229,14 +229,20 @@ public class AppRepository {
         return networkDataHelper.getIsLogged();
     }
 
+    public void setIsLogged(boolean isLogged) {
+        networkDataHelper.setIsLogged(isLogged);
+    }
+
     public void startLogout() {
         networkDataHelper.startLogOut();
     }
 
-
-
     public void startUpdateMessagingToken() {
         networkDataHelper.startUpdateMessagingToken();
+    }
+
+    public void startLoggedByPhone() {
+        networkDataHelper.startLoggedByPhone();
     }
 
     //############################### New Account ############################//
@@ -495,5 +501,6 @@ public class AppRepository {
     public void startAddPointsToUser(String userId, int points) {
         networkDataHelper.startAddPointsToUser(userId, points);
     }
+
 
 }

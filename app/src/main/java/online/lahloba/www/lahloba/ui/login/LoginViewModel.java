@@ -44,11 +44,16 @@ public class LoginViewModel extends ViewModel {
     public void startLogOut(){
         appRepository.startLogout();
         loginVMHelper.setLogged(false);
+
     }
 
 
     public MutableLiveData<Boolean> getIsLogged(){
         return appRepository.getIsLogged();
+    }
+
+    public void setIsLogged(boolean isLogged) {
+        appRepository.setIsLogged(isLogged);
     }
 
     public void deleteLocalCartItems() {
@@ -69,5 +74,9 @@ public class LoginViewModel extends ViewModel {
     public void startUpdateMessagingToken() {
         appRepository.startUpdateMessagingToken();
 
+    }
+
+    public void startLoggedByPhone() {
+        appRepository.startLoggedByPhone();
     }
 }

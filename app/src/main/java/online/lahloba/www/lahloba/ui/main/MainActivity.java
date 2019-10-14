@@ -22,6 +22,7 @@ import online.lahloba.www.lahloba.ui.adapters.AccountAdapter;
 import online.lahloba.www.lahloba.ui.favorites.FavoritesFragment;
 import online.lahloba.www.lahloba.ui.fragments.AccountDetailsFragment;
 import online.lahloba.www.lahloba.ui.fragments.AccountFragment;
+import online.lahloba.www.lahloba.ui.fragments.LoginMenuFragment;
 import online.lahloba.www.lahloba.ui.fragments.PointsFragment;
 import online.lahloba.www.lahloba.ui.login.LoginFragment;
 import online.lahloba.www.lahloba.ui.city.CityActivity;
@@ -141,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements AccountAdapter.Ac
                 Fragment accountFragment = new AccountFragment();
                 loadFragment(accountFragment);
             } else {
-                Fragment loginFragment = new LoginFragment();
+                Fragment loginFragment = new LoginMenuFragment();
                 loadFragment(loginFragment);
             }
         });
